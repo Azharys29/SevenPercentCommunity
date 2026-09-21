@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rekomendasi — SevenPercentCommunity</title>
+<style>
+:root{--bg:#090D13;--panel:#0F151D;--panel2:#141C26;--line:#2E4A68;--tx:#F3F6FA;--tx2:#A3ADBC;--tx3:#7C879A;--ice:#85B7EB;--cream:#F2EBDD}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Arial,sans-serif}.wrap{max-width:1100px;margin:auto;padding:22px 18px 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #1B2836;padding-bottom:16px}.brand{color:var(--ice);font:12px monospace;letter-spacing:.12em}.nav a{color:var(--tx2);text-decoration:none;margin-left:14px}.nav a:hover{color:var(--tx)}h1{font-size:38px;margin:34px 0 8px;color:var(--cream)}.lead{color:var(--tx2);margin:0 0 24px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--tx);padding:9px 13px;border-radius:4px;text-decoration:none;cursor:pointer}.btn.pri{background:var(--ice);color:#08101A;border-color:var(--ice);font-weight:700}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);background:var(--panel);padding:18px;border-radius:5px}.head{display:flex;justify-content:space-between;gap:12px;align-items:start}.tk{font-size:22px;font-weight:700}.date{color:var(--tx3);font-size:12px}.badge{border:1px solid var(--ice);color:var(--ice);padding:3px 8px;border-radius:999px;font-size:11px}.prices{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.p{background:var(--panel2);padding:10px;border:1px solid #1B2836}.p small{display:block;color:var(--tx3);font-size:11px}.p b{font-size:15px}.note{color:var(--tx2);white-space:pre-wrap}.empty{text-align:center;padding:50px;color:var(--tx3);border:1px dashed var(--line)}@media(max-width:700px){.grid{grid-template-columns:1fr}.prices{grid-template-columns:repeat(2,1fr)}h1{font-size:32px}}
+</style></head><body><div class="wrap">
+<header class="top"><div class="brand">SEVENPERCENTCOMMUNITY</div><nav class="nav"><a href="./index.html">Screener</a><a href="./admin.html">Admin</a></nav></header>
+<h1>Rekomendasi</h1><p class="lead">Daftar rekomendasi yang dipublikasikan. Data tersimpan di database sehingga dapat dilihat dari HP, laptop, atau perangkat lain.</p>
+<div class="toolbar"><button class="btn" id="refresh">↻ Refresh</button></div><div id="status"></div><main id="list" class="grid"></main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabase=supabaseJs.createClient("https://njghchwtcyoieymkodzj.supabase.co","sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ");
+const $=s=>document.querySelector(s);
+const rupiah=v=>new Intl.NumberFormat('id-ID',{maximumFractionDigits:2}).format(Number(v));
+async function load(){
+  $('#status').textContent='Memuat rekomendasi…';
+  const {data,error}=await supabase.from('recommendations').select('*').eq('status','active').order('created_at',{ascending:false});
+  if(error){$('#status').textContent='Gagal memuat: '+error.message;return}
+  $('#status').textContent='';
+  $('#list').innerHTML=data.length?data.map(x=>`<article class="card"><div class="head"><div><div class="tk">${x.ticker}</div><div class="date">${new Date(x.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}</div></div><span class="badge">ACTIVE</span></div><div class="prices"><div class="p"><small>ENTRY RANGE</small><b>Rp ${rupiah(x.entry_min)} – ${rupiah(x.entry_max)}</b></div><div class="p"><small>TP1</small><b>Rp ${rupiah(x.tp1)}</b></div><div class="p"><small>TP2</small><b>Rp ${rupiah(x.tp2)}</b></div><div class="p"><small>STOP LOSS</small><b>Rp ${rupiah(x.stop_loss)}</b></div></div>${x.notes?`<div class="note">${String(x.notes).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}</div>`:''}</article>`).join(''):'<div class="empty">Belum ada rekomendasi aktif.</div>'}
+$('#refresh').onclick=load;load();
+</script></body></html>
