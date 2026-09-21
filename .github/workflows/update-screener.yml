@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - "index.html"
+      - "recommendations.html"
+      - "admin.html"
       - "scripts/**"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
