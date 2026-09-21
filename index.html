@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screener Teknikal Saham IDX — Azharys.hr Capital Markets Desk</title>
+<meta name="description" content="Screener teknikal saham IDX: Stochastic, MACD, RSI, volume, dan indikator TradingView kustom dengan skor kekuatan sinyal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Midnight Ice — palet brand @azharys.hr */
+  --bg:#090D13; --panel:#0F151D; --panel2:#141C26;
+  --line:#2E4A68; --line-soft:#1B2836;
+  --ice:#85B7EB; --ice-brt:#ADD6FF; --ice-dim:#55789E; --ice-dim-tx:#7FA3CB;
+  --tx:#F3F6FA; --tx2:#A3ADBC; --tx3:#7C879A; --cream:#F2EBDD;
+  --f-disp:'Gloock','Times New Roman',serif;
+  --f-serif:'IBM Plex Serif',Georgia,serif;
+  --f-ui:'Instrument Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 15px/1.5 var(--f-ui)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ice-brt);outline-offset:2px}
+.wrap{max-width:1560px;margin:0 auto;padding:0 28px 56px}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.brand{font:500 12px var(--f-mono);letter-spacing:.14em;color:var(--ice);text-transform:uppercase}
+.pill{display:inline-block;border:1px solid var(--line);padding:4px 11px;border-radius:999px;font-size:12.5px;color:var(--tx2)}
+.pill.live{border-color:var(--ice);color:var(--ice-brt)}
+.banner{margin:16px 0 0;border:1px solid var(--cream);background:var(--panel2);padding:11px 16px;font-size:14px;color:var(--cream)}
+.hero{padding:34px 0 24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;align-items:end}
+h1{font:400 clamp(34px,4.6vw,56px)/1.03 var(--f-disp);color:var(--cream);margin:0;letter-spacing:-.01em}
+.lead{font:400 16px/1.7 var(--f-serif);color:var(--tx2);margin:0;max-width:66ch}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:6px 0 24px}
+.stat{border:1px solid var(--line);background:var(--panel);padding:14px 16px;border-radius:3px}
+.stat .k{font-size:13px;color:var(--tx2)}
+.stat .v{font:600 30px/1.15 var(--f-ui);font-variant-numeric:tabular-nums;color:var(--tx);margin:2px 0}
+.stat .c{font-size:12.5px;color:var(--tx3)}
+
+/* layout */
+.layout{display:grid;grid-template-columns:292px minmax(0,1fr);gap:26px;align-items:start}
+.filters{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto;border:1px solid var(--line);background:var(--panel);border-radius:3px;padding:6px 18px 18px}
+.fs{padding:16px 0;border-bottom:1px solid var(--line-soft)}
+.fs:last-of-type{border-bottom:0}
+.fs h3{margin:0 0 10px;font:600 13.5px var(--f-ui);color:var(--cream)}
+.fs .hint{font-size:12px;color:var(--tx3);margin:8px 0 0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row2 label{font-size:12px;color:var(--tx3);display:block}
+input[type=number],input[type=search],input[type=text],select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:3px;padding:7px 9px;font-variant-numeric:tabular-nums}
+input::placeholder,textarea::placeholder{color:var(--tx3)}
+input[type=range]{width:100%;accent-color:var(--ice)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--tx2);padding:5px 10px;border-radius:3px;font-size:13px;line-height:1.3}
+.chip:hover{border-color:var(--ice);color:var(--tx)}
+.chip[aria-pressed=true]{background:var(--ice);border-color:var(--ice);color:#08101A;font-weight:600}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--tx2);padding:7px 4px;font-size:13px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--ice);color:#08101A;font-weight:600}
+.checks{max-height:196px;overflow:auto;display:grid;gap:2px;padding-right:4px}
+.checks label{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;color:var(--tx2);padding:3px 2px;cursor:pointer}
+.checks label span:first-child{display:flex;gap:8px;align-items:center}
+.checks input{accent-color:var(--ice);margin:0}
+.checks .n{color:var(--tx3);font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--line);background:var(--panel2);padding:8px 14px;border-radius:3px;font-size:13.5px;color:var(--tx)}
+.btn:hover{border-color:var(--ice)}
+.btn.pri{background:var(--ice);border-color:var(--ice);color:#08101A;font-weight:600}
+.btn.ghost{background:transparent}
+.link{background:none;border:0;padding:0;color:var(--ice);text-decoration:underline;text-underline-offset:3px;font-size:13px}
+
+/* toolbar + table */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.toolbar .grow{flex:1}
+.presets{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
+.presets .lab{font-size:13px;color:var(--tx3);margin-right:2px}
+.tw{border:1px solid var(--line);border-radius:3px;background:var(--bg);max-height:76vh;overflow:auto}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1080px;font-size:13.5px}
+thead th{position:sticky;top:0;z-index:3;background:var(--panel2);text-align:right;font-weight:600;color:var(--tx2);font-size:12.5px;padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
+thead th.l{text-align:left}
+thead th button{width:100%;background:none;border:0;padding:11px 12px;text-align:inherit;font:inherit;color:inherit}
+thead th button:hover{color:var(--tx)}
+thead th[aria-sort=ascending] button::after{content:" ▲";color:var(--ice-brt)}
+thead th[aria-sort=descending] button::after{content:" ▼";color:var(--ice-brt)}
+thead th.first{left:0;z-index:4}
+tbody tr{background:var(--bg);cursor:pointer}
+tbody tr:hover{background:var(--panel)}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--line-soft);text-align:right;vertical-align:middle;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.l{text-align:left}
+td.first{position:sticky;left:0;z-index:2;background:inherit;text-align:left;min-width:190px;max-width:230px}
+td.first .tk{background:none;border:0;padding:0;font:700 14.5px var(--f-ui);color:var(--cream);letter-spacing:.01em}
+td.first .nm{display:block;font-size:12px;color:var(--tx3);overflow:hidden;text-overflow:ellipsis;max-width:210px}
+.sub{display:block;font-size:11.5px;color:var(--tx3)}
+.up{color:var(--ice-brt)}
+.dn{color:var(--ice-dim-tx)}
+td.sig{min-width:250px;text-align:left}
+.sigline{display:flex;align-items:center;gap:10px}
+.dbar{position:relative;flex:0 0 132px;height:9px;background:var(--line-soft);border-radius:1px}
+.dbar .mid{position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--tx3)}
+.dbar .fill{position:absolute;top:0;bottom:0}
+.dbar .fill.u{left:50%;background:var(--ice-brt)}
+.dbar .fill.d{right:50%;background:var(--ice-dim)}
+.sc{font:600 15px var(--f-ui);min-width:34px;text-align:right}
+.lbl{font-size:12px;color:var(--tx2);margin-top:3px;display:flex;gap:8px;align-items:center}
+.dots{letter-spacing:2px;color:var(--ice)}
+.empty{padding:56px 24px;text-align:center;color:var(--tx2)}
+.empty p{margin:0 0 14px}
+.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--tx3)}
+.foot p{margin:0;max-width:92ch}
+.foot .h{font:500 12px var(--f-mono);color:var(--ice)}
+
+/* dialogs */
+dialog{background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:3px;padding:0}
+dialog::backdrop{background:rgba(4,7,11,.72)}
+dialog.modal{width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 32px)}
+dialog.drawer{margin:0 0 0 auto;height:100vh;max-height:100vh;width:min(640px,100vw);border-width:0 0 0 1px;border-radius:0}
+.dw{padding:22px 24px 30px}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px}
+.dh h2{margin:0;font:400 30px/1.1 var(--f-disp);color:var(--cream)}
+.x{background:none;border:1px solid var(--line);border-radius:3px;width:34px;height:34px;color:var(--tx2);font-size:18px;line-height:1}
+.x:hover{border-color:var(--ice);color:var(--tx)}
+.meta{color:var(--tx2);font-size:13.5px}
+.big{display:flex;align-items:center;gap:18px;margin:18px 0;padding:16px;border:1px solid var(--line);background:var(--panel2);border-radius:3px}
+.big .n{font:600 44px/1 var(--f-ui);font-variant-numeric:tabular-nums}
+.big .t{flex:1}
+.brk{width:100%;border-collapse:collapse;font-size:13.5px;min-width:0}
+.brk th{background:none;position:static;text-align:left;font-weight:600;color:var(--tx3);font-size:12px;padding:6px 8px 6px 0;border-bottom:1px solid var(--line)}
+.brk td{padding:9px 8px 9px 0;border-bottom:1px solid var(--line-soft);text-align:left;white-space:normal;vertical-align:top}
+.brk tr{cursor:default;background:none}
+.brk tr:hover{background:none}
+.cbar{position:relative;width:86px;height:7px;background:var(--line-soft);margin-top:6px}
+.cbar i{position:absolute;top:0;bottom:0}
+.cbar i.u{left:50%;background:var(--ice-brt)}
+.cbar i.d{right:50%;background:var(--ice-dim)}
+.cbar b{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--tx3)}
+.ch{margin:18px 0 0}
+.ch h4{margin:0 0 4px;font:600 13px var(--f-ui);color:var(--cream)}
+.ch svg{width:100%;height:auto;display:block;background:var(--bg);border:1px solid var(--line-soft)}
+.legend{font-size:12px;color:var(--tx3);margin:4px 0 0;display:flex;gap:14px;flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:5px}
+
+/* settings & custom */
+.form{display:grid;gap:18px;padding:0 24px 24px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.form label.f{font-size:12.5px;color:var(--tx3);display:block}
+.form h3{margin:0 0 8px;font:600 14px var(--f-ui);color:var(--cream)}
+.cl{display:grid;gap:8px}
+.ci{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;border:1px solid var(--line);background:var(--bg);padding:10px 12px;border-radius:3px}
+.ci .nm{font-weight:600}
+.ci .st{font-size:12px;color:var(--tx3)}
+.ci input[type=checkbox]{accent-color:var(--ice);width:16px;height:16px}
+textarea.code{min-height:250px;font:400 12.5px/1.55 var(--f-mono);tab-size:2;white-space:pre;overflow:auto;resize:vertical}
+.res{font:400 12.5px/1.5 var(--f-mono);background:var(--bg);border:1px solid var(--line-soft);padding:10px 12px;white-space:pre-wrap;color:var(--tx2);min-height:44px}
+.res.err{border-color:var(--cream);color:var(--cream)}
+.ref{font-size:12.5px;color:var(--tx3);line-height:1.6}
+.ref code{font-family:var(--f-mono);color:var(--ice)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.only-m{display:none}
+
+@media (max-width:1100px){
+  .hero{grid-template-columns:1fr;gap:14px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .layout{grid-template-columns:1fr}
+  .filters{position:static;max-height:none;display:none}
+  .filters.open{display:block}
+  .only-m{display:inline-block}
+}
+@media (max-width:560px){ .wrap{padding:0 14px 40px} .grid4{grid-template-columns:repeat(2,1fr)} .grid3{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">@azharys.hr — Capital Markets Desk</div>
+    <span id="status" class="pill">Memuat data…</span>
+  </header>
+  <div id="banner" class="banner" hidden></div>
+
+  <section class="hero">
+    <h1>Screener teknikal saham IDX</h1>
+    <p class="lead">Stochastic, MACD, RSI, dan volume dihitung dari harga penutupan harian, lalu digabung menjadi satu skor kekuatan sinyal dari −100 sampai +100. Skor makin jauh dari nol, konfluensi antarindikator makin tinggi. Indikator TradingView Anda sendiri bisa ditambahkan sebagai kolom dan bobot skor.</p>
+  </section>
+
+  <section class="stats" aria-label="Ringkasan hasil" id="stats"></section>
+
+  <div class="layout">
+    <aside class="filters" id="filters" aria-label="Filter">
+      <div class="fs">
+        <h3>Cari saham</h3>
+        <input type="search" id="q" placeholder="Kode atau nama, mis. BBCA" autocomplete="off">
+      </div>
+      <div class="fs">
+        <h3>Indeks domestik</h3>
+        <div class="chips" id="ixChips"></div>
+        <p class="hint">Cocok dengan salah satu indeks terpilih.</p>
+      </div>
+      <div class="fs">
+        <h3>Sektor (IDX-IC)</h3>
+        <div class="checks" id="secList"></div>
+      </div>
+      <div class="fs">
+        <h3>Kapitalisasi pasar (Rp triliun)</h3>
+        <div class="row2">
+          <div><label for="mcMin">Minimum</label><input type="number" id="mcMin" min="0" step="any" placeholder="0"></div>
+          <div><label for="mcMax">Maksimum</label><input type="number" id="mcMax" min="0" step="any" placeholder="tanpa batas"></div>
+        </div>
+        <div class="chips" style="margin-top:8px">
+          <button class="chip" data-mc="100,">Besar &gt;100</button>
+          <button class="chip" data-mc="10,100">Menengah 10–100</button>
+          <button class="chip" data-mc=",10">Kecil &lt;10</button>
+        </div>
+      </div>
+      <div class="fs">
+        <h3>Beta terhadap IHSG (1 tahun)</h3>
+        <div class="row2">
+          <div><label for="bMin">Minimum</label><input type="number" id="bMin" step="0.05" placeholder="−"></div>
+          <div><label for="bMax">Maksimum</label><input type="number" id="bMax" step="0.05" placeholder="+"></div>
+        </div>
+        <div class="chips" style="margin-top:8px">
+          <button class="chip" data-b=",0.8">Defensif &lt;0,8</button>
+          <button class="chip" data-b="0.8,1.2">Sepadan 0,8–1,2</button>
+          <button class="chip" data-b="1.2,">Agresif &gt;1,2</button>
+        </div>
+      </div>
+      <div class="fs">
+        <h3>Arah dan kekuatan sinyal</h3>
+        <div class="seg" id="dirSeg" role="group" aria-label="Arah sinyal">
+          <button data-dir="all" aria-pressed="true">Semua</button>
+          <button data-dir="up" aria-pressed="false">▲ Bullish</button>
+          <button data-dir="down" aria-pressed="false">▼ Bearish</button>
+        </div>
+        <div style="margin-top:14px">
+          <label for="minScore" style="font-size:12.5px;color:var(--tx3)">Kekuatan minimum: <b id="minScoreV" style="color:var(--tx)">0</b></label>
+          <input type="range" id="minScore" min="0" max="90" step="5" value="0">
+        </div>
+        <div style="margin-top:10px">
+          <label for="minConf" style="font-size:12.5px;color:var(--tx3)">Konfluensi minimum (indikator sepakat)</label>
+          <select id="minConf"></select>
+        </div>
+      </div>
+      <div class="fs">
+        <h3>Kondisi indikator</h3>
+        <div class="chips" id="condChips"></div>
+        <p class="hint">Semua kondisi terpilih harus terpenuhi sekaligus.</p>
+      </div>
+      <div class="fs"><button class="btn ghost" id="resetF" style="width:100%">Atur ulang semua filter</button></div>
+    </aside>
+
+    <main>
+      <div class="toolbar">
+        <button class="btn only-m" id="toggleF">Filter</button>
+        <span id="count" class="meta"></span>
+        <span class="grow"></span>
+        <button class="btn" id="openCustom">Indikator kustom</button>
+        <button class="btn" id="openSet">Pengaturan sinyal</button>
+        <button class="btn" id="exportCsv">Ekspor CSV</button>
+      </div>
+      <div class="presets" id="presets"><span class="lab">Strategi cepat</span></div>
+      <div class="tw">
+        <table>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div id="empty" class="empty" hidden>
+          <p id="emptyMsg"></p>
+          <button class="btn pri" id="emptyReset">Atur ulang filter</button>
+        </div>
+      </div>
+      <footer class="foot">
+        <p>Alat bantu analisis teknikal, bukan rekomendasi jual atau beli. Skor bersifat mekanis dan mengikuti bobot serta parameter yang Anda atur. Data harian akhir hari (EOD) dari Yahoo Finance melalui yfinance, dapat tertunda atau tidak lengkap; verifikasi dengan sumber resmi sebelum mengambil keputusan.</p>
+        <span class="h">@azharys.hr</span>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<!-- Detail saham -->
+<dialog class="drawer" id="dlgDetail" aria-label="Detail saham"><div class="dw" id="detailBody"></div></dialog>
+
+<!-- Pengaturan -->
+<dialog class="modal" id="dlgSet" aria-label="Pengaturan sinyal">
+  <div class="dw" style="padding-bottom:8px"><div class="dh"><h2>Pengaturan sinyal</h2><button class="x" data-close aria-label="Tutup">×</button></div></div>
+  <div class="form">
+    <div>
+      <h3>Gaya pembacaan</h3>
+      <div class="seg" id="modeSeg" style="grid-template-columns:1fr 1fr">
+        <button data-mode="rebound" aria-pressed="true">Rebound: jenuh jual = bullish</button>
+        <button data-mode="momentum" aria-pressed="false">Momentum: kuat = bullish</button>
+      </div>
+      <p class="ref" style="margin:8px 0 0">Mengubah cara zona RSI dan Stochastic dibaca. Pada gaya rebound, RSI/Stochastic rendah bernilai bullish; pada gaya momentum, RSI/Stochastic tinggi bernilai bullish. MACD dan volume tidak terpengaruh.</p>
+    </div>
+    <div>
+      <h3>Bobot indikator</h3>
+      <div class="grid4">
+        <div><label class="f" for="w_stoch">Stochastic</label><input type="number" id="w_stoch" min="0" max="100" step="5"></div>
+        <div><label class="f" for="w_macd">MACD</label><input type="number" id="w_macd" min="0" max="100" step="5"></div>
+        <div><label class="f" for="w_rsi">RSI</label><input type="number" id="w_rsi" min="0" max="100" step="5"></div>
+        <div><label class="f" for="w_vol">Volume</label><input type="number" id="w_vol" min="0" max="100" step="5"></div>
+      </div>
+      <p class="ref" style="margin:8px 0 0">Bobot bersifat relatif; skor akhir dinormalisasi. Bobot indikator kustom diatur di jendela Indikator kustom.</p>
+    </div>
+    <div>
+      <h3>Parameter</h3>
+      <div class="grid4">
+        <div><label class="f" for="p_rsi">Periode RSI</label><input type="number" id="p_rsi" min="2" max="60"></div>
+        <div><label class="f" for="p_sk">Stochastic %K</label><input type="number" id="p_sk" min="2" max="60"></div>
+        <div><label class="f" for="p_ss">Smoothing %K</label><input type="number" id="p_ss" min="1" max="20"></div>
+        <div><label class="f" for="p_sd">Smoothing %D</label><input type="number" id="p_sd" min="1" max="20"></div>
+        <div><label class="f" for="p_mf">MACD cepat</label><input type="number" id="p_mf" min="2" max="60"></div>
+        <div><label class="f" for="p_ms">MACD lambat</label><input type="number" id="p_ms" min="3" max="120"></div>
+        <div><label class="f" for="p_mg">MACD signal</label><input type="number" id="p_mg" min="2" max="60"></div>
+        <div><label class="f" for="p_vn">Rata-rata volume (hari)</label><input type="number" id="p_vn" min="5" max="100"></div>
+        <div><label class="f" for="p_fw">Jendela cross baru (hari)</label><input type="number" id="p_fw" min="1" max="10"></div>
+      </div>
+    </div>
+    <div class="bar"><button class="btn pri" id="saveSet">Terapkan</button><button class="btn ghost" id="resetSet">Kembalikan bawaan</button></div>
+  </div>
+</dialog>
+
+<!-- Indikator kustom -->
+<dialog class="modal" id="dlgCustom" aria-label="Indikator kustom">
+  <div class="dw" style="padding-bottom:8px"><div class="dh"><h2>Indikator kustom</h2><button class="x" data-close aria-label="Tutup">×</button></div>
+    <p class="ref" style="margin:0">Terjemahkan indikator TradingView (Pine Script) ke JavaScript ringkas. Fungsi <code>ta.*</code> di sini meniru Pine, sehingga hampir satu banding satu. Hasilnya menjadi kolom baru dan ikut masuk ke skor kekuatan sinyal sesuai bobot.</p>
+  </div>
+  <div class="form">
+    <div id="ciList" class="cl"></div>
+    <div class="bar"><button class="btn pri" id="ciNew">Tambah indikator</button><button class="btn" id="ciExport">Ekspor JSON</button><button class="btn" id="ciImport">Impor JSON</button><input type="file" id="ciFile" accept="application/json" hidden></div>
+    <div id="ciEditor" hidden>
+      <h3 id="ciEdTitle">Editor</h3>
+      <div class="grid3" style="grid-template-columns:2fr 1fr 1.4fr;align-items:end">
+        <div><label class="f" for="ciName">Nama</label><input type="text" id="ciName" placeholder="mis. Supertrend 10,3"></div>
+        <div><label class="f" for="ciW">Bobot</label><input type="number" id="ciW" min="0" max="100" step="5" value="20"></div>
+        <div><label class="f" for="ciEx">Muat contoh</label><select id="ciEx"><option value="">Pilih…</option><option value="blank">Kerangka kosong</option><option value="supertrend">Supertrend (ATR 10, faktor 3)</option><option value="bbpb">Bollinger %B (20, 2)</option></select></div>
+      </div>
+      <label class="f" for="ciCode" style="margin-top:12px">Kode (badan fungsi JavaScript)</label>
+      <textarea class="code" id="ciCode" spellcheck="false"></textarea>
+      <div class="bar" style="margin-top:10px"><button class="btn" id="ciTest">Uji pada saham pertama</button><button class="btn pri" id="ciSave">Simpan</button><button class="btn ghost" id="ciCancel">Batal</button></div>
+      <div class="res" id="ciRes" style="margin-top:10px" aria-live="polite"></div>
+    </div>
+    <div class="ref">
+      <b style="color:var(--cream)">Kontrak.</b> Variabel: <code>o h l c v</code> (array harga, lama ke baru), <code>ta</code>, <code>Math</code>. Wajib <code>return { signal, value, text }</code>; <code>signal</code> antara −1 (bearish) dan +1 (bullish) pada bar terakhir. Opsional <code>series</code> (objek nama → array) dan <code>overlay: true</code> untuk menggambar di grafik harga.<br>
+      <b style="color:var(--cream)">Fungsi ta.</b> <code>sma ema rma rsi stdev highest lowest tr atr change crossover crossunder macd stoch nan last</code>. Tempel kode Pine Anda ke Claude untuk diterjemahkan.<br>
+      <b style="color:var(--cream)">Penyimpanan.</b> Tersimpan di browser ini. Agar tampil untuk semua pengunjung, ekspor JSON dan unggah sebagai <code>custom-indicators.json</code> di root repo. Kode dijalankan di browser Anda sendiri; hanya pakai kode yang Anda percaya.
+    </div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= util ================= */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const fin = Number.isFinite;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt = {
+  n: (v, d = 0) => fin(v) ? v.toLocaleString('id-ID', {minimumFractionDigits: d, maximumFractionDigits: d}) : '–',
+  sg: (v, d = 1) => fin(v) ? (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toLocaleString('id-ID', {minimumFractionDigits: d, maximumFractionDigits: d}) : '–',
+  price: v => fin(v) ? v.toLocaleString('id-ID', {maximumFractionDigits: v < 200 ? 2 : 0}) : '–',
+  mc: v => fin(v) ? (v / 1e12).toLocaleString('id-ID', {maximumFractionDigits: v >= 1e14 ? 0 : 1}) + ' T' : '–',
+};
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+/* ================= ta (ala Pine) ================= */
+const ta = (() => {
+  const nan = n => new Array(n).fill(NaN);
+  const first = x => { let i = 0; while (i < x.length && !fin(x[i])) i++; return i; };
+  function sma(x, n) {
+    const o = nan(x.length), k = first(x); if (x.length - k < n) return o;
+    let s = 0;
+    for (let i = k; i < x.length; i++) { s += x[i]; if (i - k >= n) s -= x[i - n]; if (i - k >= n - 1) o[i] = s / n; }
+    return o;
+  }
+  function ema(x, n, alpha) {
+    const o = nan(x.length), k = first(x); if (x.length - k < n) return o;
+    const a = alpha ?? 2 / (n + 1); let s = 0;
+    for (let i = k; i < k + n; i++) s += x[i];
+    let p = s / n; o[k + n - 1] = p;
+    for (let i = k + n; i < x.length; i++) { p = a * x[i] + (1 - a) * p; o[i] = p; }
+    return o;
+  }
+  const rma = (x, n) => ema(x, n, 1 / n);
+  const change = x => x.map((v, i) => i ? v - x[i - 1] : NaN);
+  function rsi(c, n) {
+    const ch = change(c);
+    const g = ch.map(v => fin(v) ? Math.max(v, 0) : NaN), l = ch.map(v => fin(v) ? Math.max(-v, 0) : NaN);
+    const ag = rma(g, n), al = rma(l, n);
+    return c.map((_, i) => fin(ag[i]) && fin(al[i]) ? (al[i] === 0 ? 100 : 100 - 100 / (1 + ag[i] / al[i])) : NaN);
+  }
+  const win = (x, n, f, init) => x.map((_, i) => { if (i < n - 1) return NaN; let m = init; for (let j = i - n + 1; j <= i; j++) m = f(m, x[j]); return m; });
+  const highest = (x, n) => win(x, n, Math.max, -Infinity);
+  const lowest = (x, n) => win(x, n, Math.min, Infinity);
+  function stdev(x, n) {
+    const m = sma(x, n);
+    return x.map((_, i) => { if (!fin(m[i])) return NaN; let s = 0; for (let j = i - n + 1; j <= i; j++) s += (x[j] - m[i]) ** 2; return Math.sqrt(s / n); });
+  }
+  const tr = (h, l, c) => h.map((_, i) => i ? Math.max(h[i] - l[i], Math.abs(h[i] - c[i - 1]), Math.abs(l[i] - c[i - 1])) : h[i] - l[i]);
+  const atr = (h, l, c, n) => rma(tr(h, l, c), n);
+  const arr = (a, b) => Array.isArray(a) ? a : b.map(() => a);
+  const crossover = (a, b) => { a = arr(a, arr(b, [])); b = arr(b, a); return a.map((v, i) => i > 0 && v > b[i] && a[i - 1] <= b[i - 1]); };
+  const crossunder = (a, b) => { a = arr(a, arr(b, [])); b = arr(b, a); return a.map((v, i) => i > 0 && v < b[i] && a[i - 1] >= b[i - 1]); };
+  function macd(c, f, s, g) {
+    const ef = ema(c, f), es = ema(c, s);
+    const m = c.map((_, i) => ef[i] - es[i]);
+    const sig = ema(m, g);
+    return {macd: m, signal: sig, hist: m.map((v, i) => v - sig[i])};
+  }
+  function stoch(h, l, c, kLen, kSm, dSm) {
+    const hh = highest(h, kLen), ll = lowest(l, kLen);
+    const raw = c.map((x, i) => { const r = hh[i] - ll[i]; return fin(r) ? (r === 0 ? 50 : (x - ll[i]) / r * 100) : NaN; });
+    const k = kSm > 1 ? sma(raw, kSm) : raw;
+    return {k, d: sma(k, dSm), raw};
+  }
+  const last = x => x[x.length - 1];
+  return {nan, sma, ema, rma, change, rsi, highest, lowest, stdev, tr, atr, crossover, crossunder, macd, stoch, last};
+})();
+
+/* ================= pengaturan ================= */
+const DEF = {
+  mode: 'rebound',
+  p: {rsi: 14, sk: 14, ss: 3, sd: 3, mf: 12, ms: 26, mg: 9, vn: 20, fw: 3},
+  w: {stoch: 25, macd: 30, rsi: 25, vol: 20},
+};
+let S = (() => { const s = store.get('azhs.screener.settings', null); return s ? {mode: s.mode || DEF.mode, p: {...DEF.p, ...s.p}, w: {...DEF.w, ...s.w}} : JSON.parse(JSON.stringify(DEF)); })();
+
+/* ================= data ================= */
+const UNIVERSE_SEED = [{"t":"BBCA","n":"Bank Central Asia Tbk","s":"Financials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"BBRI","n":"Bank Rakyat Indonesia (Persero) Tbk","s":"Financials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"BMRI","n":"Bank Mandiri (Persero) Tbk","s":"Financials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"BBNI","n":"Bank Negara Indonesia (Persero) Tbk","s":"Financials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"BRIS","n":"Bank Syariah Indonesia Tbk","s":"Financials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"ARTO","n":"Bank Jago Tbk","s":"Financials","ix":["LQ45","KOMPAS100"]},{"t":"BBTN","n":"Bank Tabungan Negara (Persero) Tbk","s":"Financials","ix":["KOMPAS100"]},{"t":"BNGA","n":"Bank CIMB Niaga Tbk","s":"Financials","ix":["KOMPAS100"]},{"t":"ADRO","n":"Alamtri Resources Indonesia Tbk","s":"Energy","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"PTBA","n":"Bukit Asam Tbk","s":"Energy","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"ITMG","n":"Indo Tambangraya Megah Tbk","s":"Energy","ix":["LQ45","KOMPAS100"]},{"t":"MEDC","n":"Medco Energi Internasional Tbk","s":"Energy","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"PGAS","n":"Perusahaan Gas Negara Tbk","s":"Energy","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"AKRA","n":"AKR Corporindo Tbk","s":"Energy","ix":["LQ45","KOMPAS100"]},{"t":"HRUM","n":"Harum Energy Tbk","s":"Energy","ix":["KOMPAS100"]},{"t":"ANTM","n":"Aneka Tambang Tbk","s":"Basic Materials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"MDKA","n":"Merdeka Copper Gold Tbk","s":"Basic Materials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"INCO","n":"Vale Indonesia Tbk","s":"Basic Materials","ix":["LQ45","KOMPAS100"]},{"t":"INKP","n":"Indah Kiat Pulp & Paper Tbk","s":"Basic Materials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"TPIA","n":"Chandra Asri Pacific Tbk","s":"Basic Materials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"BRPT","n":"Barito Pacific Tbk","s":"Basic Materials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"SMGR","n":"Semen Indonesia (Persero) Tbk","s":"Basic Materials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"INTP","n":"Indocement Tunggal Prakarsa Tbk","s":"Basic Materials","ix":["LQ45","KOMPAS100"]},{"t":"AMMN","n":"Amman Mineral Internasional Tbk","s":"Basic Materials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"ESSA","n":"ESSA Industries Indonesia Tbk","s":"Basic Materials","ix":["LQ45","KOMPAS100"]},{"t":"MBMA","n":"Merdeka Battery Materials Tbk","s":"Basic Materials","ix":["KOMPAS100"]},{"t":"NCKL","n":"Trimegah Bangun Persada Tbk","s":"Basic Materials","ix":["KOMPAS100"]},{"t":"TINS","n":"Timah Tbk","s":"Basic Materials","ix":["KOMPAS100"]},{"t":"UNTR","n":"United Tractors Tbk","s":"Industrials","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"UNVR","n":"Unilever Indonesia Tbk","s":"Consumer Non-Cyclicals","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"ICBP","n":"Indofood CBP Sukses Makmur Tbk","s":"Consumer Non-Cyclicals","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"INDF","n":"Indofood Sukses Makmur Tbk","s":"Consumer Non-Cyclicals","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"CPIN","n":"Charoen Pokphand Indonesia Tbk","s":"Consumer Non-Cyclicals","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"JPFA","n":"Japfa Comfeed Indonesia Tbk","s":"Consumer Non-Cyclicals","ix":["LQ45","KOMPAS100"]},{"t":"AMRT","n":"Sumber Alfaria Trijaya Tbk","s":"Consumer Non-Cyclicals","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"MYOR","n":"Mayora Indah Tbk","s":"Consumer Non-Cyclicals","ix":["KOMPAS100"]},{"t":"GGRM","n":"Gudang Garam Tbk","s":"Consumer Non-Cyclicals","ix":["KOMPAS100"]},{"t":"HMSP","n":"H.M. Sampoerna Tbk","s":"Consumer Non-Cyclicals","ix":["KOMPAS100"]},{"t":"CMRY","n":"Cisarua Mountain Dairy Tbk","s":"Consumer Non-Cyclicals","ix":["KOMPAS100"]},{"t":"ULTJ","n":"Ultrajaya Milk Industry Tbk","s":"Consumer Non-Cyclicals","ix":["KOMPAS100"]},{"t":"ASII","n":"Astra International Tbk","s":"Consumer Cyclicals","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"ACES","n":"Aspirasi Hidup Indonesia Tbk","s":"Consumer Cyclicals","ix":["LQ45","KOMPAS100"]},{"t":"MAPI","n":"Mitra Adiperkasa Tbk","s":"Consumer Cyclicals","ix":["LQ45","KOMPAS100"]},{"t":"ERAA","n":"Erajaya Swasembada Tbk","s":"Consumer Cyclicals","ix":["KOMPAS100"]},{"t":"MNCN","n":"Media Nusantara Citra Tbk","s":"Consumer Cyclicals","ix":["KOMPAS100"]},{"t":"SCMA","n":"Surya Citra Media Tbk","s":"Consumer Cyclicals","ix":["KOMPAS100"]},{"t":"KLBF","n":"Kalbe Farma Tbk","s":"Healthcare","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"SIDO","n":"Industri Jamu dan Farmasi Sido Muncul Tbk","s":"Healthcare","ix":["LQ45","KOMPAS100"]},{"t":"MIKA","n":"Mitra Keluarga Karyasehat Tbk","s":"Healthcare","ix":["LQ45","KOMPAS100"]},{"t":"HEAL","n":"Medikaloka Hermina Tbk","s":"Healthcare","ix":["LQ45","KOMPAS100"]},{"t":"SILO","n":"Siloam International Hospitals Tbk","s":"Healthcare","ix":["KOMPAS100"]},{"t":"BSDE","n":"Bumi Serpong Damai Tbk","s":"Properties & Real Estate","ix":["LQ45","KOMPAS100"]},{"t":"CTRA","n":"Ciputra Development Tbk","s":"Properties & Real Estate","ix":["LQ45","KOMPAS100"]},{"t":"PWON","n":"Pakuwon Jati Tbk","s":"Properties & Real Estate","ix":["LQ45","KOMPAS100"]},{"t":"SMRA","n":"Summarecon Agung Tbk","s":"Properties & Real Estate","ix":["KOMPAS100"]},{"t":"GOTO","n":"GoTo Gojek Tokopedia Tbk","s":"Technology","ix":["LQ45","KOMPAS100"]},{"t":"BUKA","n":"Bukalapak.com Tbk","s":"Technology","ix":["KOMPAS100"]},{"t":"EMTK","n":"Elang Mahkota Teknologi Tbk","s":"Technology","ix":["KOMPAS100"]},{"t":"DCII","n":"DCI Indonesia Tbk","s":"Technology","ix":["KOMPAS100"]},{"t":"TLKM","n":"Telkom Indonesia (Persero) Tbk","s":"Infrastructures","ix":["IDX30","LQ45","KOMPAS100"]},{"t":"EXCL","n":"XLSmart Telecom Sejahtera Tbk","s":"Infrastructures","ix":["LQ45","KOMPAS100"]},{"t":"ISAT","n":"Indosat Tbk","s":"Infrastructures","ix":["LQ45","KOMPAS100"]},{"t":"TOWR","n":"Sarana Menara Nusantara Tbk","s":"Infrastructures","ix":["LQ45","KOMPAS100"]},{"t":"TBIG","n":"Tower Bersama Infrastructure Tbk","s":"Infrastructures","ix":["KOMPAS100"]},{"t":"MTEL","n":"Dayamitra Telekomunikasi Tbk","s":"Infrastructures","ix":["KOMPAS100"]},{"t":"JSMR","n":"Jasa Marga (Persero) Tbk","s":"Infrastructures","ix":["LQ45","KOMPAS100"]},{"t":"BIRD","n":"Blue Bird Tbk","s":"Transportation & Logistics","ix":["KOMPAS100"]},{"t":"ASSA","n":"Adi Sarana Armada Tbk","s":"Transportation & Logistics","ix":["KOMPAS100"]}];
+let DATA = {mode: 'demo', stocks: [], asof: null, generated: null};
+let CUSTOM = [];       // {id,name,weight,enabled,code,local}
+let ROWS = [];         // {s, a}
+
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function gauss(r) { let u = 0; while (u === 0) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
+
+function demoData() {
+  const N = 300, end = new Date(Date.UTC(2026, 8, 18));
+  const dates = []; const d = new Date(end);
+  while (dates.length < N) { const w = d.getUTCDay(); if (w !== 0 && w !== 6) dates.unshift(d.toISOString().slice(0, 10)); d.setUTCDate(d.getUTCDate() - 1); }
+  const stocks = UNIVERSE_SEED.map((u, i) => {
+    const r = rng(1000 + i * 7919);
+    let p = 300 + r() * 9000, mu = 0, sg = 0.018;
+    const o = [], h = [], l = [], c = [], v = [];
+    const vbase = 2e6 + r() * 6e7;
+    for (let k = 0; k < N; k++) {
+      if (k % 35 === 0) { mu = (r() - 0.5) * 0.004; sg = 0.012 + r() * 0.014; }
+      const ret = mu + sg * gauss(r), po = p * (1 + gauss(r) * 0.003);
+      p = Math.max(50, p * (1 + ret));
+      const hi = Math.max(po, p) * (1 + Math.abs(gauss(r)) * 0.006), lo = Math.min(po, p) * (1 - Math.abs(gauss(r)) * 0.006);
+      o.push(+po.toFixed(2)); h.push(+hi.toFixed(2)); l.push(+lo.toFixed(2)); c.push(+p.toFixed(2));
+      v.push(Math.round(vbase * Math.exp(gauss(r) * 0.45) * (1 + Math.abs(ret) * 25)));
+    }
+    return {t: u.t, n: u.n, sec: u.s, ix: u.ix, mc: 2e12 * Math.exp(r() * 5), b: +(0.5 + r() * 1.3).toFixed(2), d: dates, o, h, l, c, v};
+  });
+  return {mode: 'demo', stocks, asof: dates[N - 1], generated: null};
+}
+
+async function loadData() {
+  try {
+    const r = await fetch('data/screener.json', {cache: 'no-cache'});
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    const stocks = j.stocks.map(s => ({t: s.t, n: s.n, sec: s.s, ix: s.ix || [], mc: s.mc, b: s.b, d: s.d, o: s.o, h: s.h, l: s.l, c: s.c, v: s.v}));
+    return {mode: 'live', stocks, asof: j.asof, generated: j.generated_at};
+  } catch (e) {
+    return demoData();
+  }
+}
+
+async function loadCustom() {
+  let repo = [];
+  try { const r = await fetch('custom-indicators.json', {cache: 'no-cache'}); if (r.ok) repo = await r.json(); } catch {}
+  const local = store.get('azhs.screener.custom', []);
+  const map = new Map();
+  repo.forEach(x => map.set(x.id, {...x, local: false}));
+  local.forEach(x => map.set(x.id, {...x, local: true}));
+  CUSTOM = [...map.values()];
+}
+const saveCustom = () => store.set('azhs.screener.custom', CUSTOM.filter(x => x.local).map(({id, name, weight, enabled, code}) => ({id, name, weight, enabled, code})));
+
+/* ================= analisis ================= */
+function lastCross(diff, W) {
+  const n = diff.length;
+  for (let ago = 0; ago < W; ago++) {
+    const i = n - 1 - ago; if (i < 1) break;
+    const a = diff[i], b = diff[i - 1]; if (!fin(a) || !fin(b)) break;
+    if (b <= 0 && a > 0) return {dir: 1, ago};
+    if (b >= 0 && a < 0) return {dir: -1, ago};
+  }
+  return null;
+}
+const agoTxt = a => a === 0 ? 'hari ini' : a + ' hari lalu';
+
+function runCustom(ci, s) {
+  try {
+    ci._fn = ci._fn && ci._src === ci.code ? ci._fn : new Function('o', 'h', 'l', 'c', 'v', 'ta', 'Math', '"use strict";\n' + ci.code);
+    ci._src = ci.code;
+    const r = ci._fn(s.o.slice(), s.h.slice(), s.l.slice(), s.c.slice(), s.v.slice(), ta, Math);
+    if (!r || !fin(r.signal)) throw new Error('return harus berisi signal numerik');
+    return {s: clamp(r.signal, -1, 1), value: r.value, note: String(r.text ?? ''), series: r.series || null, overlay: !!r.overlay};
+  } catch (e) { ci._err = e.message; return null; }
+}
+
+function analyze(s) {
+  const P = S.p, n = s.c.length;
+  if (n < Math.max(P.ms + P.mg, P.rsi + 2, P.sk + P.ss + P.sd, P.vn + 1, 55) + 3) return null;
+  const rsiA = ta.rsi(s.c, P.rsi), sto = ta.stoch(s.h, s.l, s.c, P.sk, P.ss, P.sd), mac = ta.macd(s.c, P.mf, P.ms, P.mg);
+  const ema20 = ta.ema(s.c, 20), ema50 = ta.ema(s.c, 50);
+  const i = n - 1, price = s.c[i];
+  const rsi = rsiA[i], rsiP = rsiA[i - 1], K = sto.k[i], D = sto.d[i], hist = mac.hist[i], histP = mac.hist[i - 1];
+  if (![rsi, rsiP, K, D, hist, histP].every(fin)) return null;
+  let vs = 0; for (let j = i - P.vn; j < i; j++) vs += s.v[j];
+  const vavg = vs / P.vn, rvol = vavg > 0 ? s.v[i] / vavg : NaN;
+  const chg = (price / s.c[i - 1] - 1) * 100;
+  const orient = S.mode === 'rebound' ? 1 : -1;
+  const comps = [];
+
+  // RSI
+  const rz = clamp((50 - rsi) / 20, -1, 1) * orient, rs = rsi > rsiP ? 1 : rsi < rsiP ? -1 : 0;
+  const zoneT = rsi < 30 ? 'jenuh jual' : rsi > 70 ? 'jenuh beli' : rsi >= 50 ? 'di atas 50' : 'di bawah 50';
+  comps.push({key: 'rsi', label: 'RSI ' + P.rsi, s: clamp(0.7 * rz + 0.3 * rs, -1, 1), w: S.w.rsi,
+    val: fmt.n(rsi, 1), note: zoneT + ', ' + (rs > 0 ? 'naik' : rs < 0 ? 'turun' : 'datar') + ' dari sesi lalu'});
+
+  // Stochastic
+  const xs = lastCross(sto.k.map((k, j) => k - sto.d[j]), P.fw);
+  const sz = clamp((50 - K) / 30, -1, 1) * orient * 0.5, sp = K > D ? 0.25 : -0.25, sx = xs ? xs.dir * 0.25 : 0;
+  comps.push({key: 'stoch', label: `Stochastic ${P.sk},${P.ss},${P.sd}`, s: clamp(sz + sp + sx, -1, 1), w: S.w.stoch,
+    val: `${fmt.n(K, 1)} / ${fmt.n(D, 1)}`, note: `%K ${K > D ? 'di atas' : 'di bawah'} %D` + (K < 20 ? ', zona jenuh jual' : K > 80 ? ', zona jenuh beli' : '') + (xs ? `, cross ${xs.dir > 0 ? 'naik' : 'turun'} ${agoTxt(xs.ago)}` : '')});
+
+  // MACD
+  const xm = lastCross(mac.hist, P.fw);
+  const md = hist > 0 ? 1 : -1, msl = hist > histP ? 1 : hist < histP ? -1 : 0;
+  comps.push({key: 'macd', label: `MACD ${P.mf},${P.ms},${P.mg}`, s: clamp(0.4 * md + 0.2 * msl + (xm ? 0.4 * xm.dir : 0), -1, 1), w: S.w.macd,
+    val: fmt.sg(hist / price * 100, 2) + '%', note: `MACD ${hist > 0 ? 'di atas' : 'di bawah'} signal, histogram ${msl > 0 ? 'menguat' : msl < 0 ? 'melemah' : 'datar'}` + (xm ? `, cross ${xm.dir > 0 ? 'naik' : 'turun'} ${agoTxt(xm.ago)}` : '')});
+
+  // Volume
+  const pdir = chg > 0 ? 1 : chg < 0 ? -1 : 0;
+  comps.push({key: 'vol', label: 'Volume', s: !fin(rvol) || rvol < 1 ? 0 : pdir * clamp(rvol - 1, 0, 1), w: S.w.vol,
+    val: fmt.n(rvol, 1) + '×', note: !fin(rvol) ? 'volume tidak tersedia' : rvol < 1 ? 'di bawah rata-rata ' + P.vn + ' hari, tanpa konfirmasi' : `${fmt.n(rvol, 1)}× rata-rata ${P.vn} hari, ${pdir > 0 ? 'mengonfirmasi kenaikan' : pdir < 0 ? 'mengonfirmasi penurunan' : 'harga datar'}`});
+
+  // Kustom
+  const custom = {};
+  CUSTOM.filter(x => x.enabled).forEach(ci => {
+    const r = runCustom(ci, s);
+    if (r) { custom[ci.id] = r; comps.push({key: 'c:' + ci.id, label: ci.name, s: r.s, w: ci.weight, val: typeof r.value === 'number' ? fmt.n(r.value, 2) : String(r.value ?? '–'), note: r.note, custom: true}); }
+  });
+
+  const use = comps.filter(x => fin(x.s) && x.w > 0);
+  const sw = use.reduce((t, x) => t + x.w, 0);
+  const score = sw ? use.reduce((t, x) => t + x.w * x.s, 0) / sw * 100 : 0;
+  const sign = score >= 0 ? 1 : -1;
+  const agree = use.filter(x => x.s * sign >= 0.2).length;
+  return {price, chg, rsi, K, D, hist, histN: hist / price * 100, rvol, comps, custom, score, agree, total: use.length,
+    xs, xm, arr: {rsi: rsiA, k: sto.k, d: sto.d, macd: mac.macd, sig: mac.signal, hist: mac.hist, ema20, ema50}};
+}
+const dirOf = sc => sc >= 15 ? 1 : sc <= -15 ? -1 : 0;
+const strengthOf = sc => { const a = Math.abs(sc); return a >= 60 ? 'Sangat kuat' : a >= 35 ? 'Kuat' : a >= 15 ? 'Moderat' : 'Netral'; };
+
+function recompute() {
+  CUSTOM.forEach(c => c._err = null);
+  ROWS = DATA.stocks.map(s => ({s, a: analyze(s)})).filter(r => r.a);
+}
+
+/* ================= filter ================= */
+const CONDS = [
+  {id: 'rsi_os', label: 'RSI jenuh jual (<30)', f: a => a.rsi < 30},
+  {id: 'rsi_ob', label: 'RSI jenuh beli (>70)', f: a => a.rsi > 70},
+  {id: 'stoch_up', label: 'Stochastic cross naik', f: a => a.xs && a.xs.dir > 0},
+  {id: 'stoch_dn', label: 'Stochastic cross turun', f: a => a.xs && a.xs.dir < 0},
+  {id: 'macd_up', label: 'MACD cross naik', f: a => a.xm && a.xm.dir > 0},
+  {id: 'macd_dn', label: 'MACD cross turun', f: a => a.xm && a.xm.dir < 0},
+  {id: 'vol_hi', label: 'Volume ≥1,5× rata-rata', f: a => a.rvol >= 1.5},
+];
+const PRESETS = [
+  {n: 'Rebound oversold', f: {conds: ['rsi_os'], dir: 'all', minScore: 0, minConf: 0}},
+  {n: 'MACD cross naik + volume', f: {conds: ['macd_up', 'vol_hi'], dir: 'all', minScore: 0, minConf: 0}},
+  {n: 'Konfluensi bullish kuat', f: {conds: [], dir: 'up', minScore: 50, minConf: 3}},
+  {n: 'Jenuh beli, waspada', f: {conds: ['rsi_ob'], dir: 'all', minScore: 0, minConf: 0}},
+  {n: 'Konfluensi bearish kuat', f: {conds: [], dir: 'down', minScore: 50, minConf: 3}},
+];
+const F0 = () => ({q: '', ix: new Set(), sec: new Set(), mcMin: null, mcMax: null, bMin: null, bMax: null, dir: 'all', minScore: 0, minConf: 0, conds: new Set()});
+let F = F0();
+let sort = {key: 'strength', dir: 'desc'};
+
+function passes(r) {
+  const {s, a} = r;
+  if (F.q) { const q = F.q.toLowerCase(); if (!s.t.toLowerCase().includes(q) && !s.n.toLowerCase().includes(q)) return false; }
+  if (F.ix.size && !s.ix.some(x => F.ix.has(x))) return false;
+  if (F.sec.size && !F.sec.has(s.sec)) return false;
+  const mc = s.mc / 1e12;
+  if (F.mcMin != null && !(mc >= F.mcMin)) return false;
+  if (F.mcMax != null && !(mc <= F.mcMax)) return false;
+  if (F.bMin != null && !(s.b >= F.bMin)) return false;
+  if (F.bMax != null && !(s.b <= F.bMax)) return false;
+  if (F.dir === 'up' && !(a.score > 0)) return false;
+  if (F.dir === 'down' && !(a.score < 0)) return false;
+  if (Math.abs(a.score) < F.minScore) return false;
+  if (F.minConf && a.agree < F.minConf) return false;
+  for (const id of F.conds) { const c = CONDS.find(x => x.id === id); if (!c.f(a)) return false; }
+  return true;
+}
+
+const SORT = {
+  ticker: r => r.s.t, sector: r => r.s.sec, price: r => r.a.price, chg: r => r.a.chg, mcap: r => r.s.mc, beta: r => r.s.b,
+  rsi: r => r.a.rsi, stoch: r => r.a.K, macd: r => r.a.histN, rvol: r => r.a.rvol, score: r => r.a.score, strength: r => Math.abs(r.a.score),
+};
+function sorter(x, y) {
+  const g = sort.key.startsWith('c:') ? (r => r.a.custom[sort.key.slice(2)]?.s) : SORT[sort.key];
+  const a = g(x), b = g(y), na = a == null || Number.isNaN(a), nb = b == null || Number.isNaN(b);
+  if (na && nb) return 0; if (na) return 1; if (nb) return -1;
+  const d = typeof a === 'string' ? a.localeCompare(b) : a - b;
+  return sort.dir === 'asc' ? d : -d;
+}
+
+/* ================= render ================= */
+const dots = (agree, total) => '●'.repeat(Math.min(agree, total)) + '○'.repeat(Math.max(total - agree, 0));
+
+function headHtml() {
+  const cols = [
+    ['ticker', 'Saham', 'l first'], ['sector', 'Sektor', 'l'], ['price', 'Harga (Rp)'], ['mcap', 'Mkt cap'], ['beta', 'Beta'],
+    ['rsi', 'RSI'], ['stoch', 'Stochastic'], ['macd', 'MACD'], ['rvol', 'Volume'],
+    ...CUSTOM.filter(c => c.enabled).map(c => ['c:' + c.id, c.name]),
+    ['strength', 'Kekuatan sinyal', 'l'],
+  ];
+  return cols.map(([k, t, cl]) => {
+    const on = sort.key === k;
+    return `<th class="${cl || ''}" ${on ? `aria-sort="${sort.dir === 'asc' ? 'ascending' : 'descending'}"` : ''}><button data-sort="${esc(k)}">${esc(t)}</button></th>`;
+  }).join('');
+}
+
+function rowHtml(r) {
+  const {s, a} = r, cu = CUSTOM.filter(c => c.enabled);
+  const cc = a.chg > 0 ? 'up' : a.chg < 0 ? 'dn' : '';
+  const arrow = v => v > 0 ? '▲' : v < 0 ? '▼' : '◆';
+  const d = dirOf(a.score), sc = a.score;
+  const fill = `<b class="fill ${sc >= 0 ? 'u' : 'd'}" style="width:${Math.abs(sc) / 2}%"></b>`;
+  const lab = d === 0 ? 'Netral' : (d > 0 ? '▲ Bullish' : '▼ Bearish') + ', ' + strengthOf(sc).toLowerCase();
+  const rz = a.rsi < 30 ? 'jenuh jual' : a.rsi > 70 ? 'jenuh beli' : '';
+  return `<tr data-t="${esc(s.t)}">
+    <td class="first"><button class="tk" data-open="${esc(s.t)}">${esc(s.t)}</button><span class="nm">${esc(s.n)}</span></td>
+    <td class="l"><span style="color:var(--tx2)">${esc(s.sec)}</span></td>
+    <td>${fmt.price(a.price)}<span class="sub ${cc}">${arrow(a.chg)} ${fmt.sg(a.chg, 2)}%</span></td>
+    <td>${fmt.mc(s.mc)}</td>
+    <td>${fmt.n(s.b, 2)}</td>
+    <td>${fmt.n(a.rsi, 1)}<span class="sub">${rz || '&nbsp;'}</span></td>
+    <td>${fmt.n(a.K, 0)} / ${fmt.n(a.D, 0)}<span class="sub ${a.xs ? (a.xs.dir > 0 ? 'up' : 'dn') : ''}">${a.xs ? (a.xs.dir > 0 ? '▲ cross naik' : '▼ cross turun') + ', ' + agoTxt(a.xs.ago) : '&nbsp;'}</span></td>
+    <td class="${a.histN > 0 ? 'up' : 'dn'}">${arrow(a.histN)} ${fmt.n(Math.abs(a.histN), 2)}%<span class="sub ${a.xm ? (a.xm.dir > 0 ? 'up' : 'dn') : ''}">${a.xm ? (a.xm.dir > 0 ? '▲ cross naik' : '▼ cross turun') + ', ' + agoTxt(a.xm.ago) : '&nbsp;'}</span></td>
+    <td class="${a.rvol >= 1.5 ? 'up' : ''}">${fmt.n(a.rvol, 1)}×</td>
+    ${cu.map(c => { const x = a.custom[c.id]; return x ? `<td class="${x.s > 0 ? 'up' : x.s < 0 ? 'dn' : ''}">${arrow(x.s)} ${typeof x.value === 'number' ? fmt.n(x.value, 2) : esc(x.value ?? '')}<span class="sub">${esc(x.note).slice(0, 34)}</span></td>` : '<td>–</td>'; }).join('')}
+    <td class="sig"><div class="sigline"><div class="dbar" role="img" aria-label="Skor ${fmt.sg(sc, 0)}"><i class="mid"></i>${fill}</div><span class="sc ${d > 0 ? 'up' : d < 0 ? 'dn' : ''}">${fmt.sg(sc, 0)}</span></div>
+      <div class="lbl"><span class="${d > 0 ? 'up' : d < 0 ? 'dn' : ''}">${lab}</span><span class="dots" title="${a.agree} dari ${a.total} indikator sepakat">${dots(a.agree, a.total)}</span></div></td>
+  </tr>`;
+}
+
+function render() {
+  $('#thead').innerHTML = headHtml();
+  const rows = ROWS.filter(passes).sort(sorter);
+  $('#tbody').innerHTML = rows.map(rowHtml).join('');
+  const empty = !rows.length;
+  $('#empty').hidden = !empty;
+  if (empty) $('#emptyMsg').textContent = ROWS.length ? 'Tidak ada saham yang memenuhi semua filter. Longgarkan filter beta, kapitalisasi pasar, atau kondisi indikator terlebih dahulu.' : 'Belum ada data yang cukup untuk dihitung.';
+  $('#count').textContent = `${rows.length} dari ${ROWS.length} saham`;
+  stats(rows);
+}
+
+function stats(rows) {
+  const tot = ROWS.length, m = rows.length;
+  const cnt = (arr, d) => arr.filter(r => dirOf(r.a.score) === d).length;
+  const avg = arr => arr.length ? arr.reduce((t, r) => t + r.a.score, 0) / arr.length : NaN;
+  const pct = (x, y) => y ? Math.round(x / y * 100) : 0;
+  const bu = cnt(rows, 1), be = cnt(rows, -1), buA = cnt(ROWS, 1), beA = cnt(ROWS, -1);
+  $('#stats').innerHTML = [
+    ['Lolos filter', m, `${pct(m, tot)}% dari ${tot} saham di universe`],
+    ['▲ Bullish', bu, `${pct(bu, m)}% dari hasil, universe ${pct(buA, tot)}%`],
+    ['▼ Bearish', be, `${pct(be, m)}% dari hasil, universe ${pct(beA, tot)}%`],
+    ['Skor rata-rata', fmt.sg(avg(rows), 0), `universe ${fmt.sg(avg(ROWS), 0)}`],
+  ].map(([k, v, c]) => `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="c">${c}</div></div>`).join('');
+}
+
+/* ================= UI filter ================= */
+function buildFilterUI() {
+  const IXO = ['IDX30', 'LQ45', 'IDX80', 'KOMPAS100', 'IDX BUMN20', 'IDX HIDIV20', 'ISSI', 'JII'];
+  const ixs = [...new Set(DATA.stocks.flatMap(s => s.ix))].sort((a, b) => (IXO.indexOf(a) + 1 || 99) - (IXO.indexOf(b) + 1 || 99) || a.localeCompare(b));
+  $('#ixChips').innerHTML = ixs.length ? ixs.map(x => `<button class="chip" data-ix="${esc(x)}" aria-pressed="false">${esc(x)}</button>`).join('') : '<span class="hint" style="margin:0">Isi kolom indices di universe.csv untuk memakai filter ini.</span>';
+  const secs = {}; DATA.stocks.forEach(s => secs[s.sec] = (secs[s.sec] || 0) + 1);
+  $('#secList').innerHTML = Object.keys(secs).sort().map(k => `<label><span><input type="checkbox" data-sec="${esc(k)}">${esc(k)}</span><span class="n">${secs[k]}</span></label>`).join('');
+  $('#condChips').innerHTML = CONDS.map(c => `<button class="chip" data-cond="${c.id}" aria-pressed="false">${c.label}</button>`).join('');
+  $('#minConf').innerHTML = [0, 2, 3, 4].map(n => `<option value="${n}">${n ? 'Minimal ' + n + ' indikator sepakat' : 'Tanpa batas'}</option>`).join('');
+  $('#presets').innerHTML = '<span class="lab">Strategi cepat</span>' + PRESETS.map((p, i) => `<button class="chip" data-preset="${i}">${p.n}</button>`).join('');
+}
+function syncFilterUI() {
+  $('#q').value = F.q;
+  $$('#ixChips [data-ix]').forEach(b => b.setAttribute('aria-pressed', F.ix.has(b.dataset.ix)));
+  $$('#secList [data-sec]').forEach(b => b.checked = F.sec.has(b.dataset.sec));
+  $$('#condChips [data-cond]').forEach(b => b.setAttribute('aria-pressed', F.conds.has(b.dataset.cond)));
+  $('#mcMin').value = F.mcMin ?? ''; $('#mcMax').value = F.mcMax ?? '';
+  $('#bMin').value = F.bMin ?? ''; $('#bMax').value = F.bMax ?? '';
+  $$('#dirSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.dir === F.dir));
+  $('#minScore').value = F.minScore; $('#minScoreV').textContent = F.minScore;
+  $('#minConf').value = F.minConf;
+}
+const num = v => v === '' || v == null ? null : (fin(+v) ? +v : null);
+const pair = str => str.split(',').map(x => x === '' ? null : +x);
+function bindFilters() {
+  $('#q').addEventListener('input', e => { F.q = e.target.value.trim(); render(); });
+  $('#ixChips').addEventListener('click', e => { const b = e.target.closest('[data-ix]'); if (!b) return; F.ix.has(b.dataset.ix) ? F.ix.delete(b.dataset.ix) : F.ix.add(b.dataset.ix); syncFilterUI(); render(); });
+  $('#secList').addEventListener('change', e => { const b = e.target.closest('[data-sec]'); if (!b) return; b.checked ? F.sec.add(b.dataset.sec) : F.sec.delete(b.dataset.sec); render(); });
+  $('#condChips').addEventListener('click', e => { const b = e.target.closest('[data-cond]'); if (!b) return; F.conds.has(b.dataset.cond) ? F.conds.delete(b.dataset.cond) : F.conds.add(b.dataset.cond); syncFilterUI(); render(); });
+  $('#mcMin').addEventListener('input', e => { F.mcMin = num(e.target.value); render(); });
+  $('#mcMax').addEventListener('input', e => { F.mcMax = num(e.target.value); render(); });
+  $('#bMin').addEventListener('input', e => { F.bMin = num(e.target.value); render(); });
+  $('#bMax').addEventListener('input', e => { F.bMax = num(e.target.value); render(); });
+  $$('[data-mc]').forEach(b => b.addEventListener('click', () => { [F.mcMin, F.mcMax] = pair(b.dataset.mc); syncFilterUI(); render(); }));
+  $$('[data-b]').forEach(b => b.addEventListener('click', () => { [F.bMin, F.bMax] = pair(b.dataset.b); syncFilterUI(); render(); }));
+  $('#dirSeg').addEventListener('click', e => { const b = e.target.closest('[data-dir]'); if (!b) return; F.dir = b.dataset.dir; syncFilterUI(); render(); });
+  $('#minScore').addEventListener('input', e => { F.minScore = +e.target.value; $('#minScoreV').textContent = F.minScore; render(); });
+  $('#minConf').addEventListener('change', e => { F.minConf = +e.target.value; render(); });
+  $('#presets').addEventListener('click', e => {
+    const b = e.target.closest('[data-preset]'); if (!b) return;
+    const p = PRESETS[+b.dataset.preset].f; F.conds = new Set(p.conds); F.dir = p.dir; F.minScore = p.minScore; F.minConf = p.minConf;
+    sort = {key: 'strength', dir: 'desc'}; syncFilterUI(); render();
+  });
+  const reset = () => { F = F0(); syncFilterUI(); render(); };
+  $('#resetF').addEventListener('click', reset); $('#emptyReset').addEventListener('click', reset);
+  $('#toggleF').addEventListener('click', () => $('#filters').classList.toggle('open'));
+  $('#thead').addEventListener('click', e => {
+    const b = e.target.closest('[data-sort]'); if (!b) return;
+    const k = b.dataset.sort;
+    sort = sort.key === k ? {key: k, dir: sort.dir === 'desc' ? 'asc' : 'desc'} : {key: k, dir: (k === 'ticker' || k === 'sector') ? 'asc' : 'desc'};
+    render();
+  });
+  $('#tbody').addEventListener('click', e => { const tr = e.target.closest('tr[data-t]'); if (tr) openDetail(tr.dataset.t); });
+}
+
+/* ================= detail ================= */
+function chart({h = 110, lines = [], bars = null, guides = [], fixed = null, zero = false, fmtv = v => fmt.n(v, 0)}) {
+  const W = 560, pl = 4, pr = 50, pt = 8, pb = 8;
+  const N = (bars ? bars.data : lines[0].data).length;
+  const vals = []; lines.forEach(l => l.data.forEach(v => fin(v) && vals.push(v))); if (bars) bars.data.forEach(v => fin(v) && vals.push(v)); guides.forEach(g => vals.push(g));
+  let lo = fixed ? fixed[0] : Math.min(...vals), hi = fixed ? fixed[1] : Math.max(...vals);
+  if (zero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+  if (lo === hi) { lo -= 1; hi += 1; }
+  if (!fixed) { const pd = (hi - lo) * 0.06; hi += pd; if (!bars || zero) lo -= pd; }
+  const x = i => pl + (W - pl - pr) * i / (N - 1), y = v => pt + (h - pt - pb) * (1 - (v - lo) / (hi - lo));
+  let o = `<svg viewBox="0 0 ${W} ${h}" role="img">`;
+  guides.forEach(g => o += `<line x1="${pl}" x2="${W - pr}" y1="${y(g)}" y2="${y(g)}" style="stroke:var(--line);stroke-dasharray:3 4"/><text x="${W - pr + 5}" y="${y(g) + 3}" style="fill:var(--tx3);font:10px var(--f-ui)">${fmtv(g)}</text>`);
+  if (zero) o += `<line x1="${pl}" x2="${W - pr}" y1="${y(0)}" y2="${y(0)}" style="stroke:var(--line)"/>`;
+  if (bars) { const bw = (W - pl - pr) / N * 0.68; bars.data.forEach((v, i) => { if (!fin(v)) return; const y0 = y(zero ? 0 : lo), y1 = y(v); o += `<rect x="${x(i) - bw / 2}" y="${Math.min(y0, y1)}" width="${bw}" height="${Math.max(Math.abs(y0 - y1), 0.6)}" style="fill:${bars.color(v, i)}"/>`; }); }
+  lines.forEach(l => {
+    let d = '', pen = false;
+    l.data.forEach((v, i) => { if (!fin(v)) { pen = false; return; } d += `${pen ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`; pen = true; });
+    o += `<path d="${d}" fill="none" style="stroke:${l.color};stroke-width:${l.w || 1.4};${l.dash ? 'stroke-dasharray:' + l.dash : ''}"/>`;
+  });
+  const lv = (lines[0]?.data || bars.data).at(-1);
+  o += `<text x="${W - pr + 5}" y="${pt + 8}" style="fill:var(--tx2);font:10px var(--f-ui)">${fmtv(hi)}</text><text x="${W - pr + 5}" y="${h - pb}" style="fill:var(--tx2);font:10px var(--f-ui)">${fmtv(lo)}</text>`;
+  return o + '</svg>';
+}
+const leg = items => `<div class="legend">${items.map(([c, t, d]) => `<span><i style="border-color:${c};${d ? 'border-top-style:dashed' : ''}"></i>${t}</span>`).join('')}</div>`;
+
+function openDetail(t) {
+  const r = ROWS.find(x => x.s.t === t); if (!r) return;
+  const {s, a} = r, N = 120, cut = arr => arr.slice(-N);
+  const d = dirOf(a.score), n = s.c.length;
+  const cc = a.chg > 0 ? 'up' : a.chg < 0 ? 'dn' : '';
+  const ov = []; CUSTOM.filter(c => c.enabled).forEach(c => { const x = a.custom[c.id]; if (x && x.series && x.overlay) Object.entries(x.series).forEach(([k, v], j) => ov.push({data: cut(v), color: j % 2 ? 'var(--cream)' : 'var(--ice)', w: 1.2, dash: j ? '4 3' : '', name: c.name + ' ' + k})); });
+  const sep = CUSTOM.filter(c => c.enabled).flatMap(c => { const x = a.custom[c.id]; return x && x.series && !x.overlay ? [{c, x}] : []; });
+  const brk = a.comps.map(x => {
+    const contrib = x.s * x.w;
+    const sw = a.comps.filter(k => k.w > 0 && fin(k.s)).reduce((t, k) => t + k.w, 0);
+    const pts = sw ? contrib / sw * 100 : 0;
+    return `<tr><td><b>${esc(x.label)}</b><div class="cbar"><b></b><i class="${x.s >= 0 ? 'u' : 'd'}" style="width:${Math.abs(x.s) * 50}%"></i></div></td><td style="font-variant-numeric:tabular-nums">${esc(x.val)}</td><td style="color:var(--tx2)">${esc(x.note)}</td><td style="text-align:right;font-variant-numeric:tabular-nums" class="${pts > 0 ? 'up' : pts < 0 ? 'dn' : ''}">${fmt.sg(pts, 1)}<div class="sub">bobot ${x.w}</div></td></tr>`;
+  }).join('');
+  const dates = s.d ? cut(s.d) : null;
+  const span = dates ? `${dates[0]} s.d. ${dates.at(-1)}` : '';
+  $('#detailBody').innerHTML = `
+    <div class="dh"><div><h2>${esc(s.t)}</h2><div class="meta">${esc(s.n)}</div><div class="meta">${esc(s.sec)}${s.ix.length ? ' · ' + esc(s.ix.join(', ')) : ''}</div></div><button class="x" data-close aria-label="Tutup">×</button></div>
+    <div class="meta"><b style="color:var(--tx);font-size:20px;font-variant-numeric:tabular-nums">Rp ${fmt.price(a.price)}</b> <span class="${cc}">${a.chg > 0 ? '▲' : a.chg < 0 ? '▼' : '◆'} ${fmt.sg(a.chg, 2)}%</span> · mkt cap ${fmt.mc(s.mc)} · beta ${fmt.n(s.b, 2)}</div>
+    <div class="big"><div class="n ${d > 0 ? 'up' : d < 0 ? 'dn' : ''}">${fmt.sg(a.score, 0)}</div>
+      <div class="t"><div class="${d > 0 ? 'up' : d < 0 ? 'dn' : ''}" style="font-weight:600">${d === 0 ? 'Netral' : d > 0 ? '▲ Bullish' : '▼ Bearish'}, ${strengthOf(a.score).toLowerCase()}</div>
+      <div class="meta">${a.agree} dari ${a.total} indikator sepakat <span class="dots">${dots(a.agree, a.total)}</span></div></div></div>
+    <table class="brk"><thead><tr><th>Indikator</th><th>Nilai</th><th>Pembacaan</th><th style="text-align:right">Kontribusi</th></tr></thead><tbody>${brk}</tbody></table>
+    <div class="ch"><h4>Harga dan EMA 20/50</h4>${chart({h: 160, lines: [{data: cut(s.c), color: 'var(--tx)', w: 1.6}, {data: cut(a.arr.ema20), color: 'var(--ice)'}, {data: cut(a.arr.ema50), color: 'var(--cream)', dash: '4 3'}, ...ov], fmtv: fmt.price})}
+      ${leg([['var(--tx)', 'Harga'], ['var(--ice)', 'EMA 20'], ['var(--cream)', 'EMA 50', 1], ...ov.map(o => [o.color, o.name, o.dash])])}<div class="legend">${span}</div></div>
+    <div class="ch"><h4>Volume</h4>${chart({h: 70, bars: {data: cut(s.v), color: () => 'var(--ice-dim)'}, fixed: [0, Math.max(...cut(s.v)) * 1.08], fmtv: v => fmt.n(v / 1e6, 0) + ' jt'})}</div>
+    <div class="ch"><h4>RSI ${S.p.rsi}</h4>${chart({h: 96, lines: [{data: cut(a.arr.rsi), color: 'var(--ice-brt)'}], guides: [30, 70], fixed: [0, 100]})}</div>
+    <div class="ch"><h4>Stochastic ${S.p.sk},${S.p.ss},${S.p.sd}</h4>${chart({h: 96, lines: [{data: cut(a.arr.k), color: 'var(--ice-brt)'}, {data: cut(a.arr.d), color: 'var(--cream)', dash: '4 3'}], guides: [20, 80], fixed: [0, 100]})}${leg([['var(--ice-brt)', '%K'], ['var(--cream)', '%D', 1]])}</div>
+    <div class="ch"><h4>MACD ${S.p.mf},${S.p.ms},${S.p.mg}</h4>${chart({h: 110, bars: {data: cut(a.arr.hist), color: v => v >= 0 ? 'var(--ice-brt)' : 'var(--ice-dim)'}, lines: [{data: cut(a.arr.macd), color: 'var(--ice)'}, {data: cut(a.arr.sig), color: 'var(--cream)', dash: '4 3'}], zero: true, fmtv: v => fmt.n(v, Math.abs(v) < 10 ? 2 : 0)})}${leg([['var(--ice)', 'MACD'], ['var(--cream)', 'Signal', 1]])}</div>
+    ${sep.map(({c, x}) => `<div class="ch"><h4>${esc(c.name)}</h4>${chart({h: 96, lines: Object.entries(x.series).map(([k, v], j) => ({data: cut(v), color: j % 2 ? 'var(--cream)' : 'var(--ice-brt)', dash: j ? '4 3' : ''})), fmtv: v => fmt.n(v, 2)})}${leg(Object.keys(x.series).map((k, j) => [j % 2 ? 'var(--cream)' : 'var(--ice-brt)', k, j]))}</div>`).join('')}`;
+  $('#dlgDetail').showModal();
+}
+
+/* ================= pengaturan ================= */
+function fillSettings() {
+  $$('#modeSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === S.mode));
+  Object.keys(S.w).forEach(k => $('#w_' + k).value = S.w[k]);
+  Object.keys(S.p).forEach(k => $('#p_' + k).value = S.p[k]);
+}
+function bindSettings() {
+  $('#openSet').addEventListener('click', () => { fillSettings(); $('#dlgSet').showModal(); });
+  $('#modeSeg').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (!b) return; $$('#modeSeg button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
+  $('#saveSet').addEventListener('click', () => {
+    const mode = $('#modeSeg [aria-pressed=true]').dataset.mode;
+    const w = {}, p = {};
+    Object.keys(DEF.w).forEach(k => w[k] = clamp(+$('#w_' + k).value || 0, 0, 100));
+    Object.keys(DEF.p).forEach(k => p[k] = Math.max(1, Math.round(+$('#p_' + k).value || DEF.p[k])));
+    if (p.mf >= p.ms) { p.mf = DEF.p.mf; p.ms = DEF.p.ms; }
+    S = {mode, w, p}; store.set('azhs.screener.settings', S);
+    $('#dlgSet').close(); recompute(); render();
+  });
+  $('#resetSet').addEventListener('click', () => { S = JSON.parse(JSON.stringify(DEF)); store.set('azhs.screener.settings', S); fillSettings(); recompute(); render(); });
+}
+
+/* ================= indikator kustom ================= */
+const EX = {
+blank: `// Variabel: o, h, l, c, v (array, lama -> baru), ta, Math
+// Wajib return { signal: -1..1, value, text }
+const r = ta.rsi(c, 7);
+const x = r[r.length - 1];
+return { signal: (50 - x) / 50, value: x, text: 'RSI 7 = ' + x.toFixed(1) };`,
+supertrend: `// Supertrend (ATR 10, faktor 3), terjemahan dari Pine Script v5
+const P = 10, M = 3;
+const a = ta.atr(h, l, c, P);
+const n = c.length;
+const up = ta.nan(n), lo = ta.nan(n), st = ta.nan(n), dir = new Array(n).fill(1);
+for (let i = 0; i < n; i++) {
+  if (!Number.isFinite(a[i])) continue;
+  const mid = (h[i] + l[i]) / 2;
+  let u = mid + M * a[i], d = mid - M * a[i];
+  if (i > 0 && Number.isFinite(up[i - 1])) {
+    u = (u < up[i - 1] || c[i - 1] > up[i - 1]) ? u : up[i - 1];
+    d = (d > lo[i - 1] || c[i - 1] < lo[i - 1]) ? d : lo[i - 1];
+    dir[i] = (st[i - 1] === up[i - 1]) ? (c[i] > u ? -1 : 1) : (c[i] < d ? 1 : -1);
+  }
+  up[i] = u; lo[i] = d;
+  st[i] = dir[i] === -1 ? d : u;
+}
+const i = n - 1;
+const bull = dir[i] === -1;
+let flipped = false;
+for (let k = 1; k <= 3; k++) if (i - k >= 0 && dir[i - k] !== dir[i - k + 1]) flipped = true;
+return {
+  signal: (bull ? 1 : -1) * (flipped ? 1 : 0.6),
+  value: st[i],
+  text: (bull ? 'Uptrend' : 'Downtrend') + (flipped ? ', baru berbalik' : ''),
+  series: { Supertrend: st },
+  overlay: true
+};`,
+bbpb: `// Bollinger %B (20, 2)
+const N = 20, K = 2;
+const basis = ta.sma(c, N), dev = ta.stdev(c, N);
+const i = c.length - 1;
+const upper = basis[i] + K * dev[i], lower = basis[i] - K * dev[i];
+const pctB = (c[i] - lower) / (upper - lower);
+return {
+  signal: Math.max(-1, Math.min(1, (0.5 - pctB) * 2)),
+  value: pctB,
+  text: pctB < 0 ? 'Di bawah band bawah' : pctB > 1 ? 'Di atas band atas' : '%B ' + pctB.toFixed(2),
+  series: { Basis: basis, Upper: basis.map((b, j) => b + K * dev[j]), Lower: basis.map((b, j) => b - K * dev[j]) },
+  overlay: true
+};`,
+};
+let editing = null;
+function ciList() {
+  $('#ciList').innerHTML = CUSTOM.length ? CUSTOM.map((c, i) => `<div class="ci"><input type="checkbox" data-ci-en="${i}" ${c.enabled ? 'checked' : ''} aria-label="Aktifkan ${esc(c.name)}"><div><div class="nm">${esc(c.name)}</div><div class="st">bobot ${c.weight} · ${c.local ? 'tersimpan di browser' : 'dari repo'}${c._err ? ' · galat: ' + esc(c._err) : ''}</div></div><button class="btn" data-ci-ed="${i}">Ubah</button><button class="btn ghost" data-ci-del="${i}">Hapus</button></div>`).join('') : '<p class="ref" style="margin:0">Belum ada indikator kustom. Klik Tambah indikator, lalu pilih contoh Supertrend atau Bollinger %B untuk melihat polanya.</p>';
+}
+function ciEdit(i) {
+  editing = i;
+  const c = i == null ? {name: '', weight: 20, code: EX.blank} : CUSTOM[i];
+  $('#ciEdTitle').textContent = i == null ? 'Indikator baru' : 'Ubah: ' + c.name;
+  $('#ciName').value = c.name; $('#ciW').value = c.weight; $('#ciCode').value = c.code; $('#ciEx').value = ''; $('#ciRes').textContent = ''; $('#ciRes').classList.remove('err');
+  $('#ciEditor').hidden = false; $('#ciName').focus();
+}
+function bindCustom() {
+  $('#openCustom').addEventListener('click', () => { ciList(); $('#ciEditor').hidden = true; $('#dlgCustom').showModal(); });
+  $('#ciNew').addEventListener('click', () => ciEdit(null));
+  $('#ciCancel').addEventListener('click', () => $('#ciEditor').hidden = true);
+  $('#ciEx').addEventListener('change', e => { if (!e.target.value) return; $('#ciCode').value = EX[e.target.value]; if (!$('#ciName').value) $('#ciName').value = {blank: 'Indikator saya', supertrend: 'Supertrend 10,3', bbpb: 'Bollinger %B'}[e.target.value]; });
+  $('#ciList').addEventListener('click', e => {
+    const ed = e.target.closest('[data-ci-ed]'), del = e.target.closest('[data-ci-del]');
+    if (ed) ciEdit(+ed.dataset.ciEd);
+    if (del) { CUSTOM.splice(+del.dataset.ciDel, 1); saveCustom(); ciList(); recompute(); render(); }
+  });
+  $('#ciList').addEventListener('change', e => { const c = e.target.closest('[data-ci-en]'); if (!c) return; const ci = CUSTOM[+c.dataset.ciEn]; ci.enabled = c.checked; ci.local = true; saveCustom(); recompute(); render(); ciList(); });
+  $('#ciTest').addEventListener('click', () => {
+    const res = $('#ciRes'); res.classList.remove('err');
+    const s = DATA.stocks[0]; if (!s) return;
+    const tmp = {code: $('#ciCode').value};
+    const r = runCustom(tmp, s);
+    if (!r) { res.textContent = 'Galat: ' + tmp._err; res.classList.add('err'); return; }
+    res.textContent = `Uji pada ${s.t}\nsignal: ${fmt.n(r.s, 2)}\nvalue : ${typeof r.value === 'number' ? fmt.n(r.value, 3) : r.value}\nteks  : ${r.note}\nseries: ${r.series ? Object.keys(r.series).join(', ') : '-'}`;
+  });
+  $('#ciSave').addEventListener('click', () => {
+    const name = $('#ciName').value.trim(), code = $('#ciCode').value, res = $('#ciRes');
+    if (!name) { res.textContent = 'Isi nama indikator terlebih dahulu.'; res.classList.add('err'); return; }
+    const test = {code}; if (DATA.stocks[0] && !runCustom(test, DATA.stocks[0])) { res.textContent = 'Kode belum lolos uji: ' + test._err; res.classList.add('err'); return; }
+    const weight = clamp(+$('#ciW').value || 0, 0, 100);
+    if (editing == null) {
+      let id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'ind'; while (CUSTOM.some(c => c.id === id)) id += '-2';
+      CUSTOM.push({id, name, weight, enabled: true, code, local: true});
+    } else Object.assign(CUSTOM[editing], {name, weight, code, local: true});
+    saveCustom(); $('#ciEditor').hidden = true; ciList(); recompute(); render();
+  });
+  $('#ciExport').addEventListener('click', () => download('custom-indicators.json', JSON.stringify(CUSTOM.map(({id, name, weight, enabled, code}) => ({id, name, weight, enabled, code})), null, 2), 'application/json'));
+  $('#ciImport').addEventListener('click', () => $('#ciFile').click());
+  $('#ciFile').addEventListener('change', async e => {
+    try {
+      const arr = JSON.parse(await e.target.files[0].text());
+      arr.forEach(x => { if (x.id && x.code) { const k = CUSTOM.findIndex(c => c.id === x.id); const item = {id: x.id, name: x.name || x.id, weight: +x.weight || 20, enabled: x.enabled !== false, code: x.code, local: true}; k >= 0 ? CUSTOM[k] = item : CUSTOM.push(item); } });
+      saveCustom(); ciList(); recompute(); render();
+    } catch { $('#ciRes').textContent = 'File JSON tidak valid.'; }
+    e.target.value = '';
+  });
+}
+
+/* ================= ekspor ================= */
+function download(name, text, type) {
+  const url = URL.createObjectURL(new Blob([text], {type}));
+  const a = Object.assign(document.createElement('a'), {href: url, download: name}); document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+function exportCsv() {
+  const rows = ROWS.filter(passes).sort(sorter), cu = CUSTOM.filter(c => c.enabled);
+  const head = ['Kode', 'Nama', 'Sektor', 'Indeks', 'Harga', 'Ubah 1D %', 'Market cap (Rp)', 'Beta', 'RSI', 'Stoch K', 'Stoch D', 'MACD hist % harga', 'RVOL', ...cu.map(c => c.name), 'Skor', 'Arah', 'Kekuatan', 'Konfluensi'];
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = rows.map(({s, a}) => [s.t, s.n, s.sec, s.ix.join('|'), a.price, a.chg.toFixed(2), Math.round(s.mc), s.b, a.rsi.toFixed(1), a.K.toFixed(1), a.D.toFixed(1), a.histN.toFixed(3), fin(a.rvol) ? a.rvol.toFixed(2) : '', ...cu.map(c => a.custom[c.id] ? (a.custom[c.id].value ?? '') : ''), a.score.toFixed(0), dirOf(a.score) > 0 ? 'Bullish' : dirOf(a.score) < 0 ? 'Bearish' : 'Netral', strengthOf(a.score), `${a.agree}/${a.total}`].map(q).join(','));
+  download(`screener-idx-${DATA.asof || 'data'}.csv`, '\ufeff' + [head.map(q).join(','), ...lines].join('\n'), 'text/csv;charset=utf-8');
+}
+
+/* ================= init ================= */
+function status() {
+  const el = $('#status'), b = $('#banner');
+  if (DATA.mode === 'live') {
+    el.className = 'pill live';
+    const g = DATA.generated ? new Date(DATA.generated).toLocaleString('id-ID', {timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}) + ' WIB' : '';
+    el.textContent = `Data penutupan ${DATA.asof}${g ? ' · diperbarui ' + g : ''}`; b.hidden = true;
+  } else {
+    el.className = 'pill'; el.textContent = 'Mode demo';
+    b.hidden = false; b.textContent = 'Mode demo: harga, kapitalisasi pasar, dan beta di bawah ini sintetis dan bukan data pasar. Data asli muncul otomatis setelah workflow GitHub Actions membuat data/screener.json.';
+  }
+}
+async function init() {
+  DATA = await loadData();
+  await loadCustom();
+  status(); buildFilterUI(); bindFilters(); bindSettings(); bindCustom(); syncFilterUI();
+  recompute(); render();
+  $('#exportCsv').addEventListener('click', exportCsv);
+  $$('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d || e.target.closest('[data-close]')) d.close(); }));
+}
+init();
+})();
+</script>
+</body>
+</html>
