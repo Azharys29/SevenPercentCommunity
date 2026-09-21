@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Build daily screener data for SevenPercentCommunity.
 
-Universe: the checked-in universe.csv. The initial universe intentionally excludes
-rows marked speculative in the seed list and is kept small enough for GitHub Actions.
+Universe: current KOMPAS100 constituents stored in universe.csv.
 OHLCV: Yahoo Finance via yfinance.
 Output: data/screener.json consumed by index.html.
 """
@@ -152,6 +151,8 @@ def main():
         "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "asof": asof,
         "benchmark": BENCH,
+        "universe_name": "KOMPAS100",
+        "universe_period": "2026-08-03 to 2027-01-29",
         "universe_count": len(universe),
         "success_count": len(stocks),
         "failed_count": len(failed),
