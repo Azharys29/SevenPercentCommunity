@@ -9,16 +9,20 @@
 <h1>Rekomendasi</h1><p class="lead">Daftar rekomendasi yang dipublikasikan. Data tersimpan di database sehingga dapat dilihat dari HP, laptop, atau perangkat lain.</p>
 <div class="toolbar"><button class="btn" id="refresh">↻ Refresh</button></div><div id="status"></div><main id="list" class="grid"></main>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const supabase=supabaseJs.createClient("https://njghchwtcyoieymkodzj.supabase.co","sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ");
+const SB_URL="https://njghchwtcyoieymkodzj.supabase.co";
+const SB_KEY="sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ";
 const $=s=>document.querySelector(s);
 const rupiah=v=>new Intl.NumberFormat('id-ID',{maximumFractionDigits:2}).format(Number(v));
 async function load(){
   $('#status').textContent='Memuat rekomendasi…';
-  const {data,error}=await supabase.from('recommendations').select('*').eq('status','active').order('created_at',{ascending:false});
-  if(error){$('#status').textContent='Gagal memuat: '+error.message;return}
-  $('#status').textContent='';
-  $('#list').innerHTML=data.length?data.map(x=>`<article class="card"><div class="head"><div><div class="tk">${x.ticker}</div><div class="date">${new Date(x.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}</div></div><span class="badge">ACTIVE</span></div><div class="prices"><div class="p"><small>ENTRY RANGE</small><b>Rp ${rupiah(x.entry_min)} – ${rupiah(x.entry_max)}</b></div><div class="p"><small>TP1</small><b>Rp ${rupiah(x.tp1)}</b></div><div class="p"><small>TP2</small><b>Rp ${rupiah(x.tp2)}</b></div><div class="p"><small>STOP LOSS</small><b>Rp ${rupiah(x.stop_loss)}</b></div></div>${x.notes?`<div class="note">${String(x.notes).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}</div>`:''}</article>`).join(''):'<div class="empty">Belum ada rekomendasi aktif.</div>'}
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recommendations?select=*&status=eq.active&order=created_at.desc",{headers:{apikey:SB_KEY}});
+    const data=await r.json();
+    if(!r.ok)throw new Error(data?.message||data?.hint||data?.details||'HTTP '+r.status);
+    $('#status').textContent=data.length?data.length+' rekomendasi aktif':'';
+    $('#list').innerHTML=data.length?data.map(x=>`<article class="card"><div class="head"><div><div class="tk">${x.ticker}</div><div class="date">${new Date(x.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}</div></div><span class="badge">ACTIVE</span></div><div class="prices"><div class="p"><small>ENTRY RANGE</small><b>Rp ${rupiah(x.entry_min)} – ${rupiah(x.entry_max)}</b></div><div class="p"><small>TP1</small><b>Rp ${rupiah(x.tp1)}</b></div><div class="p"><small>TP2</small><b>Rp ${rupiah(x.tp2)}</b></div><div class="p"><small>STOP LOSS</small><b>Rp ${rupiah(x.stop_loss)}</b></div></div>${x.notes?`<div class="note">${String(x.notes).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}</div>`:''}</article>`).join(''):'<div class="empty">Belum ada rekomendasi aktif.</div>';
+  }catch(e){$('#status').textContent='Gagal memuat rekomendasi: '+e.message;$('#list').innerHTML='<div class="empty">Data belum dapat dimuat. Coba Refresh.</div>'}
+}
 $('#refresh').onclick=load;load();
-</script></body></html>
+</script></script></body></html>
