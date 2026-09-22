@@ -23,14 +23,19 @@
 </section></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const supabase=supabaseJs.createClient("https://njghchwtcyoieymkodzj.supabase.co","sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ");
+const supabase=window.supabase.createClient("https://njghchwtcyoieymkodzj.supabase.co","sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ");
 const $=s=>document.querySelector(s);let current=null;
 function msg(el,text,err=false){el.textContent=text;el.className='msg'+(err?' error':'')}
 async function check(){
  const {data:{session}}=await supabase.auth.getSession();
- if(session){const {data:{user}}=await supabase.auth.getUser();const {data}=await supabase.from('recommendation_admins').select('email').ilike('email',user.email).maybeSingle(); if(data){current=user;$('#login').classList.add('hidden');$('#app').classList.remove('hidden');load()} else {await supabase.auth.signOut();msg($('#loginMsg'),'Akun login belum terdaftar sebagai admin.',true)}}
+ if(!session)return;
+ const {data:{user}}=await supabase.auth.getUser();
+ const {data:isAdmin,error}=await supabase.rpc('is_recommendation_admin');
+ if(error){msg($('#loginMsg'),'Login berhasil, tetapi verifikasi admin gagal: '+error.message,true);await supabase.auth.signOut();return}
+ if(isAdmin){current=user;$('#login').classList.add('hidden');$('#app').classList.remove('hidden');load()}
+ else{await supabase.auth.signOut();msg($('#loginMsg'),'Akun ini belum terdaftar sebagai admin.',true)}
 }
-$('#loginBtn').onclick=async()=>{msg($('#loginMsg'),'Login…');const {error}=await supabase.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});if(error){msg($('#loginMsg'),error.message,true);return}check()};
+$('#loginBtn').onclick=async()=>{msg($('#loginMsg'),'Login…');$('#loginBtn').disabled=true;try{const email=$('#email').value.trim();const password=$('#password').value;if(!email||!password){msg($('#loginMsg'),'Email dan password wajib diisi.',true);return}const {error}=await supabase.auth.signInWithPassword({email,password});if(error){msg($('#loginMsg'),error.message,true);return}await check()}catch(e){msg($('#loginMsg'),'Terjadi kesalahan: '+e.message,true)}finally{$('#loginBtn').disabled=false}};
 $('#logout').onclick=async()=>{await supabase.auth.signOut();location.reload()};
 $('#cancel').onclick=()=>reset();
 function reset(){ $('#form').reset();$('#id').value='';$('#status').value='active';$('#formMsg').textContent=''}
