@@ -19,7 +19,7 @@
 <div class="field"><label>Stop Loss</label><input id="stop_loss" type="number" step="any" min="0.01" required></div>
 <div class="field full"><label>Keterangan</label><textarea id="notes" placeholder="Contoh: breakout resistance + volume meningkat..."></textarea></div>
 </div><div class="actions"><button class="btn pri" type="submit">Simpan Rekomendasi</button><button class="btn" type="button" id="cancel">Reset</button></div><div id="formMsg" class="msg"></div></form></div>
-<div class="panel"><h2>Rekomendasi Tersimpan</h2><div id="tableMsg" class="msg"></div><div style="overflow:auto"><table><thead><tr><th>Ticker</th><th>Entry</th><th>TP1</th><th>TP2</th><th>SL</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+<div class="panel"><h2>Rekomendasi Tersimpan</h2><div id="tableMsg" class="msg"></div><div style="overflow:auto"><table><thead><tr><th>Ticker</th><th>Entry</th><th>TP1</th><th>TP2</th><th>SL</th><th>Auto Status</th><th>Harga</th><th>Aksi</th></tr></thead><tbody id="rows"></tbody></table></div></div>
 </section></div>
 <script>
 const SB_URL="https://njghchwtcyoieymkodzj.supabase.co";
@@ -73,7 +73,7 @@ $('#form').onsubmit=async e=>{
 async function load(){
  try{
   const data=await api('/rest/v1/recommendations?select=*&order=created_at.desc',{},accessToken);
-  $('#rows').innerHTML=data.map(x=>`<tr><td><b>${x.ticker}</b></td><td>${x.entry_min}–${x.entry_max}</td><td>${x.tp1}</td><td>${x.tp2}</td><td>${x.stop_loss}</td><td>${x.status}</td><td><button class="btn" onclick='edit(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Edit</button> <button class="btn" onclick="del('${x.id}')">Hapus</button></td></tr>`).join('')||'<tr><td colspan="7">Belum ada data.</td></tr>';
+  $('#rows').innerHTML=data.map(x=>`<tr><td><b>${x.ticker}</b></td><td>${x.entry_min}–${x.entry_max}</td><td>${x.tp1}</td><td>${x.tp2}</td><td>${x.stop_loss}</td><td>${x.auto_status||x.status}</td><td>${x.current_price??"-"}</td><td><button class="btn" onclick='edit(${JSON.stringify(x).replace(/'/g,"&#39;")})'>Edit</button> <button class="btn" onclick="del('${x.id}')">Hapus</button></td></tr>`).join('')||'<tr><td colspan="8">Belum ada data.</td></tr>';
   msg($('#tableMsg'),'Data tersinkron.');
  }catch(e){msg($('#tableMsg'),'Gagal memuat data: '+e.message,true)}
 }
