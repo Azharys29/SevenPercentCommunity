@@ -32,17 +32,21 @@ Return ONLY valid JSON with these keys:
 Do not invent facts, catalysts, risks, or URLs. Use empty arrays when no reliable item is found."""
     vals={"TICKER":item["ticker"],"NAME":item.get("name",""),"ASOF":item.get("asof"),"PRICE":item.get("price"),"SCORE":item.get("score"),"SCORE_DELTA":item.get("score_delta"),"SIGNAL":item.get("signal"),"STRENGTH":item.get("strength"),"CONFLUENCE":item.get("confluence"),"RSI":item.get("rsi"),"STOCHK":item.get("stoch_k"),"STOCHD":item.get("stoch_d"),"MACD":item.get("macd_hist_pct"),"RVOL":item.get("rvol")}
     for k,v in vals.items(): prompt=prompt.replace(k,str(v))
-    payload={"model":MODEL,"tools":[{"type":"web_search"}],"input":prompt}
+    payload={"model":MODEL,"tools":[{"type":"web_search","search_context_size":"medium"}],"input":prompt,"include":["web_search_call.action.sources"]}
     req=urllib.request.Request(API_URL,data=json.dumps(payload).encode(),headers={"Authorization":"Bearer "+os.environ["OPENAI_API_KEY"],"Content-Type":"application/json"},method="POST")
     with urllib.request.urlopen(req,timeout=120) as resp: data=json.load(resp)
     text=data.get("output_text","").strip()
     if not text:
-        for out in data.get("output",[]):
+        for src in data.get("web_search_call",{}).get("action",{}).get("sources",[]) or []:
+        u=src.get("url")
+        if u and u not in urls: urls.append(u)
+    for out in data.get("output",[]):
             if out.get("type")=="message":
                 for part in out.get("content",[]):
                     if part.get("type")=="output_text": text=part.get("text","").strip(); break
     text=re.sub(r"^```json\\s*","",text,flags=re.I); text=re.sub(r"\\s*```$","",text).strip()
     result=json.loads(text); urls=list(result.get("source_urls") or [])
+    if not isinstance(result,dict): raise ValueError("AI response is not a JSON object")
     for out in data.get("output",[]):
         for part in out.get("content",[]) if out.get("type")=="message" else []:
             for ann in part.get("annotations",[]):
