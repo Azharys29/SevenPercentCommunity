@@ -8,6 +8,7 @@ on:
       - "index.html"
       - "recommendations.html"
       - "admin.html"
+      - "ai-insights.html"
       - "scripts/**"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
