@@ -36,7 +36,8 @@
         "https://insight.kontan.co.id/news/hartadinata-hrta-incar-pertumbuhan-pendapatan-60",
         "https://hartadinataabadi.co.id/news-detail/the-bullion-gold-business-continues-to-expand%2C-hrta-enhances-anti-counterfeiting-system/8055",
         "https://market.bisnis.com/read/20260910/192/2002973/gelar-private-placement-hartadinata-hrta-tambah-modal-kerja"
-      ]
+      ],
+      "demo": true
     },
     {
       "ticker": "MAPI",
@@ -71,7 +72,8 @@
         "https://www.map.co.id/corporate-en/2q-2026-financial-report-press-release/",
         "https://www.brights.id/en/research-and-news/research-report/mitra-adiperkasa-mapiij-rp1385-hold-tp-rp1520-improving-demand-and-healthier-inventory-support-2h26-outlook",
         "https://www.idxchannel.com/market-news/mitra-adiperkasa-mapi-tetapkan-rasio-dividen-25-50-persen"
-      ]
+      ],
+      "demo": true
     },
     {
       "ticker": "MDKA",
@@ -106,7 +108,8 @@
         "https://merdekacoppergold.com/investors/press-release/",
         "https://merdekacoppergold.com/investor/siaran-pers/",
         "https://insight.kontan.co.id/news/setelah-anjlok-621-dalam-sepekan-saham-mdka-mulai-rebound"
-      ]
+      ],
+      "demo": true
     }
   ]
 }
