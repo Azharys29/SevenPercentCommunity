@@ -15,9 +15,10 @@ def run():
       ("bullish score +10",c("Bullish",60),dict(c("Bullish",70),score_delta=10),False,False),
       ("bullish to neutral",c("Bullish",60),c("Neutral",5),False,False),
       ("bearish to bullish",c("Bearish",-20),c("Bullish",60,3),True,True),
+      ("HRTA simulation: Bullish 30 to 51.02",c("Bullish",30,4),dict(c("Bullish",51.02,4),score_delta=21.02),True,True),
     ]
     for name,p,cur,nb,ai in cases:
         got=transition(p,cur)
         assert got==(nb,ai),f"{name}: expected {(nb,ai)}, got {got}"
-    print(f"PASS: {len(cases)} transition cases")
+    print(f"PASS: {len(cases)} transition cases (including HRTA simulation)")
 if __name__=="__main__": run()
