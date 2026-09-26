@@ -82,7 +82,7 @@ def transition(prev,current):
     prev_sig=prev.get("signal") if prev else None
     cur_sig=current["signal"]; delta=current["score_delta"]
     new_bull=bool(prev and cur_sig=="Bullish" and (prev_sig!="Bullish" or delta>=15))
-    ai=bool(new_bull and current["score"]>=50 and current["agree"]>=3)
+    ai=bool(new_bull and current["score"]>=35 and current["agree"]>=3)
     return new_bull,ai
 
 def main():
