@@ -9,7 +9,7 @@ def c(signal,score,agree=4): return {"signal":signal,"score":score,"score_delta"
 def run():
     cases=[
       ("no previous",None,c("Bullish",60,4),False,False),
-      ("neutral to bullish, below AI",c("Neutral",10),c("Bullish",40,3),True,False),
+      ("neutral to bullish, AI threshold 35",c("Neutral",10),c("Bullish",40,3),True,True),
       ("neutral to bullish, AI",c("Neutral",10),c("Bullish",60,3),True,True),
       ("bullish score +15",c("Bullish",60),dict(c("Bullish",75),score_delta=15),True,True),
       ("bullish score +10",c("Bullish",60),dict(c("Bullish",70),score_delta=10),False,False),
