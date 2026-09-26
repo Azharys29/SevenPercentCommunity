@@ -37,10 +37,14 @@ def main():
             "sentiment": None,
             "sources": []
         })
-    # Keep explicitly marked demo research cards visible for website preview.
+    # Preserve researched items only when they still belong to the current candidate set.
+    current={q.get("ticker") for q in queue}
     for x in existing.values():
-        if x.get("demo") and x.get("ticker") not in {q.get("ticker") for q in queue}:
-            queue.append(x)
+        if x.get("status") == "RESEARCHED" and x.get("ticker") in current:
+            for q in queue:
+                if q.get("ticker") == x.get("ticker"):
+                    q.update({k:v for k,v in x.items() if k not in {"score","score_delta","signal","strength","confluence","rsi","stoch_k","stoch_d","macd_hist_pct","rvol","asof","created_at"}})
+                    break
     payload={
         "generated": s.get("generated"),
         "asof": s.get("asof"),
