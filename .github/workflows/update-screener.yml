@@ -59,7 +59,7 @@ jobs:
       - name: Research AI queue with web search
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: gpt-5.6-luna
+          OPENAI_MODEL: gpt-6-luna
           AI_RESEARCH_MAX: 5
         run: python scripts/research_ai.py
 
