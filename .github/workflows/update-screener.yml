@@ -12,7 +12,6 @@ on:
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
   schedule:
-    # 19:30 WIB (12:30 UTC), Monday-Friday.
     - cron: "30 12 * * 1-5"
 
 permissions:
@@ -42,17 +41,23 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install yfinance pandas numpy
+          pip install "yfinance>=0.2.50,<1" "pandas>=2.2,<3" "numpy>=1.26,<3"
+
+      - name: Test signal engine
+        run: python scripts/test_signal_transitions.py
 
       - name: Fetch market data
         run: python scripts/fetch_data.py
 
-      - name: Commit fresh screener data
+      - name: Build technical signals
+        run: python scripts/build_signals.py
+
+      - name: Commit fresh screener and signal data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/screener.json
-          git diff --cached --quiet || git commit -m "chore: update screener data"
+          git add data/screener.json data/signals.json data/signal-history.json
+          git diff --cached --quiet || git commit -m "chore: update screener and technical signals"
           git push
 
       - name: Configure Pages
@@ -69,6 +74,10 @@ jobs:
 
       - name: Summary
         run: |
-          echo "Screener generated successfully."
-          echo "Latest data: $(python -c 'import json; print(json.load(open("data/screener.json"))["asof"])')"
-          echo "Universe: $(python -c 'import json; d=json.load(open("data/screener.json")); print(str(d["success_count"])+"/"+str(d["universe_count"]))')"
+          python - <<'PY'
+          import json
+          d=json.load(open("data/screener.json"))
+          s=json.load(open("data/signals.json"))
+          print(f"Screener: {d['success_count']}/{d['universe_count']} saham, asof {d['asof']}")
+          print(f"Signals: {s['signals_count']}, NEW BULLISH: {s['new_bullish_count']}, AI queue: {s['ai_queue_count']}")
+          PY
