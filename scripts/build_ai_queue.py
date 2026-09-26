@@ -9,6 +9,7 @@ OUT=ROOT/"data/ai-research.json"
 
 def main():
     s=json.loads(SIGNALS.read_text())
+    existing={x.get("ticker"): x for x in json.loads(OUT.read_text()).get("queue",[])} if OUT.exists() else {}
     queue=[]
     for x in s.get("signals",[]):
         if not x.get("ai_candidate"):
@@ -36,6 +37,10 @@ def main():
             "sentiment": None,
             "sources": []
         })
+    # Keep explicitly marked demo research cards visible for website preview.
+    for x in existing.values():
+        if x.get("demo") and x.get("ticker") not in {q.get("ticker") for q in queue}:
+            queue.append(x)
     payload={
         "generated": s.get("generated"),
         "asof": s.get("asof"),
