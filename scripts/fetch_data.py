@@ -102,6 +102,8 @@ def main():
         sys.exit(1)
 
     bench_close = bench["Close"]
+    bench_tail = bench.tail(BARS)
+    benchmark_history = {"d": [x.strftime("%Y-%m-%d") for x in bench_tail.index], "c": [round(float(x), 2) for x in bench_tail["Close"]]}
     stocks = []
     failed = []
 
@@ -156,6 +158,7 @@ def main():
         "universe_count": len(universe),
         "success_count": len(stocks),
         "failed_count": len(failed),
+        "benchmark_history": benchmark_history,
         "stocks": stocks,
     }
 
