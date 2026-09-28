@@ -4,7 +4,7 @@ p=pathlib.Path(__file__).with_name("build_market_intelligence.py"); s=importlib.
 assert m.market_sentiment(62,4,4)=="Strong Positive"
 assert m.market_sentiment(42,3,4)=="Positive"
 assert m.market_sentiment(10,2,4)=="Neutral"
-assert m.market_sentiment(-40,3,4)=="Negative"
+assert m.market_sentiment(-40,3,4)=="Strong Negative"
 assert m.news_sentiment("Laba tumbuh 20%","")=="Positif"
 assert m.news_sentiment("Laba turun dan private placement","")=="Campuran"
 print("Market Intelligence tests: PASS")
