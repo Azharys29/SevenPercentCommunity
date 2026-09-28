@@ -11,6 +11,7 @@ on:
       - "ai-insights.html"
       - "new-bullish.html"
       - "heatmap.html"
+      - "sector-rotation.html"
       - "scripts/**"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
@@ -53,11 +54,13 @@ jobs:
         run: python scripts/build_signals.py
       - name: Build Market Intelligence + news
         run: python scripts/build_market_intelligence.py
+      - name: Build Sector Rotation
+        run: python scripts/build_sector_rotation.py
       - name: Commit fresh screener, signals and intelligence data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json
+          git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json
           git diff --cached --quiet || git commit -m "chore: update screener, signals and market intelligence"
           git push
       - name: Configure Pages
@@ -73,8 +76,9 @@ jobs:
         run: |
           python - <<'PY'
           import json
-          d=json.load(open("data/screener.json")); s=json.load(open("data/signals.json")); m=json.load(open("data/market-intelligence.json"))
+          d=json.load(open("data/screener.json")); s=json.load(open("data/signals.json")); m=json.load(open("data/market-intelligence.json")); r=json.load(open("data/sector-rotation.json"))
           print(f"Screener: {d['success_count']}/{d['universe_count']} saham, asof {d['asof']}")
           print(f"Signals: {s['signals_count']}, NEW BULLISH: {s['new_bullish_count']}")
           print(f"Market Intelligence: {m['candidate_count']} candidates, {sum(len(x['news']) for x in m['items'])} news articles")
+          print(f"Sector Rotation: {r['sector_count']} sectors, asof {r['asof']}")
           PY
