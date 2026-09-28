@@ -957,6 +957,8 @@ async function init() {
   await loadCustom();
   status(); buildFilterUI(); bindFilters(); bindSettings(); bindCustom(); syncFilterUI();
   recompute(); render();
+  const qsStock = new URLSearchParams(location.search).get("stock");
+  if (qsStock) setTimeout(() => openDetail(qsStock.toUpperCase()), 0);
   $('#exportCsv').addEventListener('click', exportCsv);
   $$('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d || e.target.closest('[data-close]')) d.close(); }));
 }
