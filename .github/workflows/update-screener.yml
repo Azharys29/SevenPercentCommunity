@@ -9,6 +9,8 @@ on:
       - "recommendations.html"
       - "admin.html"
       - "ai-insights.html"
+      - "new-bullish.html"
+      - "heatmap.html"
       - "scripts/**"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
