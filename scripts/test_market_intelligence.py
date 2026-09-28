@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+import importlib.util,pathlib
+p=pathlib.Path(__file__).with_name("build_market_intelligence.py"); s=importlib.util.spec_from_file_location("mi",p); m=importlib.util.module_from_spec(s); s.loader.exec_module(m)
+assert m.market_sentiment(62,4,4)=="Strong Positive"
+assert m.market_sentiment(42,3,4)=="Positive"
+assert m.market_sentiment(10,2,4)=="Neutral"
+assert m.market_sentiment(-40,3,4)=="Negative"
+assert m.news_sentiment("Laba tumbuh 20%","")=="Positif"
+assert m.news_sentiment("Laba turun dan private placement","")=="Campuran"
+print("Market Intelligence tests: PASS")
