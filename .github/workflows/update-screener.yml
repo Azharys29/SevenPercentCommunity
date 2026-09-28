@@ -12,6 +12,7 @@ on:
       - "new-bullish.html"
       - "heatmap.html"
       - "sector-rotation.html"
+      - "backtest.html"
       - "scripts/**"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
@@ -48,6 +49,8 @@ jobs:
         run: python scripts/test_signal_transitions.py
       - name: Test Market Intelligence rules
         run: python scripts/test_market_intelligence.py
+      - name: Test Backtest engine
+        run: python scripts/test_backtest.py
       - name: Fetch market data
         run: python scripts/fetch_data.py
       - name: Build technical signals
@@ -56,11 +59,13 @@ jobs:
         run: python scripts/build_market_intelligence.py
       - name: Build Sector Rotation
         run: python scripts/build_sector_rotation.py
+      - name: Build Signal Backtest
+        run: python scripts/build_backtest.py
       - name: Commit fresh screener, signals and intelligence data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json
+          git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json
           git diff --cached --quiet || git commit -m "chore: update screener, signals and market intelligence"
           git pull --rebase origin main
           git push
@@ -77,9 +82,10 @@ jobs:
         run: |
           python - <<'PY'
           import json
-          d=json.load(open("data/screener.json")); s=json.load(open("data/signals.json")); m=json.load(open("data/market-intelligence.json")); r=json.load(open("data/sector-rotation.json"))
+          d=json.load(open("data/screener.json")); s=json.load(open("data/signals.json")); m=json.load(open("data/market-intelligence.json")); r=json.load(open("data/sector-rotation.json")); b=json.load(open("data/backtest.json"))
           print(f"Screener: {d['success_count']}/{d['universe_count']} saham, asof {d['asof']}")
           print(f"Signals: {s['signals_count']}, NEW BULLISH: {s['new_bullish_count']}")
           print(f"Market Intelligence: {m['candidate_count']} candidates, {sum(len(x['news']) for x in m['items'])} news articles")
           print(f"Sector Rotation: {r['sector_count']} sectors, asof {r['asof']}")
+          print(f"Backtest: {b['signal_count']} NEW BULLISH events, 20D avg {b['summary']['20']['avg_return']}%")
           PY
