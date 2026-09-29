@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rekap Rekomendasi — SevenPercentCommunity</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#090D13;--panel:#0F151D;--panel2:#141C26;--line:#2E4A68;--line-soft:#1B2836;--ice:#85B7EB;--ice-brt:#ADD6FF;--tx:#F3F6FA;--tx2:#A3ADBC;--tx3:#7C879A;--cream:#F2EBDD;--green:#8FD3A8;--red:#E7A0A0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Arial,sans-serif}.wrap{max-width:1280px;margin:auto;padding:0 20px 50px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid var(--line-soft)}.brand{color:var(--ice);font:12px monospace;letter-spacing:.12em}.menu{position:relative}.menu summary{list-style:none;cursor:pointer;border:1px solid var(--line);background:var(--panel2);padding:8px 13px;border-radius:4px;font-size:13px;font-weight:600}.menu summary::-webkit-details-marker{display:none}.menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:10;min-width:230px;padding:7px;border:1px solid var(--line);background:var(--panel);box-shadow:0 14px 35px rgba(0,0,0,.35);border-radius:4px}.menu-panel a{display:block;padding:9px 11px;color:var(--tx2);text-decoration:none;border-radius:3px;white-space:nowrap}.menu-panel a:hover{background:var(--panel2);color:var(--tx)}
+h1{font-size:38px;color:var(--cream);margin:34px 0 7px}.lead{color:var(--tx2);margin:0 0 22px;max-width:850px}.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:16px}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--tx);padding:9px 13px;border-radius:4px;cursor:pointer}.btn:hover{border-color:var(--ice)}.btn.pri{background:var(--ice);border-color:var(--ice);color:#08101A;font-weight:700}.period{margin-left:auto;color:var(--tx3);font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:18px}.stat{border:1px solid var(--line);background:var(--panel);padding:14px;border-radius:4px}.stat small{display:block;color:var(--tx3);font-size:11px}.stat b{display:block;font-size:25px;margin-top:2px}.up{color:var(--green)}.dn{color:var(--red)}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:4px;overflow:auto}.panel-head{padding:14px 16px;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;gap:10px;align-items:center}.panel-head b{color:var(--cream)}.hint{color:var(--tx3);font-size:12px}
+table{border-collapse:collapse;width:100%;min-width:1050px;font-size:13px}th{background:var(--panel2);color:var(--tx2);font-size:12px;text-align:right;padding:11px 10px;white-space:nowrap}th:first-child,th:nth-child(2){text-align:left}td{padding:10px;border-top:1px solid var(--line-soft);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}td:first-child,td:nth-child(2){text-align:left}td .tk{font-weight:700;color:var(--cream)}td .date{display:block;color:var(--tx3);font-size:11px;margin-top:2px}.badge{display:inline-block;border:1px solid var(--line);padding:3px 7px;border-radius:999px;font-size:11px}.win{color:var(--green);border-color:var(--green)}.loss{color:var(--red);border-color:var(--red)}.open{color:var(--ice);border-color:var(--ice)}
+.foot{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-soft);color:var(--tx3);font-size:12px;line-height:1.7}.empty{padding:45px;text-align:center;color:var(--tx3)}
+@media(max-width:950px){.stats{grid-template-columns:repeat(3,1fr)}.period{margin-left:0;width:100%}}@media(max-width:600px){h1{font-size:31px}.stats{grid-template-columns:repeat(2,1fr)}.wrap{padding:0 14px 40px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="brand">SEVENPERCENTCOMMUNITY</div><nav>
+<details class="menu"><summary>☰ Menu</summary><div class="menu-panel">
+<a href="./index.html">Screener</a><a href="./recommendations.html">Rekomendasi</a><a href="./recommendation-report.html">Rekap Rekomendasi</a><a href="./new-bullish.html">NEW Bullish</a><a href="./heatmap.html">Heatmap</a><a href="./backtest.html">Backtest</a><a href="./relative-strength.html">Relative Strength</a><a href="./momentum-dashboard.html">Momentum Dashboard</a><a href="./catalyst-calendar.html">Earnings Calendar</a><a href="./value-gap.html">Value Gap</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./ai-insights.html">Market Intelligence</a><a href="./admin.html">Admin</a>
+</div></details></nav></header>
+<h1>Rekap Rekomendasi</h1>
+<p class="lead">Evaluasi rekomendasi yang dibuat dalam 30 hari terakhir: jumlah rekomendasi, win rate, rata-rata P/L, return IHSG, dan detail setiap rekomendasi.</p>
+<div class="toolbar"><button class="btn" id="refresh">↻ Refresh</button><button class="btn pri" id="export">↓ Download Excel</button><span class="period" id="period">Periode: —</span></div>
+<section class="stats" id="stats"></section>
+<div class="panel"><div class="panel-head"><b>Daftar Rekomendasi</b><span class="hint" id="status">Memuat…</span></div><div id="table"><div class="empty">Memuat data…</div></div></div>
+<div class="foot">
+<b>Metodologi.</b> Periode = 30 hari kalender terakhir berdasarkan tanggal terbaru data. Entry price untuk perhitungan P/L menggunakan titik tengah entry range. TP1/TP2 dihitung sebagai hasil ketika target tercapai; STOP LOSS sebagai hasil ketika SL tercapai; rekomendasi yang masih aktif dihitung sebagai unrealized P/L terhadap harga terakhir. Win rate = rekomendasi yang mencapai TP1/TP2 dibagi seluruh rekomendasi dengan outcome TP/SL. Return IHSG menggunakan benchmark IHSG dari data screener pada periode sekitar 1 bulan (22 sesi perdagangan bila tersedia). Ini adalah rekap performa historis, bukan jaminan hasil berikutnya.
+</div>
+</div>
+<script>
+const SB_URL="https://njghchwtcyoieymkodzj.supabase.co";
+const SB_KEY="sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ";
+const fmt=(v,d=2)=>v==null||Number.isNaN(Number(v))?"—":new Intl.NumberFormat("id-ID",{minimumFractionDigits:d,maximumFractionDigits:d}).format(Number(v));
+const pct=v=>v==null?"—":(Number(v)>=0?"+":"")+fmt(v)+"%";
+const esc=s=>String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m]));
+let rows=[], report=null;
+
+function outcome(x){
+  const entry=(Number(x.entry_min)+Number(x.entry_max))/2;
+  const status=x.auto_status||"ACTIVE";
+  let exit=null,label="OPEN",cls="open";
+  if(status==="TP2 HIT"||status==="TP2 & SL TOUCHED"){exit=Number(x.tp2);label=status==="TP2 & SL TOUCHED"?"TP2 & SL TOUCHED":"TP2 HIT";cls="win"}
+  else if(status==="TP1 HIT"||status==="TP1 & SL TOUCHED"){exit=Number(x.tp1);label=status==="TP1 & SL TOUCHED"?"TP1 & SL TOUCHED":"TP1 HIT";cls="win"}
+  else if(status==="STOP LOSS HIT"){exit=Number(x.stop_loss);label="STOP LOSS HIT";cls="loss"}
+  const last=Number(x.current_price);
+  const pl=exit!=null?(exit-entry)/entry*100:(Number.isFinite(last)&&entry?(last-entry)/entry*100:null);
+  return {entry,status,label,cls,exit,pl};
+}
+function dateLabel(v){return new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"})}
+function calcIHSG(screener){
+  const h=screener?.benchmark_history?.c||[];
+  if(h.length<2)return null;
+  const n=Math.min(22,h.length-1);
+  const a=Number(h[h.length-1-n]), b=Number(h[h.length-1]);
+  return a?((b/a)-1)*100:null;
+}
+async function load(){
+  document.getElementById("status").textContent="Memuat…";
+  try{
+    const [rr,ss]=await Promise.all([
+      fetch(SB_URL+"/rest/v1/recommendations?select=*&order=created_at.desc",{headers:{apikey:SB_KEY,Authorization:"Bearer "+SB_KEY}}),
+      fetch("./data/screener.json?ts="+Date.now())
+    ]);
+    const recs=await rr.json(), screener=await ss.json();
+    if(!rr.ok)throw new Error(recs?.message||"Supabase HTTP "+rr.status);
+    if(!ss.ok)throw new Error("Gagal memuat data IHSG");
+    const latest=screener.asof?new Date(screener.asof+"T23:59:59"):new Date();
+    const start=new Date(latest); start.setDate(start.getDate()-30);
+    rows=recs.filter(x=>new Date(x.created_at)>=start && new Date(x.created_at)<=new Date(latest.getTime()+86400000));
+    rows=rows.map(x=>({...x,...outcome(x)}));
+    const realized=rows.filter(x=>["win","loss"].includes(x.cls));
+    const wins=realized.filter(x=>x.cls==="win");
+    const losses=realized.filter(x=>x.cls==="loss");
+    const avgAll=rows.filter(x=>x.pl!=null).reduce((a,x)=>a+x.pl,0)/(rows.filter(x=>x.pl!=null).length||1);
+    const avgReal=realized.length?realized.reduce((a,x)=>a+x.pl,0)/realized.length:null;
+    const ihsg=calcIHSG(screener);
+    report={start,latest,ihsg,wins:wins.length,losses:losses.length,open:rows.length-realized.length,winRate:realized.length?wins.length/realized.length*100:null,avgAll,avgReal};
+    document.getElementById("period").textContent="Periode: "+dateLabel(start)+" — "+dateLabel(latest);
+    document.getElementById("status").textContent=rows.length+" rekomendasi";
+    render();
+  }catch(e){document.getElementById("status").textContent="Gagal: "+e.message;document.getElementById("table").innerHTML='<div class="empty">Data belum dapat dimuat. Coba Refresh.</div>'}
+}
+function render(){
+  const s=report;
+  document.getElementById("stats").innerHTML=[
+    ["Rekomendasi",rows.length,""],
+    ["Win Rate",s.winRate==null?"—":fmt(s.winRate)+"%",s.winRate==null?"":s.winRate>=50?"up":"dn"],
+    ["Menang",s.wins,"up"],["Kalah",s.losses,"dn"],["Avg P/L",pct(s.avgAll),s.avgAll>=0?"up":"dn"],["IHSG 1 Bulan",pct(s.ihsg),s.ihsg>=0?"up":"dn"]
+  ].map(x=>'<div class="stat"><small>'+x[0]+'</small><b class="'+x[2]+'">'+x[1]+'</b></div>').join("");
+  if(!rows.length){document.getElementById("table").innerHTML='<div class="empty">Tidak ada rekomendasi dalam periode ini.</div>';return}
+  const tr=rows.map((x,i)=>'<tr><td>'+(i+1)+'</td><td><span class="tk">'+esc(x.ticker)+'</span><span class="date">'+dateLabel(x.created_at)+'</span></td><td>Rp '+fmt(x.entry)+'</td><td>Rp '+fmt(x.tp1)+'</td><td>Rp '+fmt(x.tp2)+'</td><td>Rp '+fmt(x.stop_loss)+'</td><td>Rp '+fmt(x.current_price)+'</td><td><span class="badge '+x.cls+'">'+esc(x.label)+'</span></td><td class="'+(x.pl>=0?"up":"dn")+'">'+pct(x.pl)+'</td><td>'+ (x.entry_hit_at?dateLabel(x.entry_hit_at):"—") +'</td><td>'+ (x.tp1_hit_at?dateLabel(x.tp1_hit_at):x.tp2_hit_at?dateLabel(x.tp2_hit_at):x.sl_hit_at?dateLabel(x.sl_hit_at):"—") +'</td></tr>').join("");
+  document.getElementById("table").innerHTML='<table><thead><tr><th>#</th><th>Emiten</th><th>Entry Mid</th><th>TP1</th><th>TP2</th><th>SL</th><th>Harga Terakhir</th><th>Status</th><th>P/L</th><th>Entry Hit</th><th>Outcome Date</th></tr></thead><tbody>'+tr+'</tbody></table>';
+}
+function exportExcel(){
+  if(!rows.length)return;
+  const summary=[
+    ["REKAP REKOMENDASI — SEVENPERCENTCOMMUNITY"],
+    ["Periode",dateLabel(report.start)+" - "+dateLabel(report.latest)],
+    [],
+    ["Metric","Value"],
+    ["Total Rekomendasi",rows.length],
+    ["Win Rate",report.winRate==null?null:report.winRate/100],
+    ["Menang",report.wins],["Kalah",report.losses],["Open",report.open],
+    ["Average P/L All",report.avgAll/100],["Average P/L Realized",report.avgReal==null?null:report.avgReal/100],
+    ["IHSG Return 1 Bulan",report.ihsg==null?null:report.ihsg/100]
+  ];
+  const details=rows.map((x,i)=>({
+    "#":i+1,"Emiten":x.ticker,"Tanggal Rekomendasi":x.created_at.slice(0,10),
+    "Entry Mid":x.entry,"TP1":Number(x.tp1),"TP2":Number(x.tp2),"Stop Loss":Number(x.stop_loss),
+    "Harga Terakhir":Number(x.current_price),"Status":x.label,"P/L":x.pl/100,
+    "Entry Hit":x.entry_hit_at?x.entry_hit_at.slice(0,10):"","Outcome Date":x.tp2_hit_at?x.tp2_hit_at.slice(0,10):x.tp1_hit_at?x.tp1_hit_at.slice(0,10):x.sl_hit_at?x.sl_hit_at.slice(0,10):""
+  }));
+  const wb=XLSX.utils.book_new();
+  const ws1=XLSX.utils.aoa_to_sheet(summary),ws2=XLSX.utils.json_to_sheet(details);
+  ws1["!cols"]=[{wch:28},{wch:24}];ws2["!cols"]=[{wch:6},{wch:12},{wch:18},{wch:12},{wch:12},{wch:12},{wch:15},{wch:20},{wch:14},{wch:22},{wch:12},{wch:14},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,ws1,"Summary");XLSX.utils.book_append_sheet(wb,ws2,"Recommendations");
+  XLSX.writeFile(wb,"Rekap_Rekomendasi_"+report.latest.toISOString().slice(0,10)+".xlsx");
+}
+document.getElementById("refresh").onclick=load;document.getElementById("export").onclick=exportExcel;load();
+</script>
+</body></html>
