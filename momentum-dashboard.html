@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Momentum Dashboard — SevenPercentCommunity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090D13;--panel:#0F151D;--panel2:#141C26;--line:#2E4A68;--line-soft:#1B2836;--ice:#85B7EB;--ice-brt:#ADD6FF;--ice-dim:#55789E;--tx:#F3F6FA;--tx2:#A3ADBC;--tx3:#7C879A;--cream:#F2EBDD;--fd:'Gloock',serif;--fs:'IBM Plex Serif',serif;--fu:'Instrument Sans',sans-serif;--fm:'IBM Plex Mono',monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 var(--fu)}button,input,select{font:inherit;color:inherit}button{cursor:pointer}.wrap{max-width:1500px;margin:auto;padding:0 28px 55px}.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--line-soft)}.brand{font:12px var(--fm);letter-spacing:.14em;color:var(--ice)}.menu-wrap{position:relative}.menu summary{list-style:none;border:1px solid var(--line);background:var(--panel);padding:8px 12px;border-radius:3px;color:var(--tx2);font-size:13px;cursor:pointer}.menu summary::-webkit-details-marker{display:none}.menu-panel{position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);z-index:20;min-width:195px;background:var(--panel);border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.35);padding:6px}.menu-panel a{display:block;color:var(--tx2);text-decoration:none;padding:8px 10px;font-size:13px;white-space:nowrap}.menu-panel a:hover{background:var(--panel2);color:var(--tx)}
+.hero{padding:34px 0 20px;display:flex;justify-content:space-between;gap:28px;align-items:end}.hero h1{font:400 clamp(34px,4.8vw,58px)/1.03 var(--fd);color:var(--cream);margin:0}.hero p{font:16px/1.7 var(--fs);color:var(--tx2);max-width:78ch;margin:12px 0 0}.asof{color:var(--tx3);font:12px var(--fm);text-align:right}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:8px 0 22px}.stat{border:1px solid var(--line);background:var(--panel);padding:14px 16px}.k{font-size:12px;color:var(--tx2)}.v{font-size:27px;font-weight:600;margin:2px 0}.c{font-size:11.5px;color:var(--tx3)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.controls input,.controls select,.btn{background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:8px 10px}.controls input{min-width:230px}.btn{color:var(--tx2)}.btn.active{background:var(--ice);border-color:var(--ice);color:#08101A;font-weight:600}
+.topgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}.card{border:1px solid var(--line);background:var(--panel);padding:15px 16px}.rank{font:12px var(--fm);color:var(--ice)}.card h3{margin:5px 0 0;font-size:19px}.card h3 a{color:var(--cream);text-decoration:none}.sub{color:var(--tx3);font-size:12px}.score{font-size:32px;font-weight:600;margin-top:10px}.metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:10px}.metric{border-top:1px solid var(--line-soft);padding-top:7px}.metric b{display:block}.metric span{font-size:10.5px;color:var(--tx3)}
+.table-wrap{border:1px solid var(--line);overflow:auto;max-height:70vh}table{width:100%;min-width:1150px;border-collapse:collapse;font-size:13px}th{position:sticky;top:0;z-index:2;background:var(--panel2);color:var(--tx2);font-size:11.5px;text-align:right;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap}th:first-child,th:nth-child(2),th:nth-child(3){text-align:left}td{padding:10px;border-bottom:1px solid var(--line-soft);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}td:first-child,td:nth-child(2),td:nth-child(3){text-align:left}tbody tr:hover{background:var(--panel)}td a{color:var(--cream);text-decoration:none;font-weight:600}.pos{color:var(--ice-brt)}.neg{color:var(--ice-dim)}.tag{border:1px solid var(--line);padding:2px 7px;border-radius:999px;font-size:11px;color:var(--tx2)}.tag.strong{border-color:var(--ice);color:var(--ice-brt)}.scorebar{display:flex;align-items:center;gap:7px;justify-content:flex-end}.bar{width:82px;height:7px;background:var(--line-soft)}.bar i{display:block;height:100%;background:var(--ice-brt)}.trend{font:11px var(--fm)}.foot{margin-top:28px;padding-top:16px;border-top:1px solid var(--line-soft);color:var(--tx3);font-size:12px}.loading{text-align:center;padding:50px;color:var(--tx2)}
+@media(max-width:900px){.hero{display:block}.asof{text-align:left;margin-top:12px}.stats{grid-template-columns:repeat(2,1fr)}.topgrid{grid-template-columns:1fr}.wrap{padding:0 14px 42px}}@media(max-width:560px){.stats{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr}.controls input{min-width:0;width:100%}.btn{width:100%}}
+</style></head>
+<body><div class="wrap">
+<header class="top"><div class="brand">SEVENPERCENTCOMMUNITY / MOMENTUM</div><nav class="menu-wrap"><details class="menu"><summary>☰ Menu</summary><div class="menu-panel">
+<a href="./index.html">Screener</a><a href="./recommendations.html">Rekomendasi</a><a href="./new-bullish.html">NEW Bullish</a><a href="./heatmap.html">Heatmap</a><a href="./backtest.html">Backtest</a><a href="./relative-strength.html">Relative Strength</a><a href="./momentum-dashboard.html">Momentum Dashboard</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./ai-insights.html">Market Intelligence</a><a href="./admin.html">Admin</a>
+</div></details></nav></header>
+<section class="hero"><div><h1>Momentum Dashboard</h1><p>Memetakan saham KOMPAS100 berdasarkan return 5D/20D, Technical Score, posisi harga terhadap MA20/50/200, RVOL, dan regime RSI.</p></div><div class="asof" id="asof">Memuat data...</div></section>
+<section class="stats">
+<div class="stat"><div class="k">Universe</div><div class="v" id="universe">—</div><div class="c">KOMPAS100</div></div>
+<div class="stat"><div class="k">Explosive</div><div class="v" id="explosive">—</div><div class="c">Score ≥ 75</div></div>
+<div class="stat"><div class="k">Strong</div><div class="v" id="strong">—</div><div class="c">Score 60–74.9</div></div>
+<div class="stat"><div class="k">Avg Return 5D</div><div class="v" id="avg5">—</div><div class="c">seluruh universe</div></div>
+<div class="stat"><div class="k">Avg Return 20D</div><div class="v" id="avg20">—</div><div class="c">seluruh universe</div></div>
+</section>
+<div class="controls"><input id="search" type="search" placeholder="Cari ticker / nama / sektor"><button class="btn active" data-filter="all">All</button><button class="btn" data-filter="strong">Strong+</button><button class="btn" data-filter="positive">Positive+</button><select id="sector"><option value="">Semua sektor</option></select></div>
+<section class="topgrid" id="topgrid"></section>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Ticker</th><th>Momentum</th><th>5D</th><th>20D</th><th>Technical</th><th>RSI</th><th>RVOL</th><th>MA20</th><th>MA50</th><th>MA200</th><th>Trend</th><th>Confluence</th></tr></thead><tbody id="tbody"><tr><td colspan="13" class="loading">Memuat data...</td></tr></tbody></table></div>
+<footer class="foot"><p><strong>Metodologi:</strong> Momentum Score = 20% percentile return 5D + 20% percentile return 20D + 25% Technical Score + 20% MA trend alignment + 10% RVOL + 5% RSI regime. Ranking bersifat relatif terhadap KOMPAS100. Label Explosive/Strong/Positive adalah klasifikasi komposit momentum, bukan rekomendasi beli/jual.</p><p>Trend alignment terdiri dari 5 kondisi: harga di atas MA20, MA50, MA200, serta MA20 &gt; MA50 dan MA50 &gt; MA200.</p></footer>
+</div>
+<script>
+const state={rows:[],filter:"all"};
+const fmt=(x,d=2)=>x==null?"—":Number(x).toFixed(d);
+const cls=x=>x>0?"pos":x<0?"neg":"";
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
+function trend(x){return [x.above_ma20,x.above_ma50,x.above_ma200,x.ma20_gt_ma50,x.ma50_gt_ma200].map(v=>v?"●":"○").join("");}
+function pass(x){
+ const q=document.getElementById("search").value.trim().toLowerCase(), sec=document.getElementById("sector").value;
+ if(state.filter==="strong"&&!["Explosive","Strong"].includes(x.momentum_label))return false;
+ if(state.filter==="positive"&&!["Explosive","Strong","Positive"].includes(x.momentum_label))return false;
+ if(sec&&x.sector!==sec)return false;
+ return !q||[x.ticker,x.name,x.sector].some(v=>String(v||"").toLowerCase().includes(q));
+}
+function render(){
+ const rows=state.rows.filter(pass);
+ document.getElementById("topgrid").innerHTML=rows.slice(0,3).map(x=>'<article class="card"><div class="rank">#'+x.rank+' / '+esc(x.momentum_label)+'</div><h3><a href="./index.html?stock='+encodeURIComponent(x.ticker)+'">'+esc(x.ticker)+'</a></h3><div class="sub">'+esc(x.name)+' · '+esc(x.sector)+'</div><div class="score">'+fmt(x.momentum_score,1)+'</div><div class="metrics"><div class="metric"><b class="'+cls(x.return_5d)+'">'+fmt(x.return_5d)+'%</b><span>5D RETURN</span></div><div class="metric"><b class="'+cls(x.return_20d)+'">'+fmt(x.return_20d)+'%</b><span>20D RETURN</span></div><div class="metric"><b>'+x.trend_points+'/5</b><span>MA TREND</span></div></div></article>').join("");
+ document.getElementById("tbody").innerHTML=rows.map(x=>'<tr><td>'+x.rank+'</td><td><a href="./index.html?stock='+encodeURIComponent(x.ticker)+'">'+esc(x.ticker)+'</a></td><td><div class="scorebar"><span class="tag '+(x.momentum_score>=60?"strong":"")+'">'+esc(x.momentum_label)+'</span><b>'+fmt(x.momentum_score,1)+'</b><span class="bar"><i style="width:'+Math.max(0,Math.min(100,x.momentum_score))+'%"></i></span></div></td><td class="'+cls(x.return_5d)+'">'+fmt(x.return_5d)+'%</td><td class="'+cls(x.return_20d)+'">'+fmt(x.return_20d)+'%</td><td>'+fmt(x.technical_score,1)+'</td><td>'+fmt(x.rsi,1)+'</td><td>'+fmt(x.rvol,2)+'x</td><td>'+(x.above_ma20?"Above":"Below")+'<br><small>'+fmt((x.price/x.ma20-1)*100)+'%</small></td><td>'+(x.above_ma50?"Above":"Below")+'<br><small>'+fmt((x.price/x.ma50-1)*100)+'%</small></td><td>'+(x.above_ma200?"Above":"Below")+'<br><small>'+fmt((x.price/x.ma200-1)*100)+'%</small></td><td class="trend">'+trend(x)+' '+x.trend_points+'/5</td><td>'+(x.confluence==null?"—":x.confluence+"/4")+'</td></tr>').join("")||'<tr><td colspan="13" class="loading">Tidak ada saham yang sesuai filter.</td></tr>';
+}
+async function init(){
+ try{
+  const d=await fetch("./data/momentum.json?ts="+Date.now(),{cache:"no-store"}).then(r=>r.json());
+  state.rows=d.stocks||[];document.getElementById("asof").textContent="Data s.d. "+d.asof+" · generated "+d.generated;
+  document.getElementById("universe").textContent=d.universe_count;document.getElementById("explosive").textContent=d.summary.explosive;document.getElementById("strong").textContent=d.summary.strong;
+  document.getElementById("avg5").textContent=fmt(d.summary.avg_return_5d)+"%";document.getElementById("avg20").textContent=fmt(d.summary.avg_return_20d)+"%";
+  [...new Set(state.rows.map(x=>x.sector))].sort().forEach(s=>{const o=document.createElement("option");o.value=s;o.textContent=s;document.getElementById("sector").appendChild(o)});render();
+ }catch(e){document.getElementById("tbody").innerHTML='<tr><td colspan="13" class="loading">Gagal memuat data momentum.</td></tr>';console.error(e)}
+}
+document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{state.filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));render()}));
+document.getElementById("search").addEventListener("input",render);document.getElementById("sector").addEventListener("change",render);init();
+</script></body></html>
