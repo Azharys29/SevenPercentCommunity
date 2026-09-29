@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build Value Gap Score for KOMPAS100 using Yahoo Finance price + annual EPS data."""
+"""Build Value Gap Score for KOMPAS100 using Yahoo Finance."""
 import datetime as dt, json, math, time
 from pathlib import Path
 
@@ -23,13 +23,7 @@ def finite(v):
 def pick_eps_row(stmt):
     if stmt is None or stmt.empty:
         return None
-    preferred = [
-        "Diluted EPS",
-        "Basic EPS",
-        "DilutedEPS",
-        "BasicEPS",
-    ]
-    for name in preferred:
+    for name in ("Diluted EPS", "Basic EPS", "DilutedEPS", "BasicEPS"):
         if name in stmt.index:
             return stmt.loc[name]
     for idx in stmt.index:
@@ -53,32 +47,45 @@ def annual_eps(stmt):
         except Exception:
             continue
         out.append((date, value))
-    out.sort(key=lambda x: x[0], reverse=True)
-    return out
+    return sorted(out, key=lambda x: x[0], reverse=True)
 
 
 def price_on_or_before(history, target):
     if history is None or history.empty:
         return None
-    h = history.copy()
-    idx = pd.DatetimeIndex(h.index)
-    dates = idx.tz_localize(None).date
-    mask = dates <= target
+    idx = pd.DatetimeIndex(history.index).tz_localize(None)
+    mask = idx.date <= target
     if not mask.any():
         return None
-    pos = mask.nonzero()[0][-1]
-    return finite(h.iloc[pos]["Close"])
+    return finite(history.iloc[mask.nonzero()[0][-1]]["Close"])
 
 
-def historical_pe(stmt, history):
+def fx_on_or_before(history, target):
+    rate = price_on_or_before(history, target)
+    return rate if rate and rate > 0 else None
+
+
+def historical_pe(stmt, price_history, fx_history, financial_currency):
     eps = annual_eps(stmt)
     result = []
     for fiscal_date, eps_value in eps:
-        price = price_on_or_before(history, fiscal_date)
-        if price is not None and price > 0:
-            pe = price / eps_value
-            if math.isfinite(pe) and pe > 0:
-                result.append((fiscal_date.isoformat(), pe))
+        price = price_on_or_before(price_history, fiscal_date)
+        if price is None or price <= 0:
+            continue
+
+        # Yahoo may report Indonesian-company financials in USD while the
+        # quoted share price is in IDR. Convert the historical price into the
+        # financial-statement currency before calculating P/E.
+        if str(financial_currency).upper() == "USD":
+            fx = fx_on_or_before(fx_history, fiscal_date)
+            if fx is None:
+                continue
+            price = price / fx
+
+        pe = price / eps_value
+        # Guard against obvious Yahoo unit/currency anomalies.
+        if math.isfinite(pe) and 0 < pe < 300:
+            result.append((fiscal_date.isoformat(), pe))
     return result[:3], eps
 
 
@@ -91,7 +98,6 @@ def returns(history, asof):
     last = finite(c.iloc[-1])
     base = finite(c.iloc[-22])
     r1m = (last / base - 1) * 100 if last and base and base > 0 else None
-
     dates = pd.DatetimeIndex(c.index).tz_localize(None)
     cy = c[dates.year == asof.year]
     ry = (last / float(cy.iloc[0]) - 1) * 100 if last and len(cy) and float(cy.iloc[0]) > 0 else None
@@ -103,6 +109,10 @@ def main():
     screen = json.loads(SCREENER.read_text(encoding="utf-8"))
     asof = dt.date.fromisoformat(str(screen["asof"])[:10])
 
+    # One FX history is shared by all IDX names whose financial statements
+    # are reported in USD.
+    fx_history = yf.Ticker("IDR=X").history(period="5y", auto_adjust=False)
+
     rows = []
     errors = []
 
@@ -113,12 +123,14 @@ def main():
 
         try:
             t = yf.Ticker(ticker + ".JK")
-
-            # Current PE from Yahoo's current trailing PE. If unavailable,
-            # calculate it from current price / trailing EPS.
             info = t.info or {}
             current_pe = finite(info.get("trailingPE"))
             trailing_eps = finite(info.get("trailingEps"))
+            financial_currency = str(
+                info.get("financialCurrency")
+                or info.get("currency")
+                or "IDR"
+            )
 
             history = t.history(period="5y", auto_adjust=False)
             if history is None or history.empty:
@@ -128,15 +140,13 @@ def main():
             if current_pe is None and last_close and trailing_eps and trailing_eps > 0:
                 current_pe = last_close / trailing_eps
 
-            # Yahoo valuation-measures endpoint has become unreliable for many
-            # IDX tickers. Build the 3Y historical PE directly from annual EPS
-            # and the closing price at/just before each fiscal year-end.
             stmt = t.get_income_stmt(freq="yearly")
-            pe_hist, eps_hist = historical_pe(stmt, history)
+            pe_hist, eps_hist = historical_pe(
+                stmt, history, fx_history, financial_currency
+            )
             hist3 = [x for _, x in pe_hist if x > 0]
             avg_pe = sum(hist3) / 3 if len(hist3) == 3 else None
 
-            # EPS Growth = latest annual diluted/basic EPS growth vs prior year.
             growth = None
             if len(eps_hist) >= 2:
                 latest_eps = eps_hist[0][1]
@@ -144,7 +154,6 @@ def main():
                 if prior_eps > 0:
                     growth = (latest_eps / prior_eps - 1) * 100
 
-            # Fallback to Yahoo trailing earningsGrowth if annual EPS is unavailable.
             if growth is None:
                 growth = finite(info.get("earningsGrowth"))
                 if growth is not None and abs(growth) < 2:
@@ -167,10 +176,7 @@ def main():
                 "value_gap_score": round(score, 2) if score is not None else None,
                 "return_1m": round(r1m, 2) if r1m is not None else None,
                 "return_ytd": round(ry, 2) if ry is not None else None,
-                "pe_history": [
-                    {"period": period, "pe": round(pe, 2)}
-                    for period, pe in pe_hist
-                ],
+                "pe_history": [{"period": p, "pe": round(x, 2)} for p, x in pe_hist],
                 "status": "ok" if score is not None else "incomplete",
             })
         except Exception as exc:
@@ -202,20 +208,13 @@ def main():
         "error_count": len(errors),
         "formula": "(Average 3Y P/E - Current P/E) × EPS Growth (%)",
         "eps_growth_definition": "Annual EPS growth: latest fiscal-year EPS versus prior fiscal-year EPS; Yahoo trailing earningsGrowth used only as fallback",
-        "historical_pe_definition": "Each annual P/E = fiscal-year-end/nearest prior closing price divided by that fiscal year's EPS",
+        "historical_pe_definition": "Annual P/E from fiscal-year-end/nearest prior price divided by EPS, with USD financials converted using historical USD/IDR",
         "sources": ["Yahoo Finance / yfinance"],
         "errors": errors,
         "stocks": rows,
     }
-
-    OUT.write_text(
-        json.dumps(payload, separators=(",", ":"), ensure_ascii=False),
-        encoding="utf-8",
-    )
-    print(
-        f"Value Gap: {payload['valid_count']}/{payload['universe_count']} valid, "
-        f"asof {payload['asof']}, errors {payload['error_count']}"
-    )
+    OUT.write_text(json.dumps(payload, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
+    print(f"Value Gap: {payload['valid_count']}/{payload['universe_count']} valid, asof {payload['asof']}, errors {payload['error_count']}")
 
 
 if __name__ == "__main__":
