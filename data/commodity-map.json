@@ -1,7 +1,7 @@
 {
-  "version": 1,
+  "version": 2,
   "universe": "KOMPAS100",
-  "description": "Mapping emiten KOMPAS100 terhadap komoditas. impact_up/impact_down: +1 = searah/positif, -1 = berlawanan/negatif.",
+  "description": "Mapping eksposur emiten KOMPAS100 terhadap komoditas. impact_up=1 dan impact_down=-1 menunjukkan arah sensitivitas awal; weight adalah bobot relatif.",
   "commodities": [
     "Brent Oil",
     "Natural Gas",
@@ -14,12 +14,340 @@
   ],
   "stocks": [
     {
-      "ticker": "CONTOH",
+      "ticker": "MEDC",
+      "commodity": "Brent Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "ELSA",
+      "commodity": "Brent Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "ESSA",
+      "commodity": "Brent Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "AKRA",
+      "commodity": "Brent Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "RATU",
+      "commodity": "Brent Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "PTRO",
+      "commodity": "Brent Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "PGAS",
+      "commodity": "Natural Gas",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "MEDC",
+      "commodity": "Natural Gas",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "ESSA",
+      "commodity": "Natural Gas",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "AADI",
       "commodity": "Coal",
       "impact_up": 1,
       "impact_down": -1,
       "weight": 1,
-      "note": "Ganti dengan ticker emiten KOMPAS100 yang relevan."
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "ADMR",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "ADRO",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "ITMG",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "PTBA",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "TOBA",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "HRUM",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "CUAN",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "RMKE",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "BIPI",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "UNTR",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "BUMI",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "DEWA",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "ANTM",
+      "commodity": "Gold",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "ARCI",
+      "commodity": "Gold",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "BRMS",
+      "commodity": "Gold",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "EMAS",
+      "commodity": "Gold",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "MDKA",
+      "commodity": "Gold",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "PSAB",
+      "commodity": "Gold",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "HRTA",
+      "commodity": "Gold",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "AMMN",
+      "commodity": "Gold",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "INCO",
+      "commodity": "Nickel",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "NCKL",
+      "commodity": "Nickel",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "MBMA",
+      "commodity": "Nickel",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "HRUM",
+      "commodity": "Nickel",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "TINS",
+      "commodity": "Timah",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "AMMN",
+      "commodity": "Copper",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "MDKA",
+      "commodity": "Copper",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "AALI",
+      "commodity": "Palm Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "DSNG",
+      "commodity": "Palm Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "LSIP",
+      "commodity": "Palm Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "SSMS",
+      "commodity": "Palm Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
+    },
+    {
+      "ticker": "TAPG",
+      "commodity": "Palm Oil",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation."
     }
   ]
 }
