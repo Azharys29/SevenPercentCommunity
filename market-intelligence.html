@@ -15,7 +15,7 @@
 .sectors{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.sector{border:1px solid var(--line);background:var(--panel);padding:12px 14px}.sector-head{display:flex;justify-content:space-between;gap:12px}.sector-name{font-weight:600}.sector-score{font:600 15px 'IBM Plex Mono',monospace}.sector-bar{height:6px;background:var(--soft);margin:9px 0 7px}.sector-bar i{display:block;height:100%;background:var(--ice)}.sector-meta{display:flex;justify-content:space-between;color:var(--tx3);font-size:11px}.sector-stocks{margin-top:8px;display:flex;gap:5px;flex-wrap:wrap}.sector-stocks a{border:1px solid var(--line);padding:3px 6px;color:var(--tx2);text-decoration:none;font-size:11px}.sector-stocks a:hover{color:var(--tx);border-color:var(--ice)}
 .loading{padding:30px;text-align:center;color:var(--tx2)}.error{border:1px dashed var(--line);padding:18px;color:var(--tx3)}.foot{margin-top:28px;padding-top:16px;border-top:1px solid var(--soft);color:var(--tx3);font-size:12px}
 @media(max-width:1050px){.intel{grid-template-columns:1fr}.topgrid{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.wrap{padding:0 14px 42px}.topgrid,.sectors{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.market-score{font-size:48px}}
-</style>
+.catalyst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.catalyst{border:1px solid var(--line);background:var(--panel);padding:15px}.catalyst-head{display:flex;justify-content:space-between;gap:10px}.catalyst h3{margin:3px 0;font-size:21px}.badge{display:inline-block;border:1px solid var(--ice);color:var(--bright);padding:3px 7px;font-size:11px}.badge.neg{border-color:var(--dim);color:var(--dim)}.catalyst-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.catalyst-metrics div{border-top:1px solid var(--soft);padding-top:6px}.catalyst-metrics b{display:block}.catalyst-metrics span{font-size:10px;color:var(--tx3)}.research{margin-top:11px;color:var(--tx2);font-size:13px}.news-mini{margin-top:11px;border-top:1px solid var(--soft);padding-top:9px}.news-mini a{display:block;color:var(--bright);text-decoration:none;font-size:12px;margin-top:6px}.news-mini small{color:var(--tx3)}@media(max-width:850px){.catalyst-grid{grid-template-columns:1fr}}</style>
 </head>
 <body><div class="wrap">
 <header class="top"><div class="brand">SEVENPERCENTCOMMUNITY / MARKET INTELLIGENCE</div><nav class="menu-wrap"><details class="menu"><summary>☰ Menu</summary><div class="menu-panel"><a href="./index.html">Screener</a><a href="./fundamental.html">Fundamental</a><a href="./teknikal.html">Teknikal</a><a href="./market-intelligence.html">Market Intelligence</a><a href="./recommendations.html">Rekomendasi</a><a href="./system-health.html">System Health</a><a href="./admin.html">Admin</a></div></details></nav></header>
@@ -31,7 +31,7 @@
 
 <section class="section"><h2>Volume Intelligence</h2><div class="panel"><div class="volume-grid"><div class="metric"><span>Average RVOL</span><b id="vAvg">—</b></div><div class="metric"><span>High Volume</span><b id="vHigh">—</b></div><div class="metric"><span>Volume + Price</span><b id="vConfirm">—</b></div><div class="metric"><span>Low Volume</span><b id="vLow">—</b></div></div><div class="volume-signal"><span class="muted">Volume Signal</span><br><b id="vSignal">—</b><div class="volume-note">RVOL membandingkan volume saat ini dengan rata-rata volume historis yang sudah dihitung workflow. High Volume ≥ 1.5x, Low Volume &lt; 0.8x.</div></div></div></section>
 
-<section class="section"><h2>Top Opportunities</h2><div id="topgrid" class="topgrid"><div class="loading">Memuat...</div></div></section>
+<section class="section"><h2>Market Catalyst</h2><div id="catalysts" class="catalyst-grid"><div class="loading">Memuat...</div></div></section><section class="section"><h2>Top Opportunities</h2><div id="topgrid" class="topgrid"><div class="loading">Memuat...</div></div></section>
 <section class="section"><h2>Sector Strength</h2><div id="sectors" class="sectors"><div class="loading">Memuat...</div></div></section>
 
 <footer class="foot">Metodologi bersifat mekanis dan menggunakan data KOMPAS100 yang tersedia pada file hasil workflow. Market Score adalah ringkasan teknikal, bukan rekomendasi beli/jual. Nilai dapat berubah setelah workflow menghasilkan data baru.</footer>
@@ -50,7 +50,9 @@ function calc(rows){
  const score=Math.round(0.30*breadth+0.30*trend+0.25*mom+0.15*Math.min(100,rvol/1.2*100));
  return {score,breadth,momentum:mom,volume:rvol,above20,above50,above200,avg5,avg20};
 }
+function renderCatalyst(d){const q=d.items||[];const box=$('catalysts');if(!q.length){box.innerHTML='<div class="error">Belum ada kandidat yang memenuhi Score ≥25 dan Confluence ≥3/5.</div>';return}box.innerHTML=q.map(x=>{const neg=String(x.market_sentiment||'').toLowerCase().includes('negative');const news=(x.news||[]).slice(0,2).map(n=>'<a target="_blank" rel="noopener" href="'+esc(n.url)+'">'+esc(n.title)+'</a><small>'+esc(n.source)+' · '+esc(n.sentiment)+'</small>').join('');return '<article class="catalyst"><div class="catalyst-head"><div><div class="rank">TECHNICAL CATALYST</div><h3>'+esc(x.ticker)+'</h3></div><span class="badge '+(neg?'neg':'')+'">'+esc(x.market_sentiment||'Neutral')+'</span></div><div class="muted">'+esc(x.strength||'')+' · '+esc(x.confluence)+' confluence</div><div class="catalyst-metrics"><div><b>'+Number(x.score??0).toFixed(1)+'</b><span>TECH SCORE</span></div><div><b>'+Number(x.rsi??0).toFixed(1)+'</b><span>RSI</span></div><div><b>'+Number(x.rvol??0).toFixed(2)+'x</b><span>RVOL</span></div></div><div class="research">'+esc(x.interpretation||'')}</div><div class="news-mini"><div class="muted">LATEST NEWS</div>'+ (news||'<small>Belum ada berita.</small>')+'</div></article>'}).join('')}
 function render(d){
+ renderCatalyst(d.catalyst||{});
  const rows=d.stocks||[], c=calc(rows), trend=classify(c.score);
  const validVol=rows.filter(x=>Number.isFinite(+x.rvol));
  const avgRvol=validVol.length?validVol.reduce((a,x)=>a+(+x.rvol||0),0)/validVol.length:0;
@@ -73,7 +75,8 @@ async function init(){
    fetch('./data/momentum.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('momentum.json');return r.json()}),
    fetch('./data/sector-rotation.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{sectors:[]}).catch(()=>({sectors:[]}))
   ]);
-  render({stocks:m.stocks||[],asof:m.asof,generated:m.generated,sectors:s.sectors||[]});
+  const catalyst=await fetch('./data/market-intelligence.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{items:[]}).catch(()=>({items:[]}));
+  render({stocks:m.stocks||[],asof:m.asof,generated:m.generated,sectors:s.sectors||[],catalyst});
  }catch(e){
   $('asof').textContent='Data belum tersedia';
   $('topgrid').innerHTML='<div class="error">Market Intelligence belum dapat memuat data hasil workflow. Jalankan workflow data terlebih dahulu.</div>';
