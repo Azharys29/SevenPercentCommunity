@@ -188,7 +188,7 @@ textarea.code{min-height:250px;font:400 12.5px/1.55 var(--f-mono);tab-size:2;whi
 <div class="wrap">
   <header class="top">
     <div class="brand">@azharys.hr — Capital Markets Desk</div>
-    <nav class="menu-wrap"><details class="menu"><summary>☰ Menu</summary><div class="menu-panel"><a href="./index.html">Screener</a><a href="./recommendations.html">Rekomendasi</a><a href="./recommendation-report.html">Rekap Rekomendasi</a><a href="./recommendation-analytics.html">Recommendation Analytics</a><a href="./new-bullish.html">NEW Bullish</a><a href="./heatmap.html">Heatmap</a><a href="./backtest.html">Backtest</a><a href="./relative-strength.html">Relative Strength</a><a href="./momentum-dashboard.html">Momentum Dashboard</a><a href="./catalyst-calendar.html">Earnings Calendar</a><a href="./value-gap.html">Value Gap</a><a href="./system-health.html">System Health</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./ai-insights.html">Market Intelligence</a><a href="./admin.html">Admin</a></div></details><span id="status" class="pill">Memuat data…</span></nav>
+    <nav class="menu-wrap"><details class="menu"><summary>☰ Menu</summary><div class="menu-panel"><a href="./index.html">Screener</a><a href="./recommendations.html">Rekomendasi</a><a href="./stock-detail.html">Stock Detail</a><a href="./recommendation-report.html">Rekap Rekomendasi</a><a href="./recommendation-analytics.html">Recommendation Analytics</a><a href="./new-bullish.html">NEW Bullish</a><a href="./heatmap.html">Heatmap</a><a href="./backtest.html">Backtest</a><a href="./relative-strength.html">Relative Strength</a><a href="./momentum-dashboard.html">Momentum Dashboard</a><a href="./catalyst-calendar.html">Earnings Calendar</a><a href="./value-gap.html">Value Gap</a><a href="./system-health.html">System Health</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./ai-insights.html">Market Intelligence</a><a href="./admin.html">Admin</a></div></details><span id="status" class="pill">Memuat data…</span></nav>
   </header>
   <div id="banner" class="banner" hidden></div>
 
@@ -778,6 +778,8 @@ function chart({h = 110, lines = [], bars = null, guides = [], fixed = null, zer
 const leg = items => `<div class="legend">${items.map(([c, t, d]) => `<span><i style="border-color:${c};${d ? 'border-top-style:dashed' : ''}"></i>${t}</span>`).join('')}</div>`;
 
 function openDetail(t) {
+  window.location.href = './stock-detail.html?stock=' + encodeURIComponent(t);
+  return;
   const r = ROWS.find(x => x.s.t === t); if (!r) return;
   const {s, a} = r, N = 120, cut = arr => arr.slice(-N);
   const d = dirOf(a.score), n = s.c.length;
