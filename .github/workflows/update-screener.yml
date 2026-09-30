@@ -89,10 +89,28 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Keep freshly generated files safe while synchronizing with a newer main.
+          mkdir -p /tmp/generated-data
+          cp data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json /tmp/generated-data/
+
+          git fetch origin main
+          git reset --hard origin/main
+
+          cp /tmp/generated-data/screener.json data/screener.json
+          cp /tmp/generated-data/signals.json data/signals.json
+          cp /tmp/generated-data/signal-history.json data/signal-history.json
+          cp /tmp/generated-data/market-intelligence.json data/market-intelligence.json
+          cp /tmp/generated-data/sector-rotation.json data/sector-rotation.json
+          cp /tmp/generated-data/backtest.json data/backtest.json
+          cp /tmp/generated-data/relative-strength.json data/relative-strength.json
+          cp /tmp/generated-data/momentum.json data/momentum.json
+          cp /tmp/generated-data/catalysts.json data/catalysts.json
+          cp /tmp/generated-data/value-gap.json data/value-gap.json
+
           git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json
           git diff --cached --quiet || git commit -m "chore: update screener, signals and market intelligence"
-          git pull --rebase origin main
-          git push
+          git push origin HEAD:main
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
