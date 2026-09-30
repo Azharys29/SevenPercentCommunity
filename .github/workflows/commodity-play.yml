@@ -24,9 +24,7 @@ jobs:
       - name: Install dependencies
         run: python -m pip install requests openpyxl
 
-      - name: Fetch Trading Economics commodity data
-        env:
-          TRADING_ECONOMICS_API_KEY: ${{ secrets.TRADING_ECONOMICS_API_KEY }}
+      - name: Fetch free World Bank + Kemendag commodity data
         run: python scripts/fetch_commodity_play.py
 
       - name: Commit updated Commodity Play data
