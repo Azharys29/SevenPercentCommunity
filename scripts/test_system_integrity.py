@@ -23,7 +23,7 @@ def main():
     for x in sig["signals"]:
         assert x["signal"] in {"Bullish","Bearish","Neutral"}
         assert -100 <= float(x["score"]) <= 100
-        assert int(x["agree"]) <= int(x["total"]) == 4
+        assert int(x["agree"]) <= int(x["total"]) == 5
     for name in ["market-intelligence.json","sector-rotation.json","backtest.json","relative-strength.json","momentum.json","catalysts.json","value-gap.json"]:
         load(name)
     print(f"System integrity PASS: {len(tickers)} stocks, {len(signal_tickers)} signals")
