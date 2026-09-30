@@ -233,6 +233,7 @@ def main():
         "universe": "KOMPAS100",
         "universe_count": len(rows),
         "valid_count": sum(x["value_gap_score"] is not None for x in rows),
+        "incomplete_count": sum(x["value_gap_score"] is None for x in rows) - len(errors),
         "error_count": len(errors),
         "formula": "(Average 3Y P/E - Current P/E) × EPS Growth (%)",
         "eps_growth_definition": "Annual EPS growth: latest fiscal-year EPS versus prior fiscal-year EPS; Yahoo trailing earningsGrowth used only as fallback",
