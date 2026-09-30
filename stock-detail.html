@@ -29,6 +29,13 @@ async function load(){
 async function recommendations(t){
  try{const r=await fetch(SB_URL+"/rest/v1/recommendations?select=*&ticker=eq."+encodeURIComponent(t)+"&order=created_at.desc",{headers:{apikey:SB_KEY}});return r.ok?await r.json():[]}catch{return []}
 }
+function recOutcome(r){
+ const s=String(r.auto_status||"").toUpperCase(), entry=(Number(r.entry_min)+Number(r.entry_max))/2;
+ if(s.includes("TP2")) return {label:"TP2 HIT",ret:(Number(r.tp2)/entry-1)*100};
+ if(s.includes("TP1")) return {label:"TP1 HIT",ret:(Number(r.tp1)/entry-1)*100};
+ if(s.includes("STOP LOSS")) return {label:"STOP LOSS HIT",ret:(Number(r.stop_loss)/entry-1)*100};
+ return {label:"OPEN",ret:(Number(r.current_price)/entry-1)*100};
+}
 function find(t){
  const si=DATA.si.signals.find(x=>x.ticker===t), s=DATA.sc.stocks.find(x=>x.t===t);
  return {s,si,mo:DATA.mo.stocks.find(x=>x.ticker===t),rs:DATA.rs.stocks.find(x=>x.ticker===t),vg:DATA.vg.stocks.find(x=>x.ticker===t),ca:DATA.ca.events.filter(x=>x.ticker===t)}
@@ -44,7 +51,8 @@ async function render(){
   ["MACD Hist %",pct(x.si.macd_hist_pct),tone(x.si.macd_hist_pct)],["RVOL",num(x.si.rvol,2),tone(x.si.rvol-1)],
   ["EMA20",x.si.ema20_trend?"Above price":"Below price",x.si.ema20_trend?"up":"dn"]
  ];
- const recRows=recs.length?recs.map(r=>'<tr><td>'+esc(new Date(r.created_at).toLocaleDateString("id-ID"))+'</td><td>Rp '+num(r.entry_min)+' – '+num(r.entry_max)+'</td><td>Rp '+num(r.tp1)+'</td><td>Rp '+num(r.tp2)+'</td><td>Rp '+num(r.stop_loss)+'</td><td>'+esc(r.auto_status||"ACTIVE")+'</td></tr>').join(""):'<tr><td colspan="6">Belum ada rekomendasi untuk ticker ini.</td></tr>';
+ const outcomes=recs.map(recOutcome), realized=outcomes.filter(o=>o.label!=="OPEN"), wins=realized.filter(o=>o.ret>0), avg=outcomes.length?outcomes.reduce((a,o)=>a+o.ret,0)/outcomes.length:0;
+ const recRows=recs.length?recs.map((r,i)=>{const o=outcomes[i];return '<tr><td>'+esc(new Date(r.created_at).toLocaleDateString("id-ID"))+'</td><td>Rp '+num(r.entry_min)+' – '+num(r.entry_max)+'</td><td>Rp '+num(r.tp1)+'</td><td>Rp '+num(r.tp2)+'</td><td>Rp '+num(r.stop_loss)+'</td><td>'+esc(o.label)+'</td><td class="'+tone(o.ret)+'">'+pct(o.ret)+'</td></tr>'}).join(""):'<tr><td colspan="7">Belum ada rekomendasi untuk ticker ini.</td></tr>';
  const newsUrl="https://finance.yahoo.com/quote/"+encodeURIComponent(t)+".JK/";
  $("#app").innerHTML=
  '<section class="hero"><div class="herohead"><div><div class="ticker">'+esc(t)+' <span class="pill">'+esc(x.s.s||"")+'</span></div><div class="sub">'+esc(x.s.n||t)+' · '+esc(x.s.sec||"")+' · '+esc((x.s.ix||[]).join(", "))+'</div><div class="price">Rp '+num(x.s.c?.at(-1))+'</div><div class="sub">As of '+esc(DATA.si.asof)+' · Generated '+esc(DATA.si.generated)+'</div></div><div class="'+tone(x.si.score)+'" style="text-align:right"><div style="font-size:28px;font-weight:700">'+num(x.si.score,2)+'</div><b>'+esc(x.si.signal)+' · '+esc(x.si.strength)+'</b><div class="sub">'+x.si.agree+' / '+x.si.total+' confluence</div></div></div></section>'+
@@ -59,7 +67,7 @@ async function render(){
  '<div class="card"><h2 class="section-title">Relative Strength</h2><table class="tbl"><tr><td>RS Score</td><td>'+num(x.rs?.rs_score,1)+'</td></tr><tr><td>Return vs IHSG</td><td class="'+tone(x.rs?.vs_ihsg)+'">'+pct(x.rs?.vs_ihsg)+'</td></tr><tr><td>Return vs Sector</td><td class="'+tone(x.rs?.vs_sector)+'">'+pct(x.rs?.vs_sector)+'</td></tr><tr><td>Rank</td><td>'+num(x.rs?.rank,0)+'</td></tr></table></div></section>'+
  '<section class="two"><div class="card"><h2 class="section-title">Value Gap</h2>'+(x.vg?'<table class="tbl"><tr><td>Current PER</td><td>'+num(x.vg.current_pe)+'</td></tr><tr><td>PER Avg 3Y</td><td>'+num(x.vg.avg_pe_3y)+'</td></tr><tr><td>EPS Growth</td><td class="'+tone(x.vg.eps_growth)+'">'+pct(x.vg.eps_growth)+'</td></tr><tr><td>Value Gap Score</td><td>'+num(x.vg.value_gap_score)+'</td></tr><tr><td>1M Return</td><td class="'+tone(x.vg.return_1m)+'">'+pct(x.vg.return_1m)+'</td></tr><tr><td>YTD Return</td><td class="'+tone(x.vg.return_ytd)+'">'+pct(x.vg.return_ytd)+'</td></tr></table>':'<p class="note">Tidak tersedia.</p>')+'</div>'+
  '<div class="card"><h2 class="section-title">Earnings / Catalyst</h2>'+(x.ca.length?x.ca.map(e=>'<p><b>'+esc(e.date)+'</b> · '+esc(e.title||"Earnings")+'<br><span class="sub">'+esc(e.importance||"")+'</span></p>').join(""):'<p class="note">Tidak ada earnings event pada window aktif.</p>')+'<a class="link" target="_blank" rel="noopener" href="'+newsUrl+'">Buka Yahoo Finance / News ↗</a></div></section>'+
- '<section class="card"><h2 class="section-title">Recommendation Journal</h2><div class="tablewrap"><table class="tbl"><thead><tr><th>Date</th><th>Entry</th><th>TP1</th><th>TP2</th><th>SL</th><th>Status</th></tr></thead><tbody>'+recRows+'</tbody></table></div></section>'+
+ '<section class="card"><h2 class="section-title">Recommendation Journal</h2><div class="grid"><div class="metric"><small>RECOMMENDATIONS</small><b>'+recs.length+'</b></div><div class="metric"><small>REALIZED WIN RATE</small><b>'+ (realized.length?pct(wins.length/realized.length*100):"—") +'</b></div><div class="metric"><small>AVERAGE P/L</small><b class="'+tone(avg)+'">'+(recs.length?pct(avg):"—")+'</b></div><div class="metric"><small>REALIZED</small><b>'+realized.length+'</b></div></div><div class="tablewrap" style="margin-top:14px"><table class="tbl"><thead><tr><th>Date</th><th>Entry</th><th>TP1</th><th>TP2</th><th>SL</th><th>Status</th><th>P/L</th></tr></thead><tbody>'+recRows+'</tbody></table></div></section>'+
  '<section class="card"><h2 class="section-title">Historical Price</h2><div class="note">Data harga EOD tersedia di screener. Halaman detail ini menggunakan data yang sama sehingga snapshot antar-modul tetap mengacu pada tanggal as-of yang sama.</div></section>';
 }
 $("#go").onclick=()=>{const t=$("#ticker").value.trim().toUpperCase();if(t)history.replaceState(null,"","?stock="+encodeURIComponent(t));render()};
