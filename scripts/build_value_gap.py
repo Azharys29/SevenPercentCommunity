@@ -173,7 +173,10 @@ def main():
                 stmt, history, fx_history, financial_currency
             )
             hist3 = [x for _, x in pe_hist if x > 0]
-            avg_pe = sum(hist3) / 3 if len(hist3) == 3 else None
+            # Use up to 3 valid annual observations. Newly listed names may
+            # legitimately have only 2 years available; require at least 2
+            # observations rather than dropping them unnecessarily.
+            avg_pe = sum(hist3) / len(hist3) if len(hist3) >= 2 else None
 
             growth = None
             if len(eps_hist) >= 2:
@@ -237,7 +240,7 @@ def main():
         "error_count": len(errors),
         "formula": "(Average 3Y P/E - Current P/E) × EPS Growth (%)",
         "eps_growth_definition": "Annual EPS growth: latest fiscal-year EPS versus prior fiscal-year EPS; Yahoo trailing earningsGrowth used only as fallback",
-        "historical_pe_definition": "Annual P/E from fiscal-year-end/nearest prior price divided by EPS, with USD financials converted using historical USD/IDR",
+        "historical_pe_definition": "Average of up to 3 valid annual P/E observations; at least 2 observations required, with USD financials converted using historical USD/IDR",
         "sources": ["Yahoo Finance / yfinance"],
         "errors": errors,
         "stocks": rows,
