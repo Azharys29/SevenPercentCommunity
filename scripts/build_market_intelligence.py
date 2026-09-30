@@ -45,7 +45,7 @@ def fetch_news(ticker,name):
     return out
 def main():
     s=json.loads(SIGNALS.read_text(encoding="utf-8"))
-    c=[x for x in s.get("signals",[]) if x.get("signal")=="Bullish" and float(x.get("score") or 0)>=35 and int(x.get("agree") or 0)>=3]
+    c=[x for x in s.get("signals",[]) if x.get("signal")=="Bullish" and float(x.get("score") or 0)>=25 and int(x.get("agree") or 0)>=3]
     c=sorted(c,key=lambda x:float(x.get("score") or 0),reverse=True)[:MAX_ITEMS]; items=[]
     for x in c:
         items.append({"ticker":x.get("ticker"),"name":x.get("name",""),"asof":x.get("asof"),"score":x.get("score"),"score_delta":x.get("score_delta"),"signal":x.get("signal"),"strength":x.get("strength"),"confluence":f'{x.get("agree",0)}/{x.get("total",0)}',"rsi":x.get("rsi"),"stoch_k":x.get("stoch_k"),"stoch_d":x.get("stoch_d"),"macd_hist_pct":x.get("macd_hist_pct"),"rvol":x.get("rvol"),"market_sentiment":market_sentiment(float(x.get("score") or 0),int(x.get("agree") or 0),int(x.get("total") or 4)),"interpretation":interpretation(x),"news":fetch_news(x.get("ticker",""),x.get("name","")),"updated_at":datetime.now(timezone.utc).isoformat(timespec="seconds")}); time.sleep(.25)
