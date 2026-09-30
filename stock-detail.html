@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stock Detail — SevenPercentCommunity</title>
+<style>
+:root{--bg:#090D13;--panel:#0F151D;--panel2:#141C26;--line:#2E4A68;--tx:#F3F6FA;--tx2:#A3ADBC;--tx3:#7C879A;--ice:#85B7EB;--cream:#F2EBDD;--up:#76D69A;--dn:#F28B8B}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Arial,sans-serif}.wrap{max-width:1180px;margin:auto;padding:20px 18px 50px}.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1B2836;padding-bottom:14px}.brand{color:var(--ice);font:12px monospace;letter-spacing:.1em}.menu{position:relative}.menu summary{list-style:none;cursor:pointer;border:1px solid var(--line);background:var(--panel2);padding:8px 13px;border-radius:4px}.menu summary::-webkit-details-marker{display:none}.menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:20;min-width:220px;padding:7px;border:1px solid var(--line);background:var(--panel);box-shadow:0 14px 35px #0008;border-radius:4px}.menu-panel a{display:block;padding:8px 10px;color:var(--tx2);text-decoration:none}.menu-panel a:hover{background:var(--panel2);color:var(--tx)}h1{font-size:38px;margin:30px 0 5px;color:var(--cream)}.sub{color:var(--tx3)}.search{display:flex;gap:8px;margin:20px 0}.search input{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--tx);padding:11px;border-radius:4px}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--tx);padding:10px 14px;border-radius:4px;cursor:pointer}.hero,.card{border:1px solid var(--line);background:var(--panel);padding:18px;border-radius:5px;margin-top:14px}.herohead{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.ticker{font-size:30px;font-weight:700}.price{font-size:24px;margin-top:5px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{background:var(--panel2);padding:13px;border:1px solid #1B2836}.metric small{display:block;color:var(--tx3);font-size:11px}.metric b{font-size:18px}.up{color:var(--up)}.dn{color:var(--dn)}.neutral{color:var(--tx2)}.pill{display:inline-block;border:1px solid var(--line);padding:4px 9px;border-radius:999px;font-size:11px}.section-title{margin:0 0 14px;font-size:18px}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.tablewrap{overflow:auto}.tbl{width:100%;border-collapse:collapse}.tbl th,.tbl td{text-align:left;padding:9px;border-bottom:1px solid #1B2836;white-space:nowrap}.tbl th{color:var(--tx3);font-size:11px;text-transform:uppercase}.indicator-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.ind{padding:12px;background:var(--panel2);border:1px solid #1B2836}.ind small{color:var(--tx3);display:block}.ind b{display:block;margin-top:4px}.note{color:var(--tx2)}.link{color:var(--ice);text-decoration:none}.loading{color:var(--tx3);padding:30px 0}.error{color:var(--dn)}@media(max-width:800px){.grid,.indicator-grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}h1{font-size:32px}}@media(max-width:500px){.grid,.indicator-grid{grid-template-columns:1fr}.herohead{flex-direction:column}}
+</style></head><body><div class="wrap">
+<header class="top"><div class="brand">SEVENPERCENTCOMMUNITY</div><details class="menu"><summary>☰ Menu</summary><div class="menu-panel">
+<a href="./index.html">Screener</a><a href="./recommendations.html">Rekomendasi</a><a href="./recommendation-report.html">Rekap Rekomendasi</a><a href="./recommendation-analytics.html">Recommendation Analytics</a><a href="./new-bullish.html">NEW Bullish</a><a href="./heatmap.html">Heatmap</a><a href="./backtest.html">Backtest</a><a href="./relative-strength.html">Relative Strength</a><a href="./momentum-dashboard.html">Momentum Dashboard</a><a href="./catalyst-calendar.html">Earnings Calendar</a><a href="./value-gap.html">Value Gap</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./ai-insights.html">Market Intelligence</a><a href="./system-health.html">System Health</a><a href="./admin.html">Admin</a>
+</div></details></header>
+<h1>Unified Stock Detail</h1><div class="sub">Satu halaman untuk menggabungkan Technical, Momentum, Relative Strength, Value Gap, Earnings, dan Recommendation.</div>
+<div class="search"><input id="ticker" placeholder="Masukkan ticker, mis. BBCA" autocomplete="off"><button class="btn" id="go">Lihat</button></div>
+<div id="app" class="loading">Memuat data…</div>
+</div>
+<script>
+const SB_URL="https://njghchwtcyoieymkodzj.supabase.co",SB_KEY="sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ";
+const $=s=>document.querySelector(s), esc=s=>String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const num=(v,d=2)=>v==null||v===""||!isFinite(Number(v))?"—":new Intl.NumberFormat("id-ID",{maximumFractionDigits:d}).format(Number(v));
+const pct=v=>v==null||!isFinite(Number(v))?"—":num(v,2)+"%";
+const tone=v=>Number(v)>0?"up":Number(v)<0?"dn":"neutral";
+let DATA={};
+async function json(p){const r=await fetch(p,{cache:"no-cache"});if(!r.ok)throw Error(p+" HTTP "+r.status);return r.json()}
+async function load(){
+ try{
+  const [sc,si,mo,rs,vg,ca]=await Promise.all([json("./data/screener.json"),json("./data/signals.json"),json("./data/momentum.json"),json("./data/relative-strength.json"),json("./data/value-gap.json"),json("./data/catalysts.json")]);
+  DATA={sc,si,mo,rs,vg,ca}; render();
+ }catch(e){$("#app").innerHTML='<div class="error">Gagal memuat data: '+esc(e.message)+'</div>'}
+}
+async function recommendations(t){
+ try{const r=await fetch(SB_URL+"/rest/v1/recommendations?select=*&ticker=eq."+encodeURIComponent(t)+"&order=created_at.desc",{headers:{apikey:SB_KEY}});return r.ok?await r.json():[]}catch{return []}
+}
+function find(t){
+ const si=DATA.si.signals.find(x=>x.ticker===t), s=DATA.sc.stocks.find(x=>x.t===t);
+ return {s,si,mo:DATA.mo.stocks.find(x=>x.ticker===t),rs:DATA.rs.stocks.find(x=>x.ticker===t),vg:DATA.vg.stocks.find(x=>x.ticker===t),ca:DATA.ca.events.filter(x=>x.ticker===t)}
+}
+async function render(){
+ const t=(new URLSearchParams(location.search).get("stock")||$("#ticker").value||"").trim().toUpperCase();
+ if(!t){$("#app").innerHTML='<div class="card">Masukkan ticker untuk melihat unified stock detail.</div>';return}
+ $("#ticker").value=t; const x=find(t);
+ if(!x.s||!x.si){$("#app").innerHTML='<div class="error">Ticker '+esc(t)+' tidak ditemukan di universe KOMPAS100.</div>';return}
+ const recs=await recommendations(t);
+ const comp=[
+  ["RSI",num(x.si.rsi,2),tone(50-x.si.rsi)],["Stochastic K",num(x.si.stoch_k,2),tone(x.si.stoch_k-50)],
+  ["MACD Hist %",pct(x.si.macd_hist_pct),tone(x.si.macd_hist_pct)],["RVOL",num(x.si.rvol,2),tone(x.si.rvol-1)],
+  ["EMA20",x.si.ema20_trend?"Above price":"Below price",x.si.ema20_trend?"up":"dn"]
+ ];
+ const recRows=recs.length?recs.map(r=>'<tr><td>'+esc(new Date(r.created_at).toLocaleDateString("id-ID"))+'</td><td>Rp '+num(r.entry_min)+' – '+num(r.entry_max)+'</td><td>Rp '+num(r.tp1)+'</td><td>Rp '+num(r.tp2)+'</td><td>Rp '+num(r.stop_loss)+'</td><td>'+esc(r.auto_status||"ACTIVE")+'</td></tr>').join(""):'<tr><td colspan="6">Belum ada rekomendasi untuk ticker ini.</td></tr>';
+ const newsUrl="https://finance.yahoo.com/quote/"+encodeURIComponent(t)+".JK/";
+ $("#app").innerHTML=
+ '<section class="hero"><div class="herohead"><div><div class="ticker">'+esc(t)+' <span class="pill">'+esc(x.s.s||"")+'</span></div><div class="sub">'+esc(x.s.n||t)+' · '+esc(x.s.sec||"")+' · '+esc((x.s.ix||[]).join(", "))+'</div><div class="price">Rp '+num(x.s.c?.at(-1))+'</div><div class="sub">As of '+esc(DATA.si.asof)+' · Generated '+esc(DATA.si.generated)+'</div></div><div class="'+tone(x.si.score)+'" style="text-align:right"><div style="font-size:28px;font-weight:700">'+num(x.si.score,2)+'</div><b>'+esc(x.si.signal)+' · '+esc(x.si.strength)+'</b><div class="sub">'+x.si.agree+' / '+x.si.total+' confluence</div></div></div></section>'+
+ '<section class="grid">'+
+ '<div class="metric"><small>TECHNICAL SCORE</small><b class="'+tone(x.si.score)+'">'+num(x.si.score,2)+'</b></div>'+
+ '<div class="metric"><small>CONFLUENCE</small><b>'+x.si.agree+' / '+x.si.total+'</b></div>'+
+ '<div class="metric"><small>MOMENTUM SCORE</small><b>'+num(x.mo?.momentum_score,1)+'</b><div class="sub">'+esc(x.mo?.momentum_label||"—")+'</div></div>'+
+ '<div class="metric"><small>RS SCORE</small><b>'+num(x.rs?.rs_score,1)+'</b><div class="sub">Rank '+num(x.rs?.rank,0)+'</div></div>'+
+ '</section>'+
+ '<section class="card"><h2 class="section-title">Technical Snapshot</h2><div class="indicator-grid">'+comp.map(a=>'<div class="ind"><small>'+a[0]+'</small><b class="'+a[2]+'">'+esc(a[1])+'</b></div>').join("")+'</div><p class="note">EMA20: Rp '+num(x.si.ema20)+' · Stochastic '+num(x.si.stoch_k,1)+' / '+num(x.si.stoch_d,1)+' · RVOL '+num(x.si.rvol,2)+'</p></section>'+
+ '<section class="two"><div class="card"><h2 class="section-title">Momentum</h2><table class="tbl"><tr><td>5D Return</td><td class="'+tone(x.mo?.return_5d)+'">'+pct(x.mo?.return_5d)+'</td></tr><tr><td>20D Return</td><td class="'+tone(x.mo?.return_20d)+'">'+pct(x.mo?.return_20d)+'</td></tr><tr><td>MA Trend Points</td><td>'+num(x.mo?.trend_points,0)+'/5</td></tr><tr><td>RSI</td><td>'+num(x.mo?.rsi,2)+'</td></tr></table></div>'+
+ '<div class="card"><h2 class="section-title">Relative Strength</h2><table class="tbl"><tr><td>RS Score</td><td>'+num(x.rs?.rs_score,1)+'</td></tr><tr><td>Return vs IHSG</td><td class="'+tone(x.rs?.vs_ihsg)+'">'+pct(x.rs?.vs_ihsg)+'</td></tr><tr><td>Return vs Sector</td><td class="'+tone(x.rs?.vs_sector)+'">'+pct(x.rs?.vs_sector)+'</td></tr><tr><td>Rank</td><td>'+num(x.rs?.rank,0)+'</td></tr></table></div></section>'+
+ '<section class="two"><div class="card"><h2 class="section-title">Value Gap</h2>'+(x.vg?'<table class="tbl"><tr><td>Current PER</td><td>'+num(x.vg.current_pe)+'</td></tr><tr><td>PER Avg 3Y</td><td>'+num(x.vg.avg_pe_3y)+'</td></tr><tr><td>EPS Growth</td><td class="'+tone(x.vg.eps_growth)+'">'+pct(x.vg.eps_growth)+'</td></tr><tr><td>Value Gap Score</td><td>'+num(x.vg.value_gap_score)+'</td></tr><tr><td>1M Return</td><td class="'+tone(x.vg.return_1m)+'">'+pct(x.vg.return_1m)+'</td></tr><tr><td>YTD Return</td><td class="'+tone(x.vg.return_ytd)+'">'+pct(x.vg.return_ytd)+'</td></tr></table>':'<p class="note">Tidak tersedia.</p>')+'</div>'+
+ '<div class="card"><h2 class="section-title">Earnings / Catalyst</h2>'+(x.ca.length?x.ca.map(e=>'<p><b>'+esc(e.date)+'</b> · '+esc(e.title||"Earnings")+'<br><span class="sub">'+esc(e.importance||"")+'</span></p>').join(""):'<p class="note">Tidak ada earnings event pada window aktif.</p>')+'<a class="link" target="_blank" rel="noopener" href="'+newsUrl+'">Buka Yahoo Finance / News ↗</a></div></section>'+
+ '<section class="card"><h2 class="section-title">Recommendation Journal</h2><div class="tablewrap"><table class="tbl"><thead><tr><th>Date</th><th>Entry</th><th>TP1</th><th>TP2</th><th>SL</th><th>Status</th></tr></thead><tbody>'+recRows+'</tbody></table></div></section>'+
+ '<section class="card"><h2 class="section-title">Historical Price</h2><div class="note">Data harga EOD tersedia di screener. Halaman detail ini menggunakan data yang sama sehingga snapshot antar-modul tetap mengacu pada tanggal as-of yang sama.</div></section>';
+}
+$("#go").onclick=()=>{const t=$("#ticker").value.trim().toUpperCase();if(t)history.replaceState(null,"","?stock="+encodeURIComponent(t));render()};
+$("#ticker").addEventListener("keydown",e=>{if(e.key==="Enter")$("#go").click()});
+load();
+</script></body></html>
