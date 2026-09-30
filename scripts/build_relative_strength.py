@@ -44,7 +44,7 @@ def main():
         ranks=[x["rank"][str(n)] for n in H if x["rank"][str(n)] is not None]
         x["rs_score"]=round(sum(ranks)/len(ranks),1) if ranks else None
     rows.sort(key=lambda x:x["rs_score"] if x["rs_score"] is not None else -1,reverse=True)
-    payload={"generated":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"asof":d["asof"],"universe":"KOMPAS100",
+    payload={"generated":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"asof":d["asof"],"universe":"KOMPAS100","universe_count":len(rows),
              "method":{"periods":[1,5,20,60],"rank":"cross-sectional percentile within KOMPAS100","vs_ihsg":"stock return minus IHSG return","vs_sector":"stock return minus average return of its KOMPAS100 sector"},
              "benchmark_returns":benchret,"sector_returns":sector_stats,"stocks":rows}
     OUT.write_text(json.dumps(payload,separators=(",",":"),allow_nan=False),encoding="utf-8")
