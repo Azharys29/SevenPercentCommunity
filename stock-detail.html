@@ -20,7 +20,7 @@ let DATA={};
 async function json(p){const r=await fetch(p,{cache:"no-cache"});if(!r.ok)throw Error(p+" HTTP "+r.status);return r.json()}
 async function load(){
  try{
-  const [sc,si,mo,rs,vg,ca]=await Promise.all([
+  const [sc,si,mo,rs,vg,ca,cp]=await Promise.all([
    json("./data/screener.json").catch(()=>({stocks:[]})),
    json("./data/signals.json"),
    json("./data/momentum.json"),
