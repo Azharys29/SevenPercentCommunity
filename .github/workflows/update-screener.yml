@@ -17,6 +17,8 @@ on:
       - "momentum-dashboard.html"
       - "catalyst-calendar.html"
       - "value-gap.html"
+      - "recommendation-report.html"
+      - "system-health.html"
       - "scripts/**"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
@@ -30,7 +32,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -81,6 +83,8 @@ jobs:
         run: python scripts/build_catalysts.py
       - name: Build Value Gap
         run: python scripts/build_value_gap.py
+      - name: Validate cross-module data integrity
+        run: python scripts/test_system_integrity.py
       - name: Commit fresh screener, signals and intelligence data
         run: |
           git config user.name "github-actions[bot]"
