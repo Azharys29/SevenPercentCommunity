@@ -20,8 +20,16 @@ let DATA={};
 async function json(p){const r=await fetch(p,{cache:"no-cache"});if(!r.ok)throw Error(p+" HTTP "+r.status);return r.json()}
 async function load(){
  try{
-  const [sc,si,mo,rs,vg,ca]=await Promise.all([json("./data/screener.json"),json("./data/signals.json"),json("./data/momentum.json"),json("./data/relative-strength.json"),json("./data/value-gap.json"),json("./data/catalysts.json")]);
-  DATA={sc,si,mo,rs,vg,ca}; render();
+  const [sc,si,mo,rs,vg,ca]=await Promise.all([
+   json("./data/screener.json").catch(()=>({stocks:[]})),
+   json("./data/signals.json"),
+   json("./data/momentum.json"),
+   json("./data/relative-strength.json"),
+   json("./data/value-gap.json"),
+   json("./data/catalysts.json").catch(()=>({events:[]}))
+  ]);
+  const stocks=(sc.stocks&&sc.stocks.length)?sc.stocks:(mo.stocks||[]).map(m=>({t:m.ticker,n:m.name||m.ticker,sec:m.sector,c:[m.price],s:"KOMPAS100",ix:[]}));
+  DATA={sc:{...sc,stocks},si,mo,rs,vg,ca}; render();
  }catch(e){$("#app").innerHTML='<div class="error">Gagal memuat data: '+esc(e.message)+'</div>'}
 }
 async function recommendations(t){
@@ -43,8 +51,9 @@ function recOutcome(r){
  return {label:"OPEN",ret:(Number(r.current_price)/entry-1)*100};
 }
 function find(t){
- const si=DATA.si.signals.find(x=>x.ticker===t), s=DATA.sc.stocks.find(x=>x.t===t);
- return {s,si,mo:DATA.mo.stocks.find(x=>x.ticker===t),rs:DATA.rs.stocks.find(x=>x.ticker===t),vg:DATA.vg.stocks.find(x=>x.ticker===t),ca:DATA.ca.events.filter(x=>x.ticker===t)}
+ const si=DATA.si.signals.find(x=>x.ticker===t), m=DATA.mo.stocks.find(x=>x.ticker===t), base=DATA.sc.stocks.find(x=>x.t===t);
+ const s=base|| (m?{t:m.ticker,n:m.name||m.ticker,sec:m.sector,c:[m.price],s:"KOMPAS100",ix:[]}:null);
+ return {s,si,mo:m,rs:DATA.rs.stocks.find(x=>x.ticker===t),vg:DATA.vg.stocks.find(x=>x.ticker===t),ca:DATA.ca.events.filter(x=>x.ticker===t)}
 }
 async function render(){
  const t=(new URLSearchParams(location.search).get("stock")||$("#ticker").value||"").trim().toUpperCase();
