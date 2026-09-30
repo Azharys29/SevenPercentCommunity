@@ -20,6 +20,7 @@ on:
       - "recommendation-report.html"
       - "recommendation-analytics.html"
       - "system-health.html"
+      - "stock-detail.html"
       - "scripts/**"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
