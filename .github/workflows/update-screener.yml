@@ -18,6 +18,7 @@ on:
       - "catalyst-calendar.html"
       - "value-gap.html"
       - "recommendation-report.html"
+      - "recommendation-analytics.html"
       - "system-health.html"
       - "scripts/**"
       - "universe.csv"
