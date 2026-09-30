@@ -50,6 +50,28 @@ def annual_eps(stmt):
     return sorted(out, key=lambda x: x[0], reverse=True)
 
 
+def ttm_eps(stmt):
+    """Sum the latest four reported quarterly EPS observations."""
+    row = pick_eps_row(stmt)
+    if row is None:
+        return None
+    vals = []
+    for col in row.index:
+        value = finite(row.get(col))
+        if value is None:
+            continue
+        try:
+            date = pd.Timestamp(col)
+        except Exception:
+            continue
+        vals.append((date, value))
+    vals.sort(key=lambda x: x[0], reverse=True)
+    if len(vals) < 4:
+        return None
+    total = sum(v for _, v in vals[:4])
+    return total if math.isfinite(total) else None
+
+
 def price_on_or_before(history, target):
     if history is None or history.empty:
         return None
@@ -126,6 +148,12 @@ def main():
             info = t.info or {}
             current_pe = finite(info.get("trailingPE"))
             trailing_eps = finite(info.get("trailingEps"))
+            # Yahoo can omit trailingEps for some IDX names even when quarterly EPS is available.
+            if trailing_eps is None:
+                try:
+                    trailing_eps = ttm_eps(t.get_income_stmt(freq="quarterly"))
+                except Exception:
+                    trailing_eps = None
             financial_currency = str(
                 info.get("financialCurrency")
                 or info.get("currency")
