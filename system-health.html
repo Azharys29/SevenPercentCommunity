@@ -41,8 +41,8 @@ function check(k,d){
  if(k==="backtest")return d.signal_count!=null?{state:"ok",label:"OK",reason:d.signal_count+" event backtest"}:{state:"bad",label:"ERROR",reason:"Output backtest invalid"};
  if(k==="rs")return d.universe_count?{state:"ok",label:"OK",reason:d.universe_count+" saham"}:{state:"bad",label:"ERROR",reason:"Output RS invalid"};
  if(k==="momentum")return d.universe_count?{state:"ok",label:"OK",reason:d.universe_count+" saham"}:{state:"bad",label:"ERROR",reason:"Output momentum invalid"};
- if(k==="catalysts")return d.event_count!=null?{state:"ok",label:"OK",reason:d.event_count+" earnings event"}:{state:"bad",label:"ERROR",reason:"Output earnings invalid"};
- if(k==="valuegap")return d.valid_count!=null?{state:"ok",label:"OK",reason:d.valid_count+"/"+(d.universe_count||100)+" valid"}:{state:"bad",label:"ERROR",reason:"Output Value Gap invalid"};
+ if(k==="catalysts")return d.event_count!=null?(Array.isArray(d.automatic_errors)&&d.automatic_errors.length?{state:"warn",label:"CHECK",reason:d.event_count+" earnings event · "+d.automatic_errors.length+" source errors"}:{state:"ok",label:"OK",reason:d.event_count+" earnings event"}):{state:"bad",label:"ERROR",reason:"Output earnings invalid"};
+ if(k==="valuegap")return d.valid_count!=null?(d.error_count?{state:"bad",label:"ERROR",reason:d.error_count+" build errors · "+d.valid_count+"/"+(d.universe_count||100)+" valid"}:d.incomplete_count?{state:"warn",label:"CHECK",reason:d.valid_count+"/"+(d.universe_count||100)+" valid · "+d.incomplete_count+" incomplete"}:{state:"ok",label:"OK",reason:d.valid_count+"/"+(d.universe_count||100)+" valid"}):{state:"bad",label:"ERROR",reason:"Output Value Gap invalid"};
 }
 async function load(){
  const results=await Promise.all(files.map(async f=>{try{const r=await fetch(f.file+"?ts="+Date.now());if(!r.ok)throw Error("HTTP "+r.status);return [f,await r.json(),null]}catch(e){return [f,null,e.message]}}));
