@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Market Intelligence — SevenPercentCommunity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090D13;--panel:#0F151D;--panel2:#141C26;--line:#2E4A68;--soft:#1B2836;--ice:#85B7EB;--bright:#ADD6FF;--dim:#55789E;--tx:#F3F6FA;--tx2:#A3ADBC;--tx3:#7C879A;--cream:#F2EBDD}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 'Instrument Sans',sans-serif}.wrap{max-width:1400px;margin:auto;padding:0 28px 55px}.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--soft)}.brand{font:12px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:var(--ice)}.menu-wrap{position:relative}.menu summary{list-style:none;cursor:pointer;border:1px solid var(--line);background:var(--panel2);padding:8px 13px;border-radius:4px;font-size:13px;color:var(--tx2)}.menu summary::-webkit-details-marker{display:none}.menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:20;min-width:220px;padding:7px;border:1px solid var(--line);background:var(--panel);box-shadow:0 14px 35px rgba(0,0,0,.35);border-radius:4px}.menu-panel a{display:block;padding:9px 11px;color:var(--tx2);text-decoration:none;border-radius:3px;white-space:nowrap}.menu-panel a:hover{background:var(--panel2);color:var(--tx)}
+.hero{padding:34px 0 22px}.hero h1{font:400 clamp(36px,5vw,58px)/1.02 'Gloock',serif;color:var(--cream);margin:0}.hero p{font:16px/1.7 'IBM Plex Serif',serif;color:var(--tx2);max-width:75ch;margin:12px 0 0}.asof{margin-top:12px;color:var(--tx3);font:12px 'IBM Plex Mono',monospace}
+.intel{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}.panel{border:1px solid var(--line);background:var(--panel);padding:18px}.panel h2{margin:0 0 14px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)}.score-row{display:flex;align-items:end;gap:18px}.market-score{font-size:58px;line-height:1;font-weight:700}.market-label{font-size:18px;font-weight:600;margin-bottom:7px}.muted{color:var(--tx3)}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:18px}.metric{background:var(--panel2);border:1px solid var(--soft);padding:11px}.metric span{display:block;color:var(--tx3);font-size:11px;text-transform:uppercase}.metric b{display:block;font-size:18px;margin-top:3px}.positive{color:var(--bright)}.negative{color:var(--dim)}.bar{height:7px;background:var(--soft);margin-top:12px}.bar i{display:block;height:100%;background:var(--ice)}
+.section{margin-top:14px}.section h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin:0 0 10px}.topgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stock{border:1px solid var(--line);background:var(--panel);padding:15px}.rank{font:12px 'IBM Plex Mono',monospace;color:var(--ice)}.stock h3{margin:4px 0 0;font-size:20px}.stock h3 a{color:var(--cream);text-decoration:none}.stock .score{font-size:31px;font-weight:700;margin-top:8px}.stock .meta{color:var(--tx3);font-size:12px}.mini{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:10px}.mini div{border-top:1px solid var(--soft);padding-top:7px}.mini b{display:block}.mini span{font-size:10px;color:var(--tx3)}
+.sectors{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.sector{border:1px solid var(--line);background:var(--panel);padding:12px 14px}.sector-head{display:flex;justify-content:space-between;gap:12px}.sector-name{font-weight:600}.sector-score{font:600 15px 'IBM Plex Mono',monospace}.sector-bar{height:6px;background:var(--soft);margin:9px 0 7px}.sector-bar i{display:block;height:100%;background:var(--ice)}.sector-meta{display:flex;justify-content:space-between;color:var(--tx3);font-size:11px}.sector-stocks{margin-top:8px;display:flex;gap:5px;flex-wrap:wrap}.sector-stocks a{border:1px solid var(--line);padding:3px 6px;color:var(--tx2);text-decoration:none;font-size:11px}.sector-stocks a:hover{color:var(--tx);border-color:var(--ice)}
+.loading{padding:30px;text-align:center;color:var(--tx2)}.error{border:1px dashed var(--line);padding:18px;color:var(--tx3)}.foot{margin-top:28px;padding-top:16px;border-top:1px solid var(--soft);color:var(--tx3);font-size:12px}
+@media(max-width:1050px){.intel{grid-template-columns:1fr}.topgrid{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.wrap{padding:0 14px 42px}.topgrid,.sectors{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.market-score{font-size:48px}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="top"><div class="brand">SEVENPERCENTCOMMUNITY / MARKET INTELLIGENCE</div><nav class="menu-wrap"><details class="menu"><summary>☰ Menu</summary><div class="menu-panel">
+<a href="./index.html">Screener</a><a href="./recommendations.html">Rekomendasi</a><a href="./momentum-dashboard.html">Momentum Dashboard</a><a href="./relative-strength.html">Relative Strength</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./heatmap.html">Heatmap</a><a href="./backtest.html">Backtest</a><a href="./admin.html">Admin</a>
+</div></details></nav></header>
+
+<section class="hero"><h1>Market Intelligence</h1><p>Ringkasan kondisi KOMPAS100 dari data yang sudah diproses oleh workflow. Dashboard ini membaca file JSON statis, sehingga browser tidak mengambil data Yahoo Finance satu per satu.</p><div class="asof" id="asof">Memuat data...</div></section>
+
+<div class="intel">
+<section class="panel"><h2>Market Intelligence</h2><div class="score-row"><div class="market-score" id="marketScore">—</div><div><div class="market-label" id="marketTrend">CALCULATING</div><div class="muted" id="marketDesc">Menggabungkan breadth, momentum, trend, dan volume.</div></div></div><div class="bar"><i id="scoreBar" style="width:0%"></i></div><div class="metrics">
+<div class="metric"><span>Market Score</span><b id="mScore">—</b></div><div class="metric"><span>Market Trend</span><b id="mTrend">—</b></div><div class="metric"><span>Breadth</span><b id="mBreadth">—</b></div><div class="metric"><span>Momentum</span><b id="mMomentum">—</b></div><div class="metric"><span>Volume</span><b id="mVolume">—</b></div>
+</div></section>
+<section class="panel"><h2>Market Breadth</h2><div id="breadthBox" class="loading">Memuat...</div></section>
+</div>
+
+<section class="section"><h2>Top Opportunities</h2><div id="topgrid" class="topgrid"><div class="loading">Memuat...</div></div></section>
+<section class="section"><h2>Sector Strength</h2><div id="sectors" class="sectors"><div class="loading">Memuat...</div></div></section>
+
+<footer class="foot">Metodologi bersifat mekanis dan menggunakan data KOMPAS100 yang tersedia pada file hasil workflow. Market Score adalah ringkasan teknikal, bukan rekomendasi beli/jual. Nilai dapat berubah setelah workflow menghasilkan data baru.</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const pct=(v,d=0)=>Number.isFinite(+v)?(+v).toFixed(d)+'%':'—';
+function classify(score){return score>=70?'BULLISH':score>=55?'POSITIVE':score>=45?'NEUTRAL':score>=30?'WEAK':'BEARISH'}
+function calc(rows){
+ if(!rows.length)return {score:50,breadth:50,momentum:0,volume:1,above20:50,above50:50,above200:50};
+ const n=rows.length, bullish=rows.filter(x=>(x.technical_score??x.momentum_score??0)>0).length;
+ const above20=rows.filter(x=>x.above_ma20).length/n*100, above50=rows.filter(x=>x.above_ma50).length/n*100, above200=rows.filter(x=>x.above_ma200).length/n*100;
+ const breadth=bullish/n*100, avg5=rows.reduce((a,x)=>a+(+x.return_5d||0),0)/n, avg20=rows.reduce((a,x)=>a+(+x.return_20d||0),0)/n, rvol=rows.filter(x=>Number.isFinite(+x.rvol)).reduce((a,x)=>a+(+x.rvol||0),0)/(rows.filter(x=>Number.isFinite(+x.rvol)).length||1);
+ const mom=Math.max(0,Math.min(100,50+avg5*4+avg20*1.5));
+ const trend=(above20+above50+above200)/3;
+ const score=Math.round(0.30*breadth+0.30*trend+0.25*mom+0.15*Math.min(100,rvol/1.2*100));
+ return {score,breadth,momentum:mom,volume:rvol,above20,above50,above200,avg5,avg20};
+}
+function render(d){
+ const rows=d.stocks||[], c=calc(rows), trend=classify(c.score);
+ $('asof').textContent='Data s.d. '+(d.asof||'—')+(d.generated?' · generated '+d.generated:'');
+ $('marketScore').textContent=c.score; $('marketTrend').textContent=trend; $('marketDesc').textContent=trend==='BULLISH'?'Breadth dan trend mendukung kondisi pasar positif.':trend==='BEARISH'?'Breadth dan trend relatif lemah.':'Kondisi pasar campuran, perlu melihat saham dan sektor secara selektif.';
+ $('scoreBar').style.width=c.score+'%'; $('mScore').textContent=c.score+'/100'; $('mTrend').textContent=trend; $('mBreadth').textContent=pct(c.breadth); $('mMomentum').textContent=c.momentum>=55?'POSITIVE':c.momentum>=45?'NEUTRAL':'NEGATIVE'; $('mVolume').textContent=c.volume>=1.2?'ABOVE AVG':c.volume>=0.8?'NORMAL':'BELOW AVG';
+ $('breadthBox').innerHTML='<div class="metrics" style="margin-top:0"><div class="metric"><span>Above MA20</span><b>'+pct(c.above20)+'</b></div><div class="metric"><span>Above MA50</span><b>'+pct(c.above50)+'</b></div><div class="metric"><span>Above MA200</span><b>'+pct(c.above200)+'</b></div><div class="metric"><span>Avg 5D</span><b class="'+(c.avg5>=0?'positive':'negative')+'">'+pct(c.avg5,2)+'</b></div><div class="metric"><span>Avg 20D</span><b class="'+(c.avg20>=0?'positive':'negative')+'">'+pct(c.avg20,2)+'</b></div></div><p class="muted" style="margin:14px 0 0">Breadth di dashboard ini memakai proporsi saham dengan Technical/Momentum Score positif. Angka dihitung dari data yang tersedia, bukan request baru ke Yahoo.</p>';
+ const top=[...rows].sort((a,b)=>(b.momentum_score??b.technical_score??0)-(a.momentum_score??a.technical_score??0)).slice(0,4);
+ $('topgrid').innerHTML=top.map((x,i)=>'<article class="stock"><div class="rank">#'+(i+1)+'</div><h3><a href="./index.html?stock='+encodeURIComponent(x.ticker)+'">'+esc(x.ticker)+'</a></h3><div class="meta">'+esc(x.name)+' · '+esc(x.sector)+'</div><div class="score">'+Number(x.momentum_score??x.technical_score??0).toFixed(1)+'</div><div class="mini"><div><b class="'+((x.return_5d||0)>=0?'positive':'negative')+'">'+pct(x.return_5d,2)+'</b><span>5D</span></div><div><b class="'+((x.return_20d||0)>=0?'positive':'negative')+'">'+pct(x.return_20d,2)+'</b><span>20D</span></div><div><b>'+(x.trend_points??'—')+'/5</b><span>MA TREND</span></div></div></article>').join('')||'<div class="error">Data saham belum tersedia.</div>';
+ const sec=d.sectors||[]; $('sectors').innerHTML=sec.slice().sort((a,b)=>(b.avg_score??0)-(a.avg_score??0)).map(s=>{const score=Math.max(0,Math.min(100,((+s.avg_score||0)+100)/2));const stocks=(s.stocks||[]).slice(0,6).map(x=>'<a href="./index.html?stock='+encodeURIComponent(x.ticker)+'">'+esc(x.ticker)+'</a>').join('');return '<article class="sector"><div class="sector-head"><div class="sector-name">'+esc(s.sector)+'</div><div class="sector-score">'+Number(s.avg_score||0).toFixed(1)+'</div></div><div class="sector-bar"><i style="width:'+score+'%"></i></div><div class="sector-meta"><span>'+esc(s.phase||'—')+' · '+(s.count||0)+' saham</span><span>Breadth '+Number(s.breadth||0).toFixed(1)+'%</span></div><div class="sector-stocks">'+stocks+'</div></article>'}).join('')||'<div class="error">Data sector belum tersedia.</div>';
+}
+async function init(){
+ try{
+  const [m,s]=await Promise.all([
+   fetch('./data/momentum.json?t='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('momentum.json');return r.json()}),
+   fetch('./data/sector-rotation.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():{sectors:[]}).catch(()=>({sectors:[]}))
+  ]);
+  render({stocks:m.stocks||[],asof:m.asof,generated:m.generated,sectors:s.sectors||[]});
+ }catch(e){
+  $('asof').textContent='Data belum tersedia';
+  $('topgrid').innerHTML='<div class="error">Market Intelligence belum dapat memuat data hasil workflow. Jalankan workflow data terlebih dahulu.</div>';
+  $('sectors').innerHTML='<div class="error">Sector Strength menunggu data hasil workflow.</div>';
+ }
+}
+init();
+</script>
+</body></html>
