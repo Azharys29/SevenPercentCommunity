@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recommendation Analytics — SevenPercentCommunity</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#090D13;--panel:#0F151D;--panel2:#141C26;--line:#2E4A68;--line-soft:#1B2836;--ice:#85B7EB;--tx:#F3F6FA;--tx2:#A3ADBC;--tx3:#7C879A;--cream:#F2EBDD;--green:#8FD3A8;--red:#E7A0A0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Arial,sans-serif}.wrap{max-width:1400px;margin:auto;padding:0 18px 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid var(--line-soft)}.brand{color:var(--ice);font:12px monospace;letter-spacing:.12em}.menu{position:relative}.menu summary{list-style:none;cursor:pointer;border:1px solid var(--line);background:var(--panel2);padding:8px 13px;border-radius:4px;font-size:13px;font-weight:600}.menu summary::-webkit-details-marker{display:none}.menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:10;min-width:230px;padding:7px;border:1px solid var(--line);background:var(--panel);box-shadow:0 14px 35px #0008;border-radius:4px}.menu-panel a{display:block;padding:9px 11px;color:var(--tx2);text-decoration:none;white-space:nowrap}.menu-panel a:hover{background:var(--panel2);color:var(--tx)}h1{font-size:38px;color:var(--cream);margin:34px 0 6px}.lead{color:var(--tx2);max-width:950px;margin:0 0 20px}.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:15px}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--tx);padding:9px 13px;border-radius:4px;cursor:pointer}.btn.pri{background:var(--ice);border-color:var(--ice);color:#08101A;font-weight:700}.period{margin-left:auto;color:var(--tx3);font-size:12px}.stats{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px;margin-bottom:16px}.stat{border:1px solid var(--line);background:var(--panel);padding:12px;border-radius:4px}.stat small{display:block;color:var(--tx3);font-size:11px}.stat b{display:block;font-size:22px;margin-top:2px}.up{color:var(--green)}.dn{color:var(--red)}.panel{border:1px solid var(--line);background:var(--panel);border-radius:4px;overflow:auto;margin-bottom:16px}.panel h2{font-size:17px;color:var(--cream);margin:0;padding:14px 16px;border-bottom:1px solid var(--line-soft)}table{border-collapse:collapse;width:100%;min-width:900px;font-size:12.5px}th{background:var(--panel2);color:var(--tx2);padding:10px;text-align:right;white-space:nowrap}th:first-child,th:nth-child(2){text-align:left}td{padding:9px 10px;border-top:1px solid var(--line-soft);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}td:first-child,td:nth-child(2){text-align:left}.muted{color:var(--tx3)}.badge{display:inline-block;border:1px solid var(--line);padding:3px 7px;border-radius:999px;font-size:10px}.win{color:var(--green);border-color:var(--green)}.loss{color:var(--red);border-color:var(--red)}.open{color:var(--ice);border-color:var(--ice)}.note{padding:12px 16px;color:var(--tx3);font-size:12px;border-top:1px solid var(--line-soft)}.empty{padding:35px;text-align:center;color:var(--tx3)}@media(max-width:1050px){.stats{grid-template-columns:repeat(4,1fr)}}@media(max-width:650px){h1{font-size:31px}.stats{grid-template-columns:repeat(2,1fr)}.period{margin-left:0;width:100%}.wrap{padding:0 12px 40px}}
+</style></head><body><div class="wrap">
+<header class="top"><div class="brand">SEVENPERCENTCOMMUNITY · PHASE B</div><details class="menu"><summary>☰ Menu</summary><div class="menu-panel">
+<a href="./index.html">Screener</a><a href="./recommendations.html">Rekomendasi</a><a href="./recommendation-report.html">Rekap Rekomendasi</a><a href="./recommendation-analytics.html">Recommendation Analytics</a><a href="./new-bullish.html">NEW Bullish</a><a href="./heatmap.html">Heatmap</a><a href="./backtest.html">Backtest</a><a href="./relative-strength.html">Relative Strength</a><a href="./momentum-dashboard.html">Momentum Dashboard</a><a href="./catalyst-calendar.html">Earnings Calendar</a><a href="./value-gap.html">Value Gap</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./ai-insights.html">Market Intelligence</a><a href="./system-health.html">System Health</a><a href="./admin.html">Admin</a>
+</div></details></header>
+<h1>Recommendation Analytics</h1>
+<p class="lead">Journal performa rekomendasi: Win Rate, Average/Median P/L, Profit Factor, Expectancy, holding period, statistik TP1/TP2/SL, serta performa berdasarkan Technical Score dan Confluence.</p>
+<div class="toolbar"><button class="btn" id="refresh">↻ Refresh</button><button class="btn pri" id="export">↓ Download Excel</button><span class="period" id="period">Periode: —</span></div>
+<section class="stats" id="stats"></section>
+<div class="panel"><h2>Recommendation Journal</h2><div id="journal"><div class="empty">Memuat data…</div></div></div>
+<div class="panel"><h2>TP1 / TP2 / Stop Loss Statistics</h2><div id="targets"></div></div>
+<div class="panel"><h2>Performance by Technical Score</h2><div id="scores"></div><div class="note">Hanya rekomendasi yang sudah memiliki snapshot Technical Score saat dibuat. Rekomendasi lama tanpa snapshot ditampilkan sebagai N/A dan tidak dipaksakan memakai skor hari ini.</div></div>
+<div class="panel"><h2>Performance by Confluence</h2><div id="conf"></div><div class="note">Confluence = jumlah indikator utama yang sepakat pada saat rekomendasi dibuat, skala 0–4.</div></div>
+<div class="panel"><h2>Methodology</h2><div class="note">Win Rate = TP1/TP2 hit ÷ seluruh outcome TP/SL. TP2 dihitung sebagai win dan tidak dihitung dua kali terhadap TP1. Profit Factor = gross profit ÷ gross loss absolut. Expectancy = rata-rata realized P/L per rekomendasi dengan outcome. Holding Period = hari kalender dari entry hit ke outcome; jika entry_hit_at tidak tersedia, tanggal rekomendasi digunakan sebagai fallback. P/L menggunakan entry midpoint. Open P/L ditampilkan di journal tetapi tidak masuk Win Rate, Profit Factor, atau Expectancy.</div></div>
+</div>
+<script>
+const SB_URL="https://njghchwtcyoieymkodzj.supabase.co",SB_KEY="sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ";
+const $=s=>document.querySelector(s),fmt=(v,d=2)=>v==null||!Number.isFinite(Number(v))?"—":new Intl.NumberFormat("id-ID",{minimumFractionDigits:d,maximumFractionDigits:d}).format(Number(v)),pct=v=>v==null?"—":(Number(v)>=0?"+":"")+fmt(v)+"%",esc=s=>String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+let rows=[],report=null;
+function outcome(x){
+ const entry=(Number(x.entry_min)+Number(x.entry_max))/2,status=x.auto_status||"ACTIVE";let exit=null,label="OPEN",cls="open",outAt=null;
+ if(status==="TP2 HIT"||status==="TP2 & SL TOUCHED"){exit=Number(x.tp2);label=status;cls="win";outAt=x.tp2_hit_at||x.updated_at}
+ else if(status==="TP1 HIT"||status==="TP1 & SL TOUCHED"){exit=Number(x.tp1);label=status;cls="win";outAt=x.tp1_hit_at||x.updated_at}
+ else if(status==="STOP LOSS HIT"){exit=Number(x.stop_loss);label=status;cls="loss";outAt=x.sl_hit_at||x.updated_at}
+ const last=Number(x.current_price),pl=exit!=null?(exit-entry)/entry*100:(Number.isFinite(last)&&entry?(last-entry)/entry*100:null);
+ const start=x.entry_hit_at||x.created_at,hold=outAt&&start?Math.max(0,(new Date(outAt)-new Date(start))/86400000):Math.max(0,(new Date(report?.latest||Date.now())-new Date(start))/86400000);
+ return {...x,entry,pl,label,cls,outAt,hold,realized:exit!=null};
+}
+function dateLabel(v){return v?new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"}):"—"}
+function median(a){if(!a.length)return null;const b=[...a].sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2}
+function groupStats(arr){const r=arr.filter(x=>x.realized),wins=r.filter(x=>x.cls==="win"),loss=r.filter(x=>x.cls==="loss"),gp=wins.reduce((s,x)=>s+x.pl,0),gl=Math.abs(loss.reduce((s,x)=>s+x.pl,0));return {n:r.length,w:wins.length,l:loss.length,wr:r.length?wins.length/r.length*100:null,avg:r.length?r.reduce((s,x)=>s+x.pl,0)/r.length:null,med:median(r.map(x=>x.pl)),pf:gl?gp/gl:(gp?null:0),exp:r.length?r.reduce((s,x)=>s+x.pl,0)/r.length:null,hold:r.length?r.reduce((s,x)=>s+x.hold,0)/r.length:null}}
+async function load(){
+ try{
+  const r=await fetch(SB_URL+"/rest/v1/recommendations?select=*&order=created_at.desc",{headers:{apikey:SB_KEY}}),data=await r.json();
+  if(!r.ok)throw new Error(data?.message||"Supabase HTTP "+r.status);
+  const latest=data.reduce((m,x)=>x.created_at>m?x.created_at:m,"");const end=latest?new Date(latest):new Date(),start=new Date(end);start.setDate(start.getDate()-30);
+  report={start,latest:end};rows=data.filter(x=>new Date(x.created_at)>=start&&new Date(x.created_at)<=new Date(end.getTime()+86400000)).map(outcome);
+  render();$("#period").textContent="Periode: "+dateLabel(start)+" — "+dateLabel(end); 
+ }catch(e){$("#period").textContent="Gagal: "+e.message;$("#journal").innerHTML='<div class="empty">Data belum dapat dimuat.</div>'}
+}
+function render(){
+ const s=groupStats(rows),open=rows.filter(x=>!x.realized),openAvg=open.length?open.reduce((a,x)=>a+(x.pl||0),0)/open.length:null;
+ $("#stats").innerHTML=[["Rekomendasi",rows.length,""],["Win Rate",s.wr==null?"—":fmt(s.wr)+"%",s.wr==null?"":s.wr>=50?"up":"dn"],["Avg P/L",pct(s.avg),s.avg>=0?"up":"dn"],["Median P/L",pct(s.med),s.med>=0?"up":"dn"],["Profit Factor",s.pf==null?"—":fmt(s.pf),s.pf!=null&&s.pf>=1?"up":"dn"],["Expectancy",pct(s.exp),s.exp>=0?"up":"dn"],["Avg Holding",s.hold==null?"—":fmt(s.hold)+" hari",""]].map(x=>'<div class="stat"><small>'+x[0]+'</small><b class="'+x[2]+'">'+x[1]+'</b></div>').join("");
+ const tr=rows.map((x,i)=>'<tr><td>'+ (i+1) +'</td><td><b>'+esc(x.ticker)+'</b><span class="muted"> · '+dateLabel(x.created_at)+'</span></td><td>'+fmt(x.technical_score)+'</td><td>'+ (x.confluence==null?"—":x.confluence+"/4") +'</td><td><span class="badge '+x.cls+'">'+esc(x.label)+'</span></td><td class="'+(x.pl>=0?"up":"dn")+'">'+pct(x.pl)+'</td><td>'+ (x.realized?fmt(x.hold)+" hari":"Open · "+fmt(x.hold)+" hari") +'</td><td>'+dateLabel(x.outAt)+'</td></tr>').join("");
+ $("#journal").innerHTML=rows.length?'<table><thead><tr><th>#</th><th>Emiten / Tanggal</th><th>Tech Score</th><th>Confluence</th><th>Outcome</th><th>P/L</th><th>Holding</th><th>Outcome Date</th></tr></thead><tbody>'+tr+'</tbody></table>':'<div class="empty">Tidak ada rekomendasi dalam periode ini.</div>';
+ const tp1=rows.filter(x=>x.tp1_hit_at).length,tp2=rows.filter(x=>x.tp2_hit_at).length,sl=rows.filter(x=>x.sl_hit_at).length,entry=rows.filter(x=>x.entry_hit).length;
+ $("#targets").innerHTML='<table><thead><tr><th>Metric</th><th>Count</th><th>% dari total rekomendasi</th></tr></thead><tbody>'+
+ [["Entry Hit",entry],["TP1 Hit",tp1],["TP2 Hit",tp2],["Stop Loss Hit",sl]].map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td><td>'+fmt(rows.length?x[1]/rows.length*100:0)+'%</td></tr>').join("")+'</tbody></table>';
+ renderGroups("#scores",[["<15",x=>x.technical_score!=null&&x.technical_score<15],["15–34",x=>x.technical_score>=15&&x.technical_score<35],["35–49",x=>x.technical_score>=35&&x.technical_score<50],["50+",x=>x.technical_score>=50]]);
+ renderGroups("#conf",[["0–2",x=>x.confluence!=null&&x.confluence<=2],["3",x=>x.confluence===3],["4",x=>x.confluence===4]]);
+}
+function renderGroups(sel,defs){
+ let h='<table><thead><tr><th>Group</th><th>Recommendations</th><th>Win Rate</th><th>Avg P/L</th><th>Median P/L</th><th>Profit Factor</th><th>Expectancy</th><th>Avg Holding</th></tr></thead><tbody>';
+ defs.forEach(d=>{const a=rows.filter(d[1]),s=groupStats(a);h+='<tr><td>'+d[0]+'</td><td>'+a.length+'</td><td>'+ (s.wr==null?"—":fmt(s.wr)+"%")+'</td><td class="'+(s.avg>=0?"up":"dn")+'">'+pct(s.avg)+'</td><td>'+pct(s.med)+'</td><td>'+fmt(s.pf)+'</td><td>'+pct(s.exp)+'</td><td>'+ (s.hold==null?"—":fmt(s.hold)+" hari")+'</td></tr>'});
+ const na=rows.filter(x=>(sel==="#scores"?x.technical_score==null:x.confluence==null)); if(na.length)h+='<tr><td>N/A snapshot</td><td>'+na.length+'</td><td colspan="6" class="muted">Belum ada snapshot pada saat rekomendasi dibuat</td></tr>';
+ $(sel).innerHTML=h+'</tbody></table>';
+}
+function exportExcel(){
+ if(!rows.length)return;
+ const s=groupStats(rows),data=rows.map((x,i)=>({"#":i+1,Emiten:x.ticker,"Tanggal":x.created_at?.slice(0,10),"Technical Score":x.technical_score,"Confluence":x.confluence,"Signal":x.signal_at_recommendation,"Entry Mid":x.entry,"TP1":Number(x.tp1),"TP2":Number(x.tp2),"SL":Number(x.stop_loss),"Outcome":x.label,"P/L %":x.pl/100,"Holding Days":x.hold,"Entry Hit":x.entry_hit_at?.slice(0,10)||"","Outcome Date":x.outAt?.slice(0,10)||""}));
+ const summary=[["RECOMMENDATION ANALYTICS — PHASE B"],["Period",dateLabel(report.start)+" - "+dateLabel(report.latest)],[],["Metric","Value"],["Recommendations",rows.length],["Win Rate",s.wr==null?null:s.wr/100],["Average P/L",s.avg==null?null:s.avg/100],["Median P/L",s.med==null?null:s.med/100],["Profit Factor",s.pf],["Expectancy",s.exp==null?null:s.exp/100],["Average Holding Days",s.hold]];
+ const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(summary),"Summary");XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),"Journal");XLSX.writeFile(wb,"Recommendation_Analytics_"+report.latest.toISOString().slice(0,10)+".xlsx");
+}
+$("#refresh").onclick=load;$("#export").onclick=exportExcel;load();
+</script></body></html>
