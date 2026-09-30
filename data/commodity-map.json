@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "universe": "KOMPAS100",
+  "description": "Mapping emiten KOMPAS100 terhadap komoditas. impact_up/impact_down: +1 = searah/positif, -1 = berlawanan/negatif.",
+  "commodities": [
+    "Brent Oil",
+    "Natural Gas",
+    "Coal",
+    "Gold",
+    "Nickel",
+    "Timah",
+    "Copper",
+    "Palm Oil"
+  ],
+  "stocks": [
+    {
+      "ticker": "CONTOH",
+      "commodity": "Coal",
+      "impact_up": 1,
+      "impact_down": -1,
+      "weight": 1,
+      "note": "Ganti dengan ticker emiten KOMPAS100 yang relevan."
+    }
+  ]
+}
