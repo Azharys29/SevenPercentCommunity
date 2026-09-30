@@ -1,8 +1,9 @@
 {
   "generated": null,
   "asof": null,
-  "source": "Trading Economics",
+  "source": "World Bank Pink Sheet + Kemendag Satu Data",
+  "methodology": "Monthly benchmark change × mapping weight, capped at ±5 per commodity exposure.",
   "commodities": [],
   "impacts": [],
-  "mapping_count": 0
+  "mapping_count": 42
 }
