@@ -48,33 +48,66 @@ def main():
     for ticker,meta in universe.items():
         yf_ticker=ticker+".JK"
         try:
-            cal=yf.Ticker(yf_ticker).calendar
-            if cal is not None and not cal.empty:
-                vals={}
-                for key in cal.index:
-                    v=cal.loc[key]
-                    if hasattr(v,"iloc"):
-                        v=v.iloc[0]
-                    vals[str(key).lower()]=v
+            # Yahoo's calendar endpoint changed shape across yfinance releases.
+            # Prefer get_earnings_dates(), which returns a dated index, then
+            # fall back to the calendar payload for compatibility.
+            t = yf.Ticker(yf_ticker)
+            dates = []
 
-                ed=vals.get("earnings date") or vals.get("earnings_dates")
-                if isinstance(ed,(list,tuple)) and ed:
-                    ed=ed[0]
+            try:
+                edf = t.get_earnings_dates(limit=12)
+                if edf is not None and not edf.empty:
+                    for idx in edf.index:
+                        d = parse_date(idx)
+                        if d and start <= d <= end:
+                            dates.append(d)
+            except Exception:
+                pass
 
-                d=parse_date(ed)
-                if d and start<=d<=end:
-                    events.append({
-                        "date":d.isoformat(),
-                        "ticker":ticker,
-                        "name":meta.get("name") or meta.get("Nama") or ticker,
-                        "sector":meta.get("sector") or "Lainnya",
-                        "type":"Earnings",
-                        "title":"Perkiraan tanggal earnings",
-                        "source":"Yahoo Finance / yfinance",
-                        "source_url":"https://finance.yahoo.com/quote/"+yf_ticker+"/",
-                        "importance":"High",
-                        "status":"automatic"
-                    })
+            if not dates:
+                cal = t.calendar
+                if cal is not None:
+                    if hasattr(cal, "index"):
+                        vals = {}
+                        for key in cal.index:
+                            v = cal.loc[key]
+                            if hasattr(v, "iloc"):
+                                v = v.iloc[0]
+                            vals[str(key).lower()] = v
+                        ed = vals.get("earnings date") or vals.get("earnings_dates")
+                    elif isinstance(cal, dict):
+                        ed = cal.get("Earnings Date") or cal.get("Earnings Dates") or cal.get("earningsDate")
+                    else:
+                        ed = None
+
+                    if hasattr(ed, "iloc"):
+                        for vv in ed.tolist():
+                            d = parse_date(vv)
+                            if d and start <= d <= end:
+                                dates.append(d)
+                    elif isinstance(ed, (list, tuple)):
+                        for vv in ed:
+                            d = parse_date(vv)
+                            if d and start <= d <= end:
+                                dates.append(d)
+                    else:
+                        d = parse_date(ed)
+                        if d and start <= d <= end:
+                            dates.append(d)
+
+            for d in sorted(set(dates)):
+                events.append({
+                    "date": d.isoformat(),
+                    "ticker": ticker,
+                    "name": meta.get("name") or meta.get("Nama") or ticker,
+                    "sector": meta.get("sector") or "Lainnya",
+                    "type": "Earnings",
+                    "title": "Perkiraan tanggal earnings",
+                    "source": "Yahoo Finance / yfinance",
+                    "source_url": "https://finance.yahoo.com/quote/" + yf_ticker + "/",
+                    "importance": "High",
+                    "status": "automatic"
+                })
         except Exception:
             errors.append(ticker)
         time.sleep(0.05)
