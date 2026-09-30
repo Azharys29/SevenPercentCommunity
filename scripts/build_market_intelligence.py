@@ -20,7 +20,7 @@ def market_sentiment(score,agree,total):
     if score<=-15 and agree>=3:return "Negative"
     return "Neutral"
 def interpretation(x):
-    score=float(x.get("score") or 0); agree=int(x.get("agree") or 0); total=int(x.get("total") or 4)
+    score=float(x.get("score") or 0); agree=int(x.get("agree") or 0); total=int(x.get("total") or 5)
     base="Momentum bullish kuat" if score>=60 else "Momentum bullish" if score>=35 else "Momentum bearish kuat" if score<=-60 else "Momentum bearish" if score<=-35 else "Momentum belum menunjukkan dominasi yang jelas"
     notes=[]; sk=float(x.get("stoch_k") or 50); sd=float(x.get("stoch_d") or 50); macd=float(x.get("macd_hist_pct") or 0); rvol=float(x.get("rvol") or 0)
     if sk>=80 and sk>sd: notes.append("Stochastic berada di area tinggi sehingga risiko perlambatan momentum perlu dipantau")
@@ -29,7 +29,7 @@ def interpretation(x):
     elif macd<0: notes.append("MACD histogram negatif")
     if rvol>=1.2: notes.append("volume relatif di atas rata-rata 20 hari")
     elif rvol<0.8: notes.append("volume relatif masih di bawah rata-rata 20 hari")
-    return f"{base} dengan konfluensi {agree}/{total}. "+". ".join(notes[:2])+"." if notes else f"{base} dengan konfluensi {agree}/{total}."
+    return f"Momentum bullish dengan konfluensi {agree}/{total}. "+".".join(notes[:2])+"." if score>=25 and agree>=3 and score<35 else (f"{base} dengan konfluensi {agree}/{total}. "+".".join(notes[:2])+"." if notes else f"{base} dengan konfluensi {agree}/{total}.")
 def fetch_news(ticker,name):
     q=f'"{ticker}" saham' if not name or name.upper()==ticker.upper() else f'"{ticker}" "{name}" saham'
     url="https://news.google.com/rss/search?"+urllib.parse.urlencode({"q":q,"hl":"id","gl":"ID","ceid":"ID:id"})
@@ -45,10 +45,11 @@ def fetch_news(ticker,name):
     return out
 def main():
     s=json.loads(SIGNALS.read_text(encoding="utf-8"))
-    c=[x for x in s.get("signals",[]) if x.get("signal")=="Bullish" and float(x.get("score") or 0)>=25 and int(x.get("agree") or 0)>=3]
+    # Market Intelligence: technical score >=25 with at least 3 of 5 signals/confluences.
+    c=[x for x in s.get("signals",[]) if x.get("signal")=="Bullish" and float(x.get("score") or 0)>=25 and int(x.get("agree") or 0)>=3 and int(x.get("total") or 0)==5]
     c=sorted(c,key=lambda x:float(x.get("score") or 0),reverse=True)[:MAX_ITEMS]; items=[]
     for x in c:
-        items.append({"ticker":x.get("ticker"),"name":x.get("name",""),"asof":x.get("asof"),"score":x.get("score"),"score_delta":x.get("score_delta"),"signal":x.get("signal"),"strength":x.get("strength"),"confluence":f'{x.get("agree",0)}/{x.get("total",0)}',"rsi":x.get("rsi"),"stoch_k":x.get("stoch_k"),"stoch_d":x.get("stoch_d"),"macd_hist_pct":x.get("macd_hist_pct"),"rvol":x.get("rvol"),"market_sentiment":market_sentiment(float(x.get("score") or 0),int(x.get("agree") or 0),int(x.get("total") or 4)),"interpretation":interpretation(x),"news":fetch_news(x.get("ticker",""),x.get("name","")),"updated_at":datetime.now(timezone.utc).isoformat(timespec="seconds")}); time.sleep(.25)
+        items.append({"ticker":x.get("ticker"),"name":x.get("name",""),"asof":x.get("asof"),"score":x.get("score"),"score_delta":x.get("score_delta"),"signal":x.get("signal"),"strength":x.get("strength"),"confluence":f'{x.get("agree",0)}/{x.get("total",0)}',"rsi":x.get("rsi"),"stoch_k":x.get("stoch_k"),"stoch_d":x.get("stoch_d"),"macd_hist_pct":x.get("macd_hist_pct"),"rvol":x.get("rvol"),"market_sentiment":market_sentiment(float(x.get("score") or 0),int(x.get("agree") or 0),int(x.get("total") or 5)),"interpretation":interpretation(x),"news":fetch_news(x.get("ticker",""),x.get("name","")),"updated_at":datetime.now(timezone.utc).isoformat(timespec="seconds")}); time.sleep(.25)
     OUT.write_text(json.dumps({"generated":datetime.now(timezone.utc).isoformat(timespec="seconds"),"asof":s.get("asof"),"candidate_count":len(items),"news_status":"Google News RSS","items":items},ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     print(json.dumps({"candidate_count":len(items),"news_articles":sum(len(x["news"]) for x in items)}))
 if __name__=="__main__": main()
