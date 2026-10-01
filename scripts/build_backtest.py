@@ -4,7 +4,7 @@ import datetime as dt, json, math
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 DATA=ROOT/"data/screener.json"; OUT=ROOT/"data/backtest.json"
-RSI_N=14; ST_K=14; ST_S=3; ST_D=3; MAC_F=12; MAC_S=26; MAC_G=9; VOL_N=20
+RSI_N=14; ST_K=14; ST_S=3; ST_D=3; MAC_F=12; MAC_S=26; MAC_G=9; VOL_N=20; EMA_FAST=20; EMA_SLOW=50
 HORIZONS=(5,10,20)
 def finite(x): return isinstance(x,(int,float)) and math.isfinite(x)
 def sma(a,n):
@@ -43,18 +43,27 @@ def macd(c,f=12,s=26,g=9):
     sig=ema(line,g); return [a-b if finite(a) and finite(b) else float("nan") for a,b in zip(line,sig)]
 def indicator_series(c,h,l,v):
     rr=rsi(c,RSI_N); k,d=stochastic(h,l,c,ST_K,ST_S,ST_D); mh=macd(c,MAC_F,MAC_S,MAC_G)
+    ef=ema(c,EMA_FAST); es=ema(c,EMA_SLOW)
     scores=[None]*len(c)
     for i in range(len(c)):
         if i<VOL_N-1: continue
         rv=v[i]/(sum(v[i-VOL_N+1:i+1])/VOL_N) if sum(v[i-VOL_N+1:i+1])>0 else float("nan")
-        vals=[rr[i],k[i],d[i],mh[i],rv]
+        vals=[rr[i],k[i],d[i],mh[i],rv,ef[i],es[i]]
         if not all(finite(x) for x in vals): continue
-        rscore=max(-1,min(1,(rr[i]-50)/20))
-        stscore=1 if k[i]>d[i] and k[i]<80 else -1 if k[i]<d[i] and k[i]>20 else (0.5 if k[i]>=80 else -0.5 if k[i]<=20 else 0)
-        mscore=max(-1,min(1,(mh[i]/max(abs(c[i])*0.01,1e-9))*4)); vscore=max(-1,min(1,(rv-1)*0.75))
-        score=25*rscore+25*stscore+30*mscore+20*vscore
-        agree=sum(1 for x in (rscore,stscore,mscore,vscore) if x>0.15 or x<-0.15)
-        signal="Bullish" if score>=15 else "Bearish" if score<=-15 else "Neutral"
+        trend=1 if c[i]>ef[i]>es[i] else -1 if c[i]<ef[i]<es[i] else 0
+        rscore=max(-1,min(1,(rr[i]-50)/15))
+        if rr[i]>=70 and rscore>0: rscore*=0.35
+        if rr[i]<=30 and rscore<0: rscore*=0.35
+        stscore=1 if k[i]>d[i] and k[i]<85 else -1 if k[i]<d[i] and k[i]>15 else 0
+        mscore=max(-1,min(1,(mh[i]/max(abs(c[i])*0.01,1e-9))*5))
+        if i>0 and mh[i]>0 and mh[i]<mh[i-1]: mscore*=0.65
+        if i>0 and mh[i]<0 and mh[i]>mh[i-1]: mscore*=0.65
+        pdir=1 if c[i]>c[i-1] else -1 if c[i]<c[i-1] else 0
+        vscore=0 if rv<0.9 else pdir*min(1,(rv-0.9)/0.9)
+        comps=[trend,rscore,stscore,mscore,vscore]
+        score=25*trend+20*rscore+15*stscore+25*mscore+15*vscore
+        agree=sum(1 for x in comps if x>=0.25) if score>=0 else sum(1 for x in comps if x<=-0.25)
+        signal="Bullish" if score>=25 and agree>=3 else "Bearish" if score<=-25 and agree>=3 else "Neutral"
         scores[i]={"score":round(score,2),"signal":signal,"agree":agree}
     return scores
 def pct(a,b): return (b/a-1)*100 if a else None
@@ -96,7 +105,7 @@ def main():
     ticker_rows.sort(key=lambda x:(x["20"]["avg_return"] if x["20"]["avg_return"] is not None else -999),reverse=True)
     payload={"generated":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"asof":data["asof"],"universe":"KOMPAS100",
              "method":{"entry":"close on NEW BULLISH signal day","exit":"closing price after N trading sessions","horizons":[5,10,20],
-                       "signal_rule":"Bullish score >= 15 and (previous signal was not Bullish OR score delta >= 15)","lookahead_free":True},
+                       "signal_rule":"Bullish score >= 25 with >=3/5 confirmations and (previous signal was not Bullish OR score delta >= 15)","lookahead_free":True},
              "signal_count":len(events),"summary":summary,"bands":bands,"by_ticker":ticker_rows,"events":events[-500:]}
     OUT.write_text(json.dumps(payload,separators=(",",":"),allow_nan=False),encoding="utf-8")
     print(json.dumps({"signal_count":len(events),"summary":summary}))
