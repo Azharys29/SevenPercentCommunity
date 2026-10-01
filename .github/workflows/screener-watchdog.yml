@@ -1,0 +1,57 @@
+name: Screener Schedule Watchdog
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Lightweight fallback check ~20 minutes after the hourly run window.
+    # 02:37-09:37 UTC = 09:37-16:37 WIB.
+    - cron: "37 2-9 * * 1-5"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check data freshness and dispatch fallback update
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          import subprocess
+          import urllib.request
+
+          repo = os.environ["REPO"]
+          url = f"https://raw.githubusercontent.com/{repo}/main/data/momentum.json?v={dt.datetime.now(dt.timezone.utc).timestamp()}"
+          req = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
+          with urllib.request.urlopen(req, timeout=15) as response:
+              data = json.load(response)
+
+          generated = data.get("generated")
+          if not generated:
+              raise SystemExit("momentum.json has no generated timestamp")
+
+          generated_dt = dt.datetime.fromisoformat(generated.replace("Z", "+00:00"))
+          age_min = (dt.datetime.now(dt.timezone.utc) - generated_dt).total_seconds() / 60
+          print(f"Latest generated data: {generated}")
+          print(f"Data age: {age_min:.1f} minutes")
+
+          # The normal hourly scheduler is expected to refresh within ~30 minutes.
+          # If it is older than 50 minutes, dispatch the main workflow as a fallback.
+          if age_min > 50:
+              print("Data is stale; dispatching update-screener.yml.")
+              subprocess.run(
+                  ["gh", "workflow", "run", "update-screener.yml", "--ref", "main"],
+                  check=True,
+                  env={**os.environ, "GH_TOKEN": os.environ["GH_TOKEN"]},
+              )
+          else:
+              print("Data is fresh; no fallback run needed.")
+          PY
