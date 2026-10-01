@@ -26,8 +26,8 @@ on:
       - ".github/workflows/update-screener.yml"
   schedule:
     # Every hour during IDX trading hours, Monday-Friday.
-    # 02:30-09:30 UTC = 09:30-16:30 WIB.
-    - cron: "30 2-9 * * 1-5"
+    # 02:17-09:17 UTC = 09:17-16:17 WIB.
+    - cron: "17 2-9 * * 1-5"
 
 permissions:
   contents: write
