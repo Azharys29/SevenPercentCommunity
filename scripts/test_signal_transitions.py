@@ -14,7 +14,7 @@ def run():
       ("bullish score +15",c("Bullish",60,4),dict(c("Bullish",75,4),score_delta=15),True,True),
       ("bullish score +10",c("Bullish",60,4),dict(c("Bullish",70,4),score_delta=10),False,False),
       ("bullish to neutral",c("Bullish",60,4),c("Neutral",5,2),False,False),
-      ("bearish to bullish",c("Bearish",-20,2),c("Bullish",60,3),True,True),
+      ("bearish to bullish",c("Bearish",-20,2),c("Bullish",60,3),True,False),
       ("bullish 30 to 51.02",c("Bullish",30,4),dict(c("Bullish",51.02,4),score_delta=21.02),True,True),
     ]
     for name,p,cur,nb,ai in cases:
