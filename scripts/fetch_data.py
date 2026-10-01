@@ -8,6 +8,7 @@ Output: data/screener.json consumed by index.html.
 import datetime as dt
 import json
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -59,18 +60,32 @@ def beta(stock_close, bench_close):
     return round(v, 2) if np.isfinite(v) else None
 
 
-def download_symbols(symbols):
+def download_symbols(symbols, attempts=3):
     # auto_adjust=False preserves raw OHLC suitable for a technical screener.
-    return yf.download(
-        symbols,
-        period="2y",
-        interval="1d",
-        group_by="ticker",
-        auto_adjust=False,
-        actions=False,
-        threads=True,
-        progress=False,
-    )
+    # Retry transient Yahoo/network failures so one temporary outage does not
+    # invalidate an otherwise healthy hourly build.
+    last_error = None
+    for attempt in range(1, attempts + 1):
+        try:
+            raw = yf.download(
+                symbols,
+                period="2y",
+                interval="1d",
+                group_by="ticker",
+                auto_adjust=False,
+                actions=False,
+                threads=True,
+                progress=False,
+            )
+            if raw is not None and not raw.empty:
+                return raw
+        except Exception as exc:
+            last_error = exc
+        if attempt < attempts:
+            time.sleep(3 * attempt)
+    if last_error:
+        raise last_error
+    return pd.DataFrame()
 
 
 def extract(raw, symbol):
