@@ -17,7 +17,7 @@ const num=(v,d=2)=>v==null||v===""||!isFinite(Number(v))?"—":new Intl.NumberFo
 const pct=v=>v==null||!isFinite(Number(v))?"—":num(v,2)+"%";
 const tone=v=>Number(v)>0?"up":Number(v)<0?"dn":"neutral";
 let DATA={};
-async function json(p){const r=await fetch(p,{cache:"no-cache"});if(!r.ok)throw Error(p+" HTTP "+r.status);return r.json()}
+async function json(p){const r=await fetch(p+(p.includes('?')?'&':'?')+'v='+Date.now(),{cache:"no-store"});if(!r.ok)throw Error(p+" HTTP "+r.status);return r.json()}
 async function load(){
  try{
   const [sc,si,mo,rs,vg,ca,cp]=await Promise.all([
