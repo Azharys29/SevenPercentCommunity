@@ -78,7 +78,6 @@ async function render(){
  $("#ticker").value=t; const x=find(t);
  if(!x.s||!x.si){$("#app").innerHTML='<div class="error">Ticker '+esc(t)+' tidak ditemukan di universe KOMPAS100.</div>';return}
  const recs=await recommendations(t);
- renderCharts(x);
  const comp=[
   ["RSI",num(x.si.rsi,2),tone(50-x.si.rsi)],["Stochastic K",num(x.si.stoch_k,2),tone(x.si.stoch_k-50)],
   ["MACD Hist %",pct(x.si.macd_hist_pct),tone(x.si.macd_hist_pct)],["RVOL",num(x.si.rvol,2),tone(x.si.rvol-1)],
@@ -103,6 +102,7 @@ async function render(){
  '<div class="card"><h2 class="section-title">Earnings / Catalyst</h2>'+(x.ca.length?x.ca.map(e=>'<p><b>'+esc(e.date)+'</b> · '+esc(e.title||"Earnings")+'<br><span class="sub">'+esc(e.importance||"")+'</span></p>').join(""):'<p class="note">Tidak ada earnings event pada window aktif.</p>')+'<a class="link" target="_blank" rel="noopener" href="'+newsUrl+'">Buka Yahoo Finance / News ↗</a></div></section>'+
  '<section class="card"><h2 class="section-title">Recommendation Journal</h2><div class="grid"><div class="metric"><small>RECOMMENDATIONS</small><b>'+recs.length+'</b></div><div class="metric"><small>REALIZED WIN RATE</small><b>'+ (realized.length?pct(wins.length/realized.length*100):"—") +'</b></div><div class="metric"><small>AVERAGE P/L</small><b class="'+tone(avg)+'">'+(recs.length?pct(avg):"—")+'</b></div><div class="metric"><small>REALIZED</small><b>'+realized.length+'</b></div></div><div class="tablewrap" style="margin-top:14px"><table class="tbl"><thead><tr><th>Date</th><th>Entry</th><th>TP1</th><th>TP2</th><th>SL</th><th>Status</th><th>P/L</th></tr></thead><tbody>'+recRows+'</tbody></table></div></section>'+
  '<section class="card"><h2 class="section-title">Indicator Charts</h2><p class="note">Chart dihitung dari histori harga EOD yang sama dengan screener. Menampilkan Price & MA, RSI, MACD, dan Stochastic untuk ticker yang dipilih.</p><div id="charts" class="charts"></div></section><section class="card"><h2 class="section-title">Historical Price</h2><div class="note">Data harga EOD tersedia di screener. Halaman detail ini menggunakan data yang sama sehingga snapshot antar-modul tetap mengacu pada tanggal as-of yang sama.</div></section>';
+ renderCharts(x);
 }
 $("#go").onclick=()=>{const t=$("#ticker").value.trim().toUpperCase();if(t)history.replaceState(null,"","?stock="+encodeURIComponent(t));render()};
 $("#ticker").addEventListener("keydown",e=>{if(e.key==="Enter")$("#go").click()});
