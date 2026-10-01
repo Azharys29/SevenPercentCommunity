@@ -62,18 +62,21 @@ def macd(c,f=12,s=26,g=9):
     return line,sig,hist
 def cross_up(a,b):
     return len(a)>1 and all(finite(x) for x in (a[-2],a[-1],b[-2],b[-1])) and a[-2]<=b[-2] and a[-1]>b[-1]
-def classify(score):
-    if score>=15: return "Bullish"
-    if score<=-15: return "Bearish"
+def classify(score, agree):
+    if score>=25 and agree>=3: return "Bullish"
+    if score<=-25 and agree>=3: return "Bearish"
     return "Neutral"
-def strength(score):
+def strength(score, agree):
     x=abs(score)
-    return "Very Strong" if x>=60 else "Strong" if x>=35 else "Moderate" if x>=15 else "Netral"
+    if x>=60 and agree>=4: return "Very Strong"
+    if x>=45 and agree>=4: return "Strong"
+    if x>=35 and agree>=3: return "Moderate"
+    return "Netral"
 def transition(prev,current):
     prev_sig=prev.get("signal") if prev else None
     cur_sig=current["signal"]; delta=current["score_delta"]
     new_bull=bool(prev and cur_sig=="Bullish" and (prev_sig!="Bullish" or delta>=15))
-    ai=bool(new_bull and current["score"]>=35 and current["agree"]>=3)
+    ai=bool(new_bull and current["score"]>=45 and current["agree"]>=4)
     return new_bull,ai
 def main():
     data=json.loads(DATA.read_text())
@@ -87,15 +90,23 @@ def main():
         rv=(v[-1]/(sum(v[-VOL_N:])/VOL_N)) if sum(v[-VOL_N:])>0 else float("nan")
         vals=[rr[-1],k[-1],d[-1],ml[-1],ms[-1],mh[-1],rv,e20[-1]]
         if not all(finite(x) for x in vals): continue
-        rscore=max(-1,min(1,(rr[-1]-50)/20))
-        stscore=1 if k[-1]>d[-1] and k[-1]<80 else -1 if k[-1]<d[-1] and k[-1]>20 else (0.5 if k[-1]>=80 else -0.5 if k[-1]<=20 else 0)
-        mscore=max(-1,min(1,(mh[-1]/max(abs(c[-1])*0.01,1e-9))*4))
-        vscore=max(-1,min(1,(rv-1)*0.75))
-        ema_score=1 if c[-1]>e20[-1] else -1
-        score=25*rscore+25*stscore+30*mscore+20*vscore
-        agree=sum(1 for x in (rscore,stscore,mscore,vscore,ema_score) if x>0.15 or x<-0.15)
-        sig=classify(score); p=prev.get(s["t"]); delta=round(score-(p.get("score",score) if p else score),4)
-        cur={"ticker":s["t"],"name":s["n"],"price":c[-1],"asof":s["d"][-1],"score":round(score,2),"signal":sig,"strength":strength(score),"agree":agree,"total":5,"rsi":round(rr[-1],2),"stoch_k":round(k[-1],2),"stoch_d":round(d[-1],2),"macd_hist_pct":round(100*mh[-1]/c[-1],4),"rvol":round(rv,3),"ema20":round(e20[-1],2),"ema20_trend":ema_score>0,"stoch_cross":cross_up(k,d),"macd_cross":cross_up(ml,ms),"previous_signal":p.get("signal") if p else None,"previous_score":p.get("score") if p else None,"score_delta":delta}
+        ema50=ema(c,50)
+        if not finite(ema50[-1]): continue
+        trend_raw=1 if c[-1]>e20[-1]>ema50[-1] else -1 if c[-1]<e20[-1]<ema50[-1] else 0
+        rscore=max(-1,min(1,(rr[-1]-50)/15))
+        if rr[-1]>=70 and rscore>0: rscore*=0.35
+        if rr[-1]<=30 and rscore<0: rscore*=0.35
+        stscore=1 if k[-1]>d[-1] and k[-1]<85 else -1 if k[-1]<d[-1] and k[-1]>15 else 0
+        mscore=max(-1,min(1,(mh[-1]/max(abs(c[-1])*0.01,1e-9))*5))
+        if mh[-1]>0 and mh[-1]<mh[-2]: mscore*=0.65
+        if mh[-1]<0 and mh[-1]>mh[-2]: mscore*=0.65
+        pdir=1 if c[-1]>c[-2] else -1 if c[-1]<c[-2] else 0
+        vscore=0 if not finite(rv) or rv<0.9 else pdir*min(1,(rv-0.9)/0.9)
+        comps=[trend_raw,rscore,stscore,mscore,vscore]
+        score=25*trend_raw+20*rscore+15*stscore+25*mscore+15*vscore
+        agree=sum(1 for x in comps if x>=0.25) if score>=0 else sum(1 for x in comps if x<=-0.25)
+        sig=classify(score,agree); p=prev.get(s["t"]); delta=round(score-(p.get("score",score) if p else score),4)
+        cur={"ticker":s["t"],"name":s["n"],"price":c[-1],"asof":s["d"][-1],"score":round(score,2),"signal":sig,"strength":strength(score),"agree":agree,"total":5,"rsi":round(rr[-1],2),"stoch_k":round(k[-1],2),"stoch_d":round(d[-1],2),"macd_hist_pct":round(100*mh[-1]/c[-1],4),"rvol":round(rv,3),"ema20":round(e20[-1],2),"ema50":round(ema50[-1],2),"trend_score":trend_raw,"ema20_trend":e20[-1]>ema50[-1],"stoch_cross":cross_up(k,d),"macd_cross":cross_up(ml,ms),"previous_signal":p.get("signal") if p else None,"previous_score":p.get("score") if p else None,"score_delta":delta}
         nb,ai=transition(p,cur); cur["signal_changed"]=bool(p and p.get("signal")!=sig); cur["new_bullish"]=nb; cur["ai_candidate"]=ai
         if nb: events.append({"ticker":s["t"],"asof":cur["asof"],"signal":sig,"score":cur["score"],"previous_signal":cur["previous_signal"],"previous_score":cur["previous_score"],"ai_candidate":ai})
         signals.append(cur)
