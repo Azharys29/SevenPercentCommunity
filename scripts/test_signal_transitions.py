@@ -9,13 +9,13 @@ def c(signal,score,agree=3): return {"signal":signal,"score":score,"score_delta"
 def run():
     cases=[
       ("no previous",None,c("Bullish",60,4),False,False),
-      ("neutral to bullish, AI threshold 35",c("Neutral",10),c("Bullish",40,3),True,True),
-      ("neutral to bullish, AI",c("Neutral",10),c("Bullish",60,3),True,True),
+      ("neutral to bullish, AI threshold 45/4",c("Neutral",10),c("Bullish",40,3),True,False),
+      ("neutral to bullish, AI",c("Neutral",10),c("Bullish",60,4),True,True),
       ("bullish score +15",c("Bullish",60,4),dict(c("Bullish",75,4),score_delta=15),True,True),
       ("bullish score +10",c("Bullish",60,4),dict(c("Bullish",70,4),score_delta=10),False,False),
       ("bullish to neutral",c("Bullish",60,4),c("Neutral",5,2),False,False),
       ("bearish to bullish",c("Bearish",-20,2),c("Bullish",60,3),True,True),
-      ("HRTA simulation: Bullish 30 to 51.02",c("Bullish",30,4),dict(c("Bullish",51.02,4),score_delta=21.02),True,True),
+      ("bullish 30 to 51.02",c("Bullish",30,4),dict(c("Bullish",51.02,4),score_delta=21.02),True,True),
     ]
     for name,p,cur,nb,ai in cases:
         got=transition(p,cur)
