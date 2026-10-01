@@ -35,11 +35,63 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "screener-build"
   cancel-in-progress: false
 
 jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      should_run: ${{ steps.freshness.outputs.should_run }}
+    steps:
+      - name: Check existing data freshness
+        id: freshness
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          import urllib.request
+
+          repo = os.environ["REPO"]
+          url = f"https://raw.githubusercontent.com/{repo}/main/data/momentum.json?v={dt.datetime.now(dt.timezone.utc).timestamp()}"
+          try:
+              req = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
+              with urllib.request.urlopen(req, timeout=15) as response:
+                  data = json.load(response)
+              generated = data.get("generated")
+              if not generated:
+                  raise ValueError("missing generated timestamp")
+
+              generated_dt = dt.datetime.fromisoformat(generated.replace("Z", "+00:00"))
+              age_min = (dt.datetime.now(dt.timezone.utc) - generated_dt).total_seconds() / 60
+              print(f"Latest generated data: {generated}")
+              print(f"Data age: {age_min:.1f} minutes")
+
+              # Native GitHub schedule and the external trigger may overlap.
+              # If another run already refreshed the data recently, skip the
+              # expensive duplicate build. Concurrency queues overlapping runs,
+              # so the second run sees the first run's fresh timestamp.
+              if age_min <= 50:
+                  print("Data is fresh; skip duplicate build.")
+                  with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                      f.write("should_run=false\\n")
+              else:
+                  print("Data is stale; run the screener build.")
+                  with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                      f.write("should_run=true\\n")
+          except Exception as exc:
+              print(f"Freshness check unavailable ({exc}); allowing build.")
+              with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                  f.write("should_run=true\\n")
+          PY
+
   build:
+    needs: preflight
+    if: needs.preflight.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
