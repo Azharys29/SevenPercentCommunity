@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
+import csv
+from io import StringIO
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data/commodity-play.json"
@@ -28,6 +30,20 @@ def num(v):
         return float(str(v).replace(",", "").strip())
     except Exception:
         return None
+
+def parse_fred_csv(series_id):
+    url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=" + series_id
+    r = requests.get(url, timeout=30, headers={"User-Agent": "SevenPercentCommunity/CommodityPlay"})
+    r.raise_for_status()
+    rows = list(csv.DictReader(StringIO(r.text)))
+    vals = []
+    for row in rows:
+        v = num(row.get(series_id))
+        if v is not None:
+            vals.append((row.get("DATE"), v))
+    if len(vals) < 2:
+        return None
+    return {"price": vals[-1][1], "previous": vals[-2][1], "period": vals[-1][0], "source": "FRED"}
 
 def parse_kemendag():
     html = requests.get(KEMENDAG_URL, timeout=30, headers={"User-Agent": "SevenPercentCommunity/CommodityPlay"}).text
@@ -80,11 +96,22 @@ def main():
     mapping = json.loads(MAP.read_text(encoding="utf-8"))
     prices = {}
     try:
+        x = parse_fred_csv("DCOILBRENTEU")
+        if x: prices["Brent Oil"] = {**x, "unit": "USD/bbl"}
+    except Exception as exc:
+        print("FRED Brent warning:", exc)
+    try:
+        x = parse_fred_csv("DHHNGSP")
+        if x: prices["Natural Gas"] = {**x, "unit": "USD/MMBtu"}
+    except Exception as exc:
+        print("FRED Natural Gas warning:", exc)
+    try:
         prices.update(parse_kemendag())
     except Exception as exc:
         print("Kemendag source warning:", exc)
     try:
-        prices.update(parse_world_bank())
+        wb = parse_world_bank()
+        for k, v in wb.items(): prices.setdefault(k, v)
     except Exception as exc:
         print("World Bank source warning:", exc)
 
