@@ -2,6 +2,13 @@ name: Commodity Play
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/fetch_commodity_play.py"
+      - "data/commodity-map.json"
+      - "commodity-play.html"
+      - ".github/workflows/commodity-play.yml"
   schedule:
     - cron: "30 2 * * 1-5"
     - cron: "30 8 * * 1-5"
