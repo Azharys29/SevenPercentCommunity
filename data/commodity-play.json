@@ -1,26 +1,30 @@
 {
-  "generated": "2026-10-01T15:35:39.318487+00:00",
-  "asof": "2026-10-01",
-  "source": "World Bank Pink Sheet + Kemendag Satu Data",
-  "methodology": "Monthly benchmark change × mapping weight, capped at ±5 per commodity exposure. Direction is an exposure indicator, not a price target.",
+  "generated": "2026-10-02T00:30:13.141560+00:00",
+  "asof": "2026-10-02",
+  "source": "Yahoo Finance futures + Bursa Malaysia FCPO + World Bank Pink Sheet + Kemendag",
+  "methodology": "Live/near-live futures for Brent and Natural Gas; Bursa Malaysia FCPO in MYR/metric ton for Palm Oil; monthly benchmark data for other commodities. Impact is directional exposure, not a price target.",
   "commodities": [
     {
       "id": "Brent Oil",
       "name": "Brent Oil",
-      "price": null,
-      "previous": null,
-      "change_pct": null,
+      "price": 102.58000183105469,
+      "previous": 103.52999877929688,
+      "change_pct": -0.9176054857948701,
       "unit": "USD/bbl",
-      "source": null
+      "period": "2026-10-02",
+      "source": "Yahoo Finance BZ=F",
+      "symbol": "BZ=F"
     },
     {
       "id": "Natural Gas",
       "name": "Natural Gas",
-      "price": null,
-      "previous": null,
-      "change_pct": null,
+      "price": 2.946000099182129,
+      "previous": 3.0260000228881836,
+      "change_pct": -2.6437515895884944,
       "unit": "USD/MMBtu",
-      "source": null
+      "period": "2026-10-02",
+      "source": "Yahoo Finance NG=F",
+      "symbol": "NG=F"
     },
     {
       "id": "Coal",
@@ -30,7 +34,8 @@
       "change_pct": 0.8695016805494671,
       "unit": "USD/mt",
       "period": "latest public monthly value",
-      "source": "Kemendag / World Bank"
+      "source": "Kemendag / World Bank",
+      "symbol": null
     },
     {
       "id": "Gold",
@@ -40,7 +45,8 @@
       "change_pct": -7.830685754521816,
       "unit": "USD/toz",
       "period": "latest public monthly value",
-      "source": "Kemendag / World Bank"
+      "source": "Kemendag / World Bank",
+      "symbol": null
     },
     {
       "id": "Nickel",
@@ -50,7 +56,8 @@
       "change_pct": -6.4755125687488535,
       "unit": "USD/mt",
       "period": "latest public monthly value",
-      "source": "Kemendag / World Bank"
+      "source": "Kemendag / World Bank",
+      "symbol": null
     },
     {
       "id": "Timah",
@@ -60,7 +67,8 @@
       "change_pct": -0.9816329582532979,
       "unit": "USD/mt",
       "period": "latest public monthly value",
-      "source": "Kemendag / World Bank"
+      "source": "Kemendag / World Bank",
+      "symbol": null
     },
     {
       "id": "Copper",
@@ -70,17 +78,19 @@
       "change_pct": 0.06505114378516641,
       "unit": "USD/mt",
       "period": "latest public monthly value",
-      "source": "Kemendag / World Bank"
+      "source": "Kemendag / World Bank",
+      "symbol": null
     },
     {
       "id": "Palm Oil",
       "name": "Palm Oil",
-      "price": 1105.0,
-      "previous": 1139.94,
-      "change_pct": -3.0650736003649315,
-      "unit": "USD/mt",
-      "period": "latest public monthly value",
-      "source": "Kemendag / World Bank"
+      "price": 7000.0,
+      "previous": null,
+      "change_pct": null,
+      "unit": "MYR/mt",
+      "period": "2026-10-02",
+      "source": "Bursa Malaysia FCPO / iFCPO",
+      "symbol": "FCPO_CONT"
     }
   ],
   "impacts": [
@@ -295,74 +305,74 @@
       "ticker_average_impact": -2.0652491597252665
     },
     {
-      "ticker": "AALI",
-      "commodity": "Palm Oil",
-      "commodity_id": "Palm Oil",
+      "ticker": "MEDC",
+      "commodity": "Brent Oil",
+      "commodity_id": "Brent Oil",
       "commodity_direction": "DOWN",
-      "commodity_change_pct": -3.0650736003649315,
+      "commodity_change_pct": -0.9176054857948701,
       "expected_direction": "DOWN",
-      "impact_score": -3.0650736003649315,
+      "impact_score": -0.9176054857948701,
       "weight": 1.0,
       "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
-      "source": "Kemendag / World Bank",
-      "ticker_aggregate_impact": -3.0650736003649315,
-      "ticker_average_impact": -3.0650736003649315
+      "source": "Yahoo Finance BZ=F",
+      "ticker_aggregate_impact": -3.5613570753833645,
+      "ticker_average_impact": -1.7806785376916823
     },
     {
-      "ticker": "DSNG",
-      "commodity": "Palm Oil",
-      "commodity_id": "Palm Oil",
+      "ticker": "ESSA",
+      "commodity": "Brent Oil",
+      "commodity_id": "Brent Oil",
       "commodity_direction": "DOWN",
-      "commodity_change_pct": -3.0650736003649315,
+      "commodity_change_pct": -0.9176054857948701,
       "expected_direction": "DOWN",
-      "impact_score": -3.0650736003649315,
+      "impact_score": -0.9176054857948701,
       "weight": 1.0,
       "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
-      "source": "Kemendag / World Bank",
-      "ticker_aggregate_impact": -3.0650736003649315,
-      "ticker_average_impact": -3.0650736003649315
+      "source": "Yahoo Finance BZ=F",
+      "ticker_aggregate_impact": -3.5613570753833645,
+      "ticker_average_impact": -1.7806785376916823
     },
     {
-      "ticker": "LSIP",
-      "commodity": "Palm Oil",
-      "commodity_id": "Palm Oil",
+      "ticker": "MEDC",
+      "commodity": "Natural Gas",
+      "commodity_id": "Natural Gas",
       "commodity_direction": "DOWN",
-      "commodity_change_pct": -3.0650736003649315,
+      "commodity_change_pct": -2.6437515895884944,
       "expected_direction": "DOWN",
-      "impact_score": -3.0650736003649315,
+      "impact_score": -2.6437515895884944,
       "weight": 1.0,
       "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
-      "source": "Kemendag / World Bank",
-      "ticker_aggregate_impact": -3.0650736003649315,
-      "ticker_average_impact": -3.0650736003649315
+      "source": "Yahoo Finance NG=F",
+      "ticker_aggregate_impact": -3.5613570753833645,
+      "ticker_average_impact": -1.7806785376916823
     },
     {
-      "ticker": "SSMS",
-      "commodity": "Palm Oil",
-      "commodity_id": "Palm Oil",
+      "ticker": "ESSA",
+      "commodity": "Natural Gas",
+      "commodity_id": "Natural Gas",
       "commodity_direction": "DOWN",
-      "commodity_change_pct": -3.0650736003649315,
+      "commodity_change_pct": -2.6437515895884944,
       "expected_direction": "DOWN",
-      "impact_score": -3.0650736003649315,
+      "impact_score": -2.6437515895884944,
       "weight": 1.0,
       "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
-      "source": "Kemendag / World Bank",
-      "ticker_aggregate_impact": -3.0650736003649315,
-      "ticker_average_impact": -3.0650736003649315
+      "source": "Yahoo Finance NG=F",
+      "ticker_aggregate_impact": -3.5613570753833645,
+      "ticker_average_impact": -1.7806785376916823
     },
     {
-      "ticker": "TAPG",
-      "commodity": "Palm Oil",
-      "commodity_id": "Palm Oil",
+      "ticker": "PGAS",
+      "commodity": "Natural Gas",
+      "commodity_id": "Natural Gas",
       "commodity_direction": "DOWN",
-      "commodity_change_pct": -3.0650736003649315,
+      "commodity_change_pct": -2.6437515895884944,
       "expected_direction": "DOWN",
-      "impact_score": -3.0650736003649315,
+      "impact_score": -2.6437515895884944,
       "weight": 1.0,
       "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
-      "source": "Kemendag / World Bank",
-      "ticker_aggregate_impact": -3.0650736003649315,
-      "ticker_average_impact": -3.0650736003649315
+      "source": "Yahoo Finance NG=F",
+      "ticker_aggregate_impact": -2.6437515895884944,
+      "ticker_average_impact": -2.6437515895884944
     },
     {
       "ticker": "TINS",
@@ -377,6 +387,62 @@
       "source": "Kemendag / World Bank",
       "ticker_aggregate_impact": -0.9816329582532979,
       "ticker_average_impact": -0.9816329582532979
+    },
+    {
+      "ticker": "ELSA",
+      "commodity": "Brent Oil",
+      "commodity_id": "Brent Oil",
+      "commodity_direction": "DOWN",
+      "commodity_change_pct": -0.9176054857948701,
+      "expected_direction": "DOWN",
+      "impact_score": -0.9176054857948701,
+      "weight": 1.0,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
+      "source": "Yahoo Finance BZ=F",
+      "ticker_aggregate_impact": -0.9176054857948701,
+      "ticker_average_impact": -0.9176054857948701
+    },
+    {
+      "ticker": "AKRA",
+      "commodity": "Brent Oil",
+      "commodity_id": "Brent Oil",
+      "commodity_direction": "DOWN",
+      "commodity_change_pct": -0.9176054857948701,
+      "expected_direction": "DOWN",
+      "impact_score": -0.9176054857948701,
+      "weight": 1.0,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
+      "source": "Yahoo Finance BZ=F",
+      "ticker_aggregate_impact": -0.9176054857948701,
+      "ticker_average_impact": -0.9176054857948701
+    },
+    {
+      "ticker": "RATU",
+      "commodity": "Brent Oil",
+      "commodity_id": "Brent Oil",
+      "commodity_direction": "DOWN",
+      "commodity_change_pct": -0.9176054857948701,
+      "expected_direction": "DOWN",
+      "impact_score": -0.9176054857948701,
+      "weight": 1.0,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
+      "source": "Yahoo Finance BZ=F",
+      "ticker_aggregate_impact": -0.9176054857948701,
+      "ticker_average_impact": -0.9176054857948701
+    },
+    {
+      "ticker": "PTRO",
+      "commodity": "Brent Oil",
+      "commodity_id": "Brent Oil",
+      "commodity_direction": "DOWN",
+      "commodity_change_pct": -0.9176054857948701,
+      "expected_direction": "DOWN",
+      "impact_score": -0.9176054857948701,
+      "weight": 1.0,
+      "note": "Positive commodity exposure; directional sensitivity is a mechanical mapping and should be read with technical confirmation.",
+      "source": "Yahoo Finance BZ=F",
+      "ticker_aggregate_impact": -0.9176054857948701,
+      "ticker_average_impact": -0.9176054857948701
     },
     {
       "ticker": "AADI",
