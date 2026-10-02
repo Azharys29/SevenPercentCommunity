@@ -319,7 +319,7 @@ textarea.code{min-height:250px;font:400 12.5px/1.55 var(--f-mono);tab-size:2;whi
       <h3>Parameter</h3>
       <div class="grid4">
         <div><label class="f" for="p_rsi">Periode RSI</label><input type="number" id="p_rsi" min="2" max="60"></div>
-        <div><label class="f" for="p_sk">Stochastic %K</label><input type="number" id="p_sk" min="2" max="60"></div>
+        <div><label class="f" for="p_sk">Stochastic %K length</label><input type="number" id="p_sk" min="2" max="60"></div>
         <div><label class="f" for="p_ss">Smoothing %K</label><input type="number" id="p_ss" min="1" max="20"></div>
         <div><label class="f" for="p_sd">Smoothing %D</label><input type="number" id="p_sd" min="1" max="20"></div>
         <div><label class="f" for="p_mf">MACD cepat</label><input type="number" id="p_mf" min="2" max="60"></div>
@@ -439,7 +439,7 @@ const ta = (() => {
 /* ================= pengaturan ================= */
 const DEF = {
   mode: 'rebound',
-  p: {rsi: 14, sk: 14, ss: 3, sd: 3, mf: 12, ms: 26, mg: 9, vn: 20, fw: 3},
+  p: {rsi: 14, sk: 14, ss: 5, sd: 5, mf: 10, ms: 20, mg: 9, vn: 20, fw: 3},
   w: {stoch: 25, macd: 30, rsi: 25, vol: 20},
 };
 let S = (() => { const s = store.get('azhs.screener.settings', null); return s ? {mode: s.mode || DEF.mode, p: {...DEF.p, ...s.p}, w: {...DEF.w, ...s.w}} : JSON.parse(JSON.stringify(DEF)); })();
