@@ -110,7 +110,7 @@ def main():
     for s in sigs:
         # Journal is LONG-only: only fresh bullish setups are eligible.
         if s.get("signal") != "Bullish": continue
-        if not bool(s.get("new_bullish")) and s.get("previous_signal") is not None: continue
+        if not bool(s.get("new_bullish")): continue
         if float(s.get("score",0)) < MIN_SCORE: continue
         if int(s.get("agree",0)) < MIN_AGREE: continue
         rsi=float(s.get("rsi",0))
