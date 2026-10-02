@@ -122,6 +122,8 @@ def main():
 
     for s in sigs:
         if s.get("signal") not in ("Bullish","Bearish"): continue
+        eligible = bool(s.get("new_bullish")) or (s.get("signal")=="Bearish" and bool(s.get("signal_changed"))) or s.get("previous_signal") is None
+        if not eligible: continue
         if float(s.get("score",0)) < MIN_SCORE and s.get("signal")=="Bullish": continue
         if float(s.get("score",0)) > -MIN_SCORE and s.get("signal")=="Bearish": continue
         if int(s.get("agree",0)) < MIN_AGREE: continue
