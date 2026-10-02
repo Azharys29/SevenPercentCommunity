@@ -156,11 +156,18 @@ def main():
         status=trade.get("status","WAITING ENTRY")
         for i in range(start_idx,len(dates)):
             high=float(highs[i]); low=float(lows[i])
-            status,entered,tp1hit,slhit=touch_status(trade["direction"],high,low,trade["entry"],trade["tp1"],trade["tp2"],trade["stop_loss"],entered)
+            day_status,entered,tp1hit,slhit=touch_status(trade["direction"],high,low,trade["entry"],trade["tp1"],trade["tp2"],trade["stop_loss"],entered)
             trade["entry_hit"]=entered
-            trade["tp1_hit"]=trade.get("tp1_hit",False) or tp1hit or status.startswith("TP1") or status.startswith("TP2")
-            trade["tp2_hit"]=trade.get("tp2_hit",False) or tp2hit if False else trade.get("tp2_hit",False) or status.startswith("TP2")
-            trade["sl_hit"]=trade.get("sl_hit",False) or slhit or "SL" in status or status=="STOP LOSS HIT"
+            trade["tp1_hit"]=trade.get("tp1_hit",False) or tp1hit or day_status.startswith("TP1") or day_status.startswith("TP2")
+            trade["tp2_hit"]=trade.get("tp2_hit",False) or day_status.startswith("TP2")
+            trade["sl_hit"]=trade.get("sl_hit",False) or slhit or "SL" in day_status or day_status=="STOP LOSS HIT"
+            if day_status=="TP2 & SL TOUCHED": status=day_status
+            elif day_status=="TP1 & SL TOUCHED": status=day_status
+            elif day_status=="STOP LOSS HIT": status=day_status
+            elif day_status=="TP2 HIT": status=day_status
+            elif trade["tp1_hit"]: status="TP1 HIT"
+            elif entered: status="ENTRY HIT"
+            else: status="WAITING ENTRY"
             trade["status"]=status
             if status in ("TP2 HIT","TP2 & SL TOUCHED","STOP LOSS HIT","TP1 & SL TOUCHED"):
                 trade["closed"]=True; trade["close_date"]=dates[i]
