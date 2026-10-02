@@ -4,7 +4,7 @@ import datetime as dt, json, math
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 DATA=ROOT/"data/screener.json"; OUT=ROOT/"data/backtest.json"
-RSI_N=14; ST_K=14; ST_S=3; ST_D=3; MAC_F=12; MAC_S=26; MAC_G=9; VOL_N=20; EMA_FAST=20; EMA_SLOW=50
+RSI_N=14; ST_K=14; ST_S=5; ST_D=5; MAC_F=10; MAC_S=20; MAC_G=9; VOL_N=20; EMA_FAST=20; EMA_SLOW=50
 HORIZONS=(5,10,20)
 def finite(x): return isinstance(x,(int,float)) and math.isfinite(x)
 def sma(a,n):
