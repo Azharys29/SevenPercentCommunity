@@ -106,22 +106,43 @@ def main():
     sigs=signals.get("signals",[])
     today=signals.get("asof") or screener.get("asof")
     new_count=0
+    diagnostics={
+        "universe":len(sigs),
+        "bullish":0,
+        "fresh_bullish":0,
+        "score_ok":0,
+        "confluence_ok":0,
+        "rsi_ok":0,
+        "fib_rr_ok":0,
+        "already_recorded":0,
+        "rejected_no_stock":0
+    }
 
     for s in sigs:
         # Journal is LONG-only: only fresh bullish setups are eligible.
         if s.get("signal") != "Bullish": continue
+        diagnostics["bullish"] += 1
         if not bool(s.get("new_bullish")): continue
+        diagnostics["fresh_bullish"] += 1
         if float(s.get("score",0)) < MIN_SCORE: continue
+        diagnostics["score_ok"] += 1
         if int(s.get("agree",0)) < MIN_AGREE: continue
+        diagnostics["confluence_ok"] += 1
         rsi=float(s.get("rsi",0))
         # RSI confirms bullish momentum while avoiding the traditional overbought zone.
         if rsi < RSI_MIN or rsi >= RSI_MAX: continue
+        diagnostics["rsi_ok"] += 1
         stock=stocks.get(s["ticker"])
-        if not stock: continue
+        if not stock:
+            diagnostics["rejected_no_stock"] += 1
+            continue
         setup=f'{s["ticker"]}|{s["signal"]}|{s.get("asof")}|{s.get("score")}'
-        if setup in by_id: continue
+        if setup in by_id:
+            diagnostics["already_recorded"] += 1
+            continue
         fib=fib_setup(stock,"Bullish")
         if not fib: continue
+        diagnostics["fib_rr_ok"] += 1
         trade={
             "setup_id":setup,"ticker":s["ticker"],"name":s.get("name",s["ticker"]),
             "signal":s["signal"],"direction":fib["direction"],"signal_date":s.get("asof"),
@@ -172,8 +193,8 @@ def main():
                 trade["status"]="EXPIRED"; trade["closed"]=True; trade["close_date"]=dates[-1]; trade["close_price"]=float(stock["c"][-1])
 
     trades=sorted(by_id.values(),key=lambda x:(x.get("signal_date") or "",x.get("ticker") or ""),reverse=True)
-    payload={"generated":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"asof":today,"trade_count":len(trades),"active_count":sum(not x.get("closed") for x in trades),"new_count":new_count,"trades":trades}
+    payload={"generated":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"asof":today,"trade_count":len(trades),"active_count":sum(not x.get("closed") for x in trades),"new_count":new_count,"diagnostics":diagnostics,"trades":trades}
     OUT.write_text(json.dumps(payload,separators=(",",":"),allow_nan=False))
-    print(json.dumps({"trade_count":payload["trade_count"],"active_count":payload["active_count"],"new_count":new_count}))
+    print(json.dumps({"trade_count":payload["trade_count"],"active_count":payload["active_count"],"new_count":new_count,"diagnostics":diagnostics}))
 
 if __name__=="__main__": main()
