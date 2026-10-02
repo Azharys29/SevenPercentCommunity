@@ -15,6 +15,8 @@ MIN_AGREE=3
 LOOKBACK=90
 PIVOT=3
 MIN_RR=1.5
+RSI_MIN=50
+RSI_MAX=70
 MAX_ACTIVE_DAYS=20
 
 def finite(x):
@@ -51,21 +53,6 @@ def fib_setup(stock,signal):
         tp2=high+rng*0.618
         sl=low
         direction="LONG"
-    elif signal=="Bearish":
-        lows=[i for i in pl if i>=PIVOT]
-        if not lows: return None
-        lo=lows[-1]
-        highs=[i for i in ph if i<lo]
-        if not highs: return None
-        hi=highs[-1]
-        high=hh[hi]; low=ll[lo]
-        if high<=low: return None
-        rng=high-low
-        entry=c[-1]
-        tp1=low-rng*0.272
-        tp2=low-rng*0.618
-        sl=high
-        direction="SHORT"
     else:
         return None
     risk=abs(entry-sl)
@@ -121,17 +108,19 @@ def main():
     new_count=0
 
     for s in sigs:
-        if s.get("signal") not in ("Bullish","Bearish"): continue
-        eligible = bool(s.get("new_bullish")) or (s.get("signal")=="Bearish" and bool(s.get("signal_changed"))) or s.get("previous_signal") is None
-        if not eligible: continue
-        if float(s.get("score",0)) < MIN_SCORE and s.get("signal")=="Bullish": continue
-        if float(s.get("score",0)) > -MIN_SCORE and s.get("signal")=="Bearish": continue
+        # Journal is LONG-only: only fresh bullish setups are eligible.
+        if s.get("signal") != "Bullish": continue
+        if not bool(s.get("new_bullish")) and s.get("previous_signal") is not None: continue
+        if float(s.get("score",0)) < MIN_SCORE: continue
         if int(s.get("agree",0)) < MIN_AGREE: continue
+        rsi=float(s.get("rsi",0))
+        # RSI confirms bullish momentum while avoiding the traditional overbought zone.
+        if rsi < RSI_MIN or rsi >= RSI_MAX: continue
         stock=stocks.get(s["ticker"])
         if not stock: continue
         setup=f'{s["ticker"]}|{s["signal"]}|{s.get("asof")}|{s.get("score")}'
         if setup in by_id: continue
-        fib=fib_setup(stock,s["signal"])
+        fib=fib_setup(stock,"Bullish")
         if not fib: continue
         trade={
             "setup_id":setup,"ticker":s["ticker"],"name":s.get("name",s["ticker"]),
