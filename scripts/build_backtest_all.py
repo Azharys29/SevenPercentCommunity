@@ -191,8 +191,12 @@ def main():
                         row={"ticker":s["t"],"signal_date":dates[i],"entry_price":price,"return_pct":pct(price,o["exit_price"]),"setup_score":q["score"],**o}
                         if breakout: families["EARLY BREAKOUT"].append(row); diagnostics["early_breakout"]+=1
                         if pull: families["EARLY PULLBACK"].append(row); diagnostics["early_pullback"]+=1
-    summary={k:stats(v) for k,v in families.items()}
-    ranked=sorted(summary.items(),key=lambda kv:(kv[1]["expectancy_r"] if kv[1]["expectancy_r"] is not None else -999),reverse=True)
+    # Technical Signal is a fixed-horizon study; risk-based setups use R-multiple outcomes.
+    tech20=[x for x in families["TECHNICAL SIGNAL"] if x["horizon"]==20]
+    summary={k:stats(v) for k,v in families.items() if k!="TECHNICAL SIGNAL"}
+    summary["TECHNICAL SIGNAL"]=stats(tech20)
+    summary["TECHNICAL SIGNAL"]["horizons"]={str(n):stats([x for x in families["TECHNICAL SIGNAL"] if x["horizon"]==n]) for n in HORIZONS}
+    ranked=sorted(summary.items(),key=lambda kv:((kv[1]["expectancy_r"] if kv[1]["expectancy_r"] is not None else -999),kv[1]["win_rate"] if kv[1]["win_rate"] is not None else -999),reverse=True)
     payload={
         "generated":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "asof":data["asof"],"universe":"KOMPAS100",
