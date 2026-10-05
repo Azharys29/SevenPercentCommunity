@@ -132,23 +132,25 @@ def pct(a,b): return (b/a-1)*100 if a else None
 
 def stats(rows):
     if not rows:
-        return {"count":0,"win_rate":None,"tp1_rate":None,"tp2_rate":None,"sl_rate":None,"timeout_rate":None,"avg_return":None,"avg_r":None,"profit_factor":None,"expectancy_r":None,"best_r":None,"worst_r":None,"max_drawdown_r":None}
+        return {"count":0,"risk_based":False,"win_rate":None,"tp1_rate":None,"tp2_rate":None,"sl_rate":None,"timeout_rate":None,"avg_return":None,"avg_r":None,"profit_factor":None,"expectancy_r":None,"best_r":None,"worst_r":None,"max_drawdown_r":None}
     rr=[x["r"] for x in rows]; rets=[x["return_pct"] for x in rows]
-    wins=[x for x in rows if x["outcome"] in ("TP1","TP2")]
+    risk_based=any(x["outcome"] in ("TP1","TP2","STOP LOSS","TIMEOUT") for x in rows)
+    wins=[x for x in rows if (x["outcome"] in ("TP1","TP2") if risk_based else x["outcome"]=="WIN")]
     gross_win=sum(max(0,x["r"]) for x in rows); gross_loss=sum(abs(min(0,x["r"])) for x in rows)
     eq=peak=0; dd=0
     for x in sorted(rows,key=lambda z:z["signal_date"]):
         eq+=x["r"]; peak=max(peak,eq); dd=min(dd,eq-peak)
     return {
-        "count":len(rows),"win_rate":round(100*len(wins)/len(rows),2),
-        "tp1_rate":round(100*sum(x["tp1_hit"] for x in rows)/len(rows),2),
-        "tp2_rate":round(100*sum(x["tp2_hit"] for x in rows)/len(rows),2),
-        "sl_rate":round(100*sum(x["outcome"]=="STOP LOSS" for x in rows)/len(rows),2),
-        "timeout_rate":round(100*sum(x["outcome"]=="TIMEOUT" for x in rows)/len(rows),2),
-        "avg_return":round(sum(rets)/len(rets),2),"avg_r":round(sum(rr)/len(rr),3),
-        "profit_factor":round(gross_win/gross_loss,3) if gross_loss else None,
-        "expectancy_r":round(sum(rr)/len(rr),3),"best_r":round(max(rr),3),
-        "worst_r":round(min(rr),3),"max_drawdown_r":round(dd,3)
+        "count":len(rows),"risk_based":risk_based,"win_rate":round(100*len(wins)/len(rows),2),
+        "tp1_rate":round(100*sum(x["tp1_hit"] for x in rows)/len(rows),2) if risk_based else None,
+        "tp2_rate":round(100*sum(x["tp2_hit"] for x in rows)/len(rows),2) if risk_based else None,
+        "sl_rate":round(100*sum(x["outcome"]=="STOP LOSS" for x in rows)/len(rows),2) if risk_based else None,
+        "timeout_rate":round(100*sum(x["outcome"]=="TIMEOUT" for x in rows)/len(rows),2) if risk_based else None,
+        "avg_return":round(sum(rets)/len(rets),2),"avg_r":round(sum(rr)/len(rr),3) if risk_based else None,
+        "profit_factor":round(gross_win/gross_loss,3) if risk_based and gross_loss else None,
+        "expectancy_r":round(sum(rr)/len(rr),3) if risk_based else None,
+        "best_r":round(max(rr),3) if risk_based else None,"worst_r":round(min(rr),3) if risk_based else None,
+        "max_drawdown_r":round(dd,3) if risk_based else None
     }
 
 def main():
