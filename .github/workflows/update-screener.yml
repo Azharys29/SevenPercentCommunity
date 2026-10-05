@@ -160,6 +160,8 @@ jobs:
         run: python scripts/build_value_gap.py
       - name: Build Technical Trade Journal
         run: python scripts/build_technical_journal.py
+      - name: Test Technical Trade Journal
+        run: python scripts/test_technical_journal.py
       - name: Validate cross-module data integrity
         run: python scripts/test_system_integrity.py
       - name: Commit fresh screener, signals and intelligence data
