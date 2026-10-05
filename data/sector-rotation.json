@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-05T00:33:50.144474+00:00",
+  "generated": "2026-10-05T01:50:27.925363+00:00",
   "asof": "2026-10-02",
   "universe": "KOMPAS100",
   "sector_count": 10,
@@ -331,7 +331,7 @@
           "ticker": "PANI",
           "score": -47.34,
           "signal": "Bearish",
-          "score_delta": 0.02
+          "score_delta": 0.0
         },
         {
           "ticker": "AMRT",
@@ -360,7 +360,7 @@
       "count": 8,
       "avg_score": -36.45,
       "median_score": -37.65,
-      "avg_score_delta": 0.0,
+      "avg_score_delta": -0.0,
       "breadth": -75.0,
       "bullish": 0,
       "neutral": 2,
@@ -408,7 +408,7 @@
           "ticker": "JSMR",
           "score": -63.85,
           "signal": "Bearish",
-          "score_delta": 0.02
+          "score_delta": -0.0
         },
         {
           "ticker": "PGEO",
