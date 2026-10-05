@@ -28,6 +28,7 @@ on:
       - "system-health.html"
       - "stock-detail.html"
       - "technical-journal.html"
+      - "early-signals.html"
       - "scripts/**"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
@@ -158,6 +159,10 @@ jobs:
         run: python scripts/build_catalysts.py
       - name: Build Value Gap
         run: python scripts/build_value_gap.py
+      - name: Build Early Signals
+        run: python scripts/build_early_signals.py
+      - name: Test Early Signals
+        run: python scripts/test_early_signals.py
       - name: Build Technical Trade Journal
         run: python scripts/build_technical_journal.py
       - name: Test Technical Trade Journal
@@ -171,7 +176,7 @@ jobs:
 
           # Keep freshly generated files safe while synchronizing with a newer main.
           mkdir -p /tmp/generated-data
-          cp data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json /tmp/generated-data/
+          cp data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json data/early-signals.json /tmp/generated-data/
 
           git fetch origin main
           git reset --hard origin/main
@@ -187,8 +192,9 @@ jobs:
           cp /tmp/generated-data/catalysts.json data/catalysts.json
           cp /tmp/generated-data/value-gap.json data/value-gap.json
           cp /tmp/generated-data/technical-journal.json data/technical-journal.json
+          cp /tmp/generated-data/early-signals.json data/early-signals.json
 
-          git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json
+          git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json data/early-signals.json
           git diff --cached --quiet || git commit -m "chore: update screener, signals and market intelligence"
           git push origin HEAD:main
       - name: Configure Pages
