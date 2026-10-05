@@ -147,7 +147,7 @@ def main():
             "setup_id":setup,"ticker":s["ticker"],"name":s.get("name",s["ticker"]),
             "signal":s["signal"],"direction":fib["direction"],"signal_date":s.get("asof"),
             "created_at":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-            "score":s.get("score"),"strength":s.get("strength"),"confluence":s.get("agree"),
+            "score":s.get("score"),"strength":s.get("strength"),"confluence":s.get("agree"),"rsi":round(float(s.get("rsi",0)),2),"new_bullish":bool(s.get("new_bullish")),
             **fib,"status":"WAITING ENTRY","entry_hit":False,"tp1_hit":False,"tp2_hit":False,
             "sl_hit":False,"closed":False,"close_date":None,"close_price":None
         }
