@@ -61,7 +61,7 @@ function renderGroups(sel,defs){
 }
 function exportExcel(){
  if(!rows.length)return;
- const s=groupStats(rows),data=rows.map((x,i)=>({"#":i+1,Emiten:x.ticker,"Tanggal":x.created_at?.slice(0,10),"Technical Score":x.technical_score,"Confluence":x.confluence,"Signal":x.signal_at_recommendation,"Entry Mid":x.entry,"TP1":Number(x.tp1),"TP2":Number(x.tp2),"SL":Number(x.stop_loss),"Outcome":x.label,"P/L %":x.pl/100,"Holding Days":x.hold,"Entry Hit":x.entry_hit_at?.slice(0,10)||"","Outcome Date":x.outAt?.slice(0,10)||""}));
+ const s=groupStats(rows),data=rows.map((x,i)=>({"#":i+1,Emiten:x.ticker,"Tanggal":x.created_at?.slice(0,10),"Technical Score":x.technical_score,"Confluence":x.confluence,"Signal":x.signal_at_recommendation,"Entry Mid":x.entry,"TP1":Number(x.tp1),"TP2":Number(x.tp2),"SL":Number(x.stop_loss),"Outcome":x.label,"Post-TP":x.post,"P/L %":x.pl/100,"Holding Days":x.hold,"Entry Hit":x.entry_hit_at?.slice(0,10)||"","Outcome Date":x.outAt?.slice(0,10)||""}));
  const summary=[["RECOMMENDATION ANALYTICS — PHASE B"],["Period",dateLabel(report.start)+" - "+dateLabel(report.latest)],[],["Metric","Value"],["Recommendations",rows.length],["Win Rate",s.wr==null?null:s.wr/100],["Average P/L",s.avg==null?null:s.avg/100],["Median P/L",s.med==null?null:s.med/100],["Profit Factor",s.pf],["Expectancy",s.exp==null?null:s.exp/100],["Average Holding Days",s.hold]];
  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(summary),"Summary");XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),"Journal");XLSX.writeFile(wb,"Recommendation_Analytics_"+report.latest.toISOString().slice(0,10)+".xlsx");
 }
