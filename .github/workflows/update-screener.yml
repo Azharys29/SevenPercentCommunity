@@ -151,6 +151,10 @@ jobs:
         run: python scripts/build_sector_rotation.py
       - name: Build Signal Backtest
         run: python scripts/build_backtest.py
+      - name: Build Phase D All-Setup Backtest
+        run: python scripts/build_backtest_all.py
+      - name: Test Phase D All-Setup Backtest
+        run: python scripts/test_backtest_all.py
       - name: Build Relative Strength
         run: python scripts/build_relative_strength.py
       - name: Build Momentum Dashboard
@@ -176,7 +180,7 @@ jobs:
 
           # Keep freshly generated files safe while synchronizing with a newer main.
           mkdir -p /tmp/generated-data
-          cp data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json data/early-signals.json /tmp/generated-data/
+          cp data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/backtest-all.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json data/early-signals.json /tmp/generated-data/
 
           git fetch origin main
           git reset --hard origin/main
@@ -187,6 +191,7 @@ jobs:
           cp /tmp/generated-data/market-intelligence.json data/market-intelligence.json
           cp /tmp/generated-data/sector-rotation.json data/sector-rotation.json
           cp /tmp/generated-data/backtest.json data/backtest.json
+          cp /tmp/generated-data/backtest-all.json data/backtest-all.json
           cp /tmp/generated-data/relative-strength.json data/relative-strength.json
           cp /tmp/generated-data/momentum.json data/momentum.json
           cp /tmp/generated-data/catalysts.json data/catalysts.json
@@ -210,12 +215,13 @@ jobs:
         run: |
           python - <<'PY'
           import json
-          d=json.load(open("data/screener.json")); s=json.load(open("data/signals.json")); m=json.load(open("data/market-intelligence.json")); r=json.load(open("data/sector-rotation.json")); b=json.load(open("data/backtest.json")); mm=json.load(open("data/momentum.json"))
+          d=json.load(open("data/screener.json")); s=json.load(open("data/signals.json")); m=json.load(open("data/market-intelligence.json")); r=json.load(open("data/sector-rotation.json")); b=json.load(open("data/backtest.json")); bd=json.load(open("data/backtest-all.json")); mm=json.load(open("data/momentum.json"))
           print(f"Screener: {d['success_count']}/{d['universe_count']} saham, asof {d['asof']}")
           print(f"Signals: {s['signals_count']}, NEW BULLISH: {s['new_bullish_count']}")
           print(f"Market Intelligence: {m['candidate_count']} candidates, {sum(len(x['news']) for x in m['items'])} news articles")
           print(f"Sector Rotation: {r['sector_count']} sectors, asof {r['asof']}")
           print(f"Backtest: {b['signal_count']} NEW BULLISH events, 20D avg {b['summary']['20']['avg_return']}%")
+          for k,v in bd["summary"].items(): print(f"Phase D {k}: {v['count']} trades, win {v['win_rate']}%, avg {v['avg_return']}%, expectancy {v['expectancy_r']}R")
           cc=json.load(open("data/catalysts.json")); vg=json.load(open("data/value-gap.json"))
           print(f"Momentum: {mm['universe_count']} stocks, top {mm['stocks'][0]['ticker']} ({mm['stocks'][0]['momentum_score']})")
           print(f"Catalysts: {cc['event_count']} events, {cc['window_start']} to {cc['window_end']}")
