@@ -15,20 +15,20 @@
 <div class="panel"><h2>TP1 / TP2 / Stop Loss Statistics</h2><div id="targets"></div></div>
 <div class="panel"><h2>Performance by Technical Score</h2><div id="scores"></div><div class="note">Hanya rekomendasi yang sudah memiliki snapshot Technical Score saat dibuat. Rekomendasi lama tanpa snapshot ditampilkan sebagai N/A dan tidak dipaksakan memakai skor hari ini.</div></div>
 <div class="panel"><h2>Performance by Confluence</h2><div id="conf"></div><div class="note">Confluence = jumlah indikator utama yang sepakat pada saat rekomendasi dibuat, skala 0–4.</div></div>
-<div class="panel"><h2>Methodology</h2><div class="note">Win Rate = TP1/TP2 hit ÷ seluruh outcome TP/SL. TP2 dihitung sebagai win dan tidak dihitung dua kali terhadap TP1. Profit Factor = gross profit ÷ gross loss absolut. Expectancy = rata-rata realized P/L per rekomendasi dengan outcome. Holding Period = hari kalender dari entry hit ke outcome; jika entry_hit_at tidak tersedia, tanggal rekomendasi digunakan sebagai fallback. P/L menggunakan entry midpoint. Open P/L ditampilkan di journal tetapi tidak masuk Win Rate, Profit Factor, atau Expectancy.</div></div>
+<div class="panel"><h2>Methodology</h2><div class="note">Win Rate = TP1/TP2 hit ÷ seluruh outcome TP/SL. TP2 dihitung sebagai win dan tidak dihitung dua kali terhadap TP1. Setelah TP1 tercapai, milestone dikunci di TP1; jika harga kemudian turun di bawah TP1, Post-TP menampilkan TS (trailing stop). Setelah TP2 tercapai, milestone dikunci di TP2 dan Post-TP menampilkan DONE. Profit Factor = gross profit ÷ gross loss absolut. Expectancy = rata-rata realized P/L per rekomendasi dengan outcome. Holding Period = hari kalender dari entry hit ke outcome; jika entry_hit_at tidak tersedia, tanggal rekomendasi digunakan sebagai fallback. P/L menggunakan entry midpoint. Open P/L ditampilkan di journal tetapi tidak masuk Win Rate, Profit Factor, atau Expectancy.</div></div>
 </div>
 <script>
 const SB_URL="https://njghchwtcyoieymkodzj.supabase.co",SB_KEY="sb_publishable_PqtSIs0LASiKcUjW8P3cJw_W27mGAoJ";
 const $=s=>document.querySelector(s),fmt=(v,d=2)=>v==null||!Number.isFinite(Number(v))?"—":new Intl.NumberFormat("id-ID",{minimumFractionDigits:d,maximumFractionDigits:d}).format(Number(v)),pct=v=>v==null?"—":(Number(v)>=0?"+":"")+fmt(v)+"%",esc=s=>String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 let rows=[],report=null;
 function outcome(x){
- const entry=(Number(x.entry_min)+Number(x.entry_max))/2,status=x.auto_status||"ACTIVE";let exit=null,label="OPEN",cls="open",outAt=null;
- if(status==="TP2 HIT"||status==="TP2 & SL TOUCHED"){exit=Number(x.tp2);label=status;cls="win";outAt=x.tp2_hit_at||x.updated_at}
- else if(status==="TP1 HIT"||status==="TP1 & SL TOUCHED"){exit=Number(x.tp1);label=status;cls="win";outAt=x.tp1_hit_at||x.updated_at}
- else if(status==="STOP LOSS HIT"){exit=Number(x.stop_loss);label=status;cls="loss";outAt=x.sl_hit_at||x.updated_at}
+ const entry=(Number(x.entry_min)+Number(x.entry_max))/2,status=x.auto_status||"ACTIVE";let exit=null,label="OPEN",cls="open",outAt=null,post="—";
+ if(x.tp2_hit_at){exit=Number(x.tp2);label="TP2 HIT";cls="win";outAt=x.tp2_hit_at;post="DONE"}
+ else if(x.tp1_hit_at){exit=Number(x.tp1);label="TP1 HIT";cls="win";outAt=x.tp1_hit_at;post=Number(x.current_price)<Number(x.tp1)?"TS":"RUNNING"}
+ else if(status==="STOP LOSS HIT"){exit=Number(x.stop_loss);label="STOP LOSS HIT";cls="loss";outAt=x.sl_hit_at||x.updated_at}
  const last=Number(x.current_price),pl=exit!=null?(exit-entry)/entry*100:(Number.isFinite(last)&&entry?(last-entry)/entry*100:null);
  const start=x.entry_hit_at||x.created_at,hold=outAt&&start?Math.max(0,(new Date(outAt)-new Date(start))/86400000):Math.max(0,(new Date(report?.latest||Date.now())-new Date(start))/86400000);
- return {...x,entry,pl,label,cls,outAt,hold,realized:exit!=null};
+ return {...x,entry,pl,label,cls,outAt,post,hold,realized:exit!=null};
 }
 function dateLabel(v){return v?new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"}):"—"}
 function median(a){if(!a.length)return null;const b=[...a].sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2}
@@ -45,8 +45,8 @@ async function load(){
 function render(){
  const s=groupStats(rows),open=rows.filter(x=>!x.realized),openAvg=open.length?open.reduce((a,x)=>a+(x.pl||0),0)/open.length:null;
  $("#stats").innerHTML=[["Rekomendasi",rows.length,""],["Win Rate",s.wr==null?"—":fmt(s.wr)+"%",s.wr==null?"":s.wr>=50?"up":"dn"],["Avg P/L",pct(s.avg),s.avg>=0?"up":"dn"],["Median P/L",pct(s.med),s.med>=0?"up":"dn"],["Profit Factor",s.pf==null?"—":fmt(s.pf),s.pf!=null&&s.pf>=1?"up":"dn"],["Expectancy",pct(s.exp),s.exp>=0?"up":"dn"],["Avg Holding",s.hold==null?"—":fmt(s.hold)+" hari",""]].map(x=>'<div class="stat"><small>'+x[0]+'</small><b class="'+x[2]+'">'+x[1]+'</b></div>').join("");
- const tr=rows.map((x,i)=>'<tr><td>'+ (i+1) +'</td><td><b>'+esc(x.ticker)+'</b><span class="muted"> · '+dateLabel(x.created_at)+'</span></td><td>'+fmt(x.technical_score)+'</td><td>'+ (x.confluence==null?"—":x.confluence+"/4") +'</td><td><span class="badge '+x.cls+'">'+esc(x.label)+'</span></td><td class="'+(x.pl>=0?"up":"dn")+'">'+pct(x.pl)+'</td><td>'+ (x.realized?fmt(x.hold)+" hari":"Open · "+fmt(x.hold)+" hari") +'</td><td>'+dateLabel(x.outAt)+'</td></tr>').join("");
- $("#journal").innerHTML=rows.length?'<table><thead><tr><th>#</th><th>Emiten / Tanggal</th><th>Tech Score</th><th>Confluence</th><th>Outcome</th><th>P/L</th><th>Holding</th><th>Outcome Date</th></tr></thead><tbody>'+tr+'</tbody></table>':'<div class="empty">Tidak ada rekomendasi dalam periode ini.</div>';
+ const tr=rows.map((x,i)=>'<tr><td>'+ (i+1) +'</td><td><b>'+esc(x.ticker)+'</b><span class="muted"> · '+dateLabel(x.created_at)+'</span></td><td>'+fmt(x.technical_score)+'</td><td>'+ (x.confluence==null?"—":x.confluence+"/4") +'</td><td><span class="badge '+x.cls+'">'+esc(x.label)+'</span></td><td><span class="badge '+(x.post==="TS"?"open":x.post==="DONE"?"win":"")+'">'+esc(x.post)+'</span></td><td class="'+(x.pl>=0?"up":"dn")+'">'+pct(x.pl)+'</td><td>'+ (x.realized?fmt(x.hold)+" hari":"Open · "+fmt(x.hold)+" hari") +'</td><td>'+dateLabel(x.outAt)+'</td></tr>').join("");
+ $("#journal").innerHTML=rows.length?'<table><thead><tr><th>#</th><th>Emiten / Tanggal</th><th>Tech Score</th><th>Confluence</th><th>Outcome</th><th>Post-TP</th><th>P/L</th><th>Holding</th><th>Outcome Date</th></tr></thead><tbody>'+tr+'</tbody></table>':'<div class="empty">Tidak ada rekomendasi dalam periode ini.</div>';
  const tp1=rows.filter(x=>x.tp1_hit_at).length,tp2=rows.filter(x=>x.tp2_hit_at).length,sl=rows.filter(x=>x.sl_hit_at).length,entry=rows.filter(x=>x.entry_hit).length;
  $("#targets").innerHTML='<table><thead><tr><th>Metric</th><th>Count</th><th>% dari total rekomendasi</th></tr></thead><tbody>'+
  [["Entry Hit",entry],["TP1 Hit",tp1],["TP2 Hit",tp2],["Stop Loss Hit",sl]].map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td><td>'+fmt(rows.length?x[1]/rows.length*100:0)+'%</td></tr>').join("")+'</tbody></table>';
