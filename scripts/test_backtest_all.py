@@ -19,8 +19,12 @@ for name,x in summary.items():
             assert isinstance(x[k],(int,float)) and math.isfinite(x[k]),f"{name}: invalid {k}"
     if x["count"]:
         assert 0<=x["win_rate"]<=100
-        assert 0<=x["sl_rate"]<=100
-        assert x["best_r"]>=x["worst_r"]
+        if x.get("risk_based"):
+            assert 0<=x["sl_rate"]<=100
+            assert x["best_r"]>=x["worst_r"]
+        else:
+            assert name=="TECHNICAL SIGNAL"
+            assert isinstance(x.get("horizons"),dict) and set(x["horizons"])=={"5","10","20"}
 diag=d.get("diagnostics",{})
 for k in ["stocks","technical_candidates","journal_candidates","journal_rr_valid","early_breakout","early_pullback"]:
     assert isinstance(diag.get(k),int) and diag[k]>=0,k
