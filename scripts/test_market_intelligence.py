@@ -11,7 +11,7 @@ print("Market Intelligence tests: PASS")
 
 from datetime import datetime, timezone, timedelta
 from email.utils import format_datetime
-now=datetime.now(timezone.utc)
+now=datetime.now(timezone.utc).replace(microsecond=0)
 assert m.is_recent_news(format_datetime(now-timedelta(days=13)),now)
 assert m.is_recent_news(format_datetime(now-timedelta(days=14)),now)
 assert not m.is_recent_news(format_datetime(now-timedelta(days=14,seconds=1)),now)
