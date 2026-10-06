@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Build rule-based Market Intelligence from technical signals + public Google News RSS."""
 import html,json,re,time,urllib.parse,urllib.request,xml.etree.ElementTree as ET
-from datetime import datetime,timezone
+from datetime import datetime,timezone,timedelta
+from email.utils import parsedate_to_datetime,format_datetime
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 SIGNALS=ROOT/"data/signals.json"; OUT=ROOT/"data/market-intelligence.json"
-MAX_ITEMS=10; MAX_NEWS=5
+MAX_ITEMS=10; MAX_NEWS=5; NEWS_MAX_AGE=timedelta(days=14)
 POSITIVE_TERMS=["naik","meningkat","tumbuh","pertumbuhan","ekspansi","kontrak baru","pesanan","kerja sama","dividen","laba","pendapatan","rebound","bullish","akuisisi","guidance naik","target naik","investasi"]
 NEGATIVE_TERMS=["turun","menurun","penurunan","rugi","kerugian","utang","dilusi","private placement","gugatan","suspensi","phk","pemutusan hubungan kerja","guidance turun","target turun","downgrade","bearish","default"]
 def clean_text(v):
@@ -30,6 +31,17 @@ def interpretation(x):
     if rvol>=1.2: notes.append("volume relatif di atas rata-rata 20 hari")
     elif rvol<0.8: notes.append("volume relatif masih di bawah rata-rata 20 hari")
     return f"Momentum bullish dengan konfluensi {agree}/{total}. "+".".join(notes[:2])+"." if score>=25 and agree>=3 and score<35 else (f"{base} dengan konfluensi {agree}/{total}. "+".".join(notes[:2])+"." if notes else f"{base} dengan konfluensi {agree}/{total}.")
+def is_recent_news(pub_date, now=None):
+    """Only accept dated articles published in the last 14 days; fail closed on unknown dates."""
+    try:
+        published=parsedate_to_datetime(pub_date)
+        if published.tzinfo is None: published=published.replace(tzinfo=timezone.utc)
+        published=published.astimezone(timezone.utc)
+        now=(now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+        return now-NEWS_MAX_AGE <= published <= now+timedelta(hours=1)
+    except (TypeError,ValueError,OverflowError):
+        return False
+
 def fetch_news(ticker,name):
     q=f'"{ticker}" saham' if not name or name.upper()==ticker.upper() else f'"{ticker}" "{name}" saham'
     url="https://news.google.com/rss/search?"+urllib.parse.urlencode({"q":q,"hl":"id","gl":"ID","ceid":"ID:id"})
@@ -38,10 +50,14 @@ def fetch_news(ticker,name):
         with urllib.request.urlopen(req,timeout=20) as r: root=ET.fromstring(r.read())
     except Exception as e:
         print(f"news fetch failed {ticker}: {e}"); return []
-    out=[]
-    for item in root.findall("./channel/item")[:MAX_NEWS]:
+    out=[]; now=datetime.now(timezone.utc)
+    # RSS may contain stale stories among the first results, so filter by pubDate
+    # before applying MAX_NEWS. Never display undated or older-than-14-day articles.
+    for item in root.findall("./channel/item"):
         title=clean_text(item.findtext("title")); link=item.findtext("link") or ""; pub=item.findtext("pubDate") or ""; desc=clean_text(item.findtext("description")); se=item.find("source"); source=clean_text(se.text if se is not None else "")
-        if title and link: out.append({"title":title,"source":source or "Google News","published":pub,"url":link,"sentiment":news_sentiment(title,desc)})
+        if not title or not link or not is_recent_news(pub,now): continue
+        out.append({"title":title,"source":source or "Google News","published":pub,"url":link,"sentiment":news_sentiment(title,desc)})
+        if len(out)>=MAX_NEWS: break
     return out
 def main():
     s=json.loads(SIGNALS.read_text(encoding="utf-8"))
