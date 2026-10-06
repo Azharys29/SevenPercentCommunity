@@ -74,11 +74,11 @@ $('#form').onsubmit=async e=>{
  try{
   const ticker=val('ticker').trim().toUpperCase();
   const payload={ticker,entry_min:+val('entry_min'),entry_max:+val('entry_max'),tp1:+val('tp1'),tp2:+val('tp2'),stop_loss:+val('stop_loss'),notes:val('notes').trim(),status:val('status')};
-  let path='/rest/v1/recommendations', opts={method:'POST',body:JSON.stringify({...payload,created_by:current.id}),headers:{Prefer:'return=minimal'}};
   if(!val('id')){
     const snap=await getSignalSnapshot(ticker);
     if(snap) Object.assign(payload,snap);
   }
+  let path='/rest/v1/recommendations', opts={method:'POST',body:JSON.stringify({...payload,created_by:current.id}),headers:{Prefer:'return=minimal'}};
   if(val('id')){path+='?id=eq.'+encodeURIComponent(val('id'));opts.method='PATCH';opts.body=JSON.stringify(payload)}
   await api(path,opts,accessToken);msg($('#formMsg'),'Tersimpan.');reset();await load();
  }catch(e){msg($('#formMsg'),'Gagal menyimpan: '+e.message,true)}
