@@ -199,7 +199,7 @@ jobs:
           cp /tmp/generated-data/technical-journal.json data/technical-journal.json
           cp /tmp/generated-data/early-signals.json data/early-signals.json
 
-          git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json data/early-signals.json
+          git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/backtest-all.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json data/early-signals.json
           git diff --cached --quiet || git commit -m "chore: update screener, signals and market intelligence"
           git push origin HEAD:main
       - name: Configure Pages
