@@ -8,3 +8,14 @@ assert m.market_sentiment(-40,3,4)=="Strong Negative"
 assert m.news_sentiment("Laba tumbuh 20%","")=="Positif"
 assert m.news_sentiment("Laba turun dan private placement","")=="Campuran"
 print("Market Intelligence tests: PASS")
+
+from datetime import datetime, timezone, timedelta
+from email.utils import format_datetime
+now=datetime.now(timezone.utc)
+assert m.is_recent_news(format_datetime(now-timedelta(days=13)),now)
+assert m.is_recent_news(format_datetime(now-timedelta(days=14)),now)
+assert not m.is_recent_news(format_datetime(now-timedelta(days=14,seconds=1)),now)
+assert not m.is_recent_news(format_datetime(now-timedelta(days=30)),now)
+assert not m.is_recent_news("",now)
+assert not m.is_recent_news("not a date",now)
+print("Market Intelligence 14-day news cutoff tests: PASS")
