@@ -55,8 +55,11 @@ def fib_setup(stock,signal):
         direction="LONG"
     else:
         return None
-    risk=abs(entry-sl)
-    reward=abs(tp1-entry)
+    # A LONG setup is invalid if price has already fallen to/below the swing-low stop.
+    # Reject it before calculating R:R so the journal never records Entry <= Stop Loss.
+    if entry <= sl: return None
+    risk=entry-sl
+    reward=tp1-entry
     rr=reward/risk if risk else 0
     if risk<=0 or reward<=0 or rr<MIN_RR: return None
     if direction=="LONG" and entry>=tp2: return None
