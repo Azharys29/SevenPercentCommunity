@@ -41,9 +41,11 @@ function macdHist(c,f=10,s=20,g=9){const ef=ema(c,f),es=ema(c,s),line=c.map((_,i
 function historicalSnapshot(x,stocks){
   if(x.technical_score!=null&&x.confluence!=null)return {...x,snapshot_source:"stored"};
   const stock=stocks[String(x.ticker||"").toUpperCase()]; if(!stock||!Array.isArray(stock.d))return x;
-  const target=String(x.created_at||"").slice(0,10);
-  let i=stock.d.findIndex(v=>String(v).slice(0,10)===target);
-  if(i<0){i=stock.d.map(v=>String(v).slice(0,10)).reduce((best,v,j)=>v<=target?j:best,-1)}
+  // Daily technical signals use completed candles. For an intraday recommendation,
+  // use the latest completed trading day strictly before the recommendation date.
+  const createdDate=new Date(x.created_at||Date.now()); createdDate.setUTCDate(createdDate.getUTCDate()-1);
+  const target=createdDate.toISOString().slice(0,10);
+  let i=stock.d.map(v=>String(v).slice(0,10)).reduce((best,v,j)=>v<=target?j:best,-1);
   if(i<59)return x;
   const c=stock.c.map(Number),h=stock.h.map(Number),l=stock.l.map(Number),v=stock.v.map(Number);
   const rr=rsiHist(c,14),[sk,sd]=stochasticHist(h,l,c,14,5,5),mh=macdHist(c,10,20,9),e20=ema(c,20),e50=ema(c,50);
