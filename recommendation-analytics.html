@@ -13,8 +13,8 @@
 <section class="stats" id="stats"></section>
 <div class="panel"><h2>Recommendation Journal</h2><div id="journal"><div class="empty">Memuat data…</div></div></div>
 <div class="panel"><h2>TP1 / TP2 / Stop Loss Statistics</h2><div id="targets"></div></div>
-<div class="panel"><h2>Performance by Technical Score</h2><div id="scores"></div><div class="note">Hanya rekomendasi yang sudah memiliki snapshot Technical Score saat dibuat. Rekomendasi lama tanpa snapshot ditampilkan sebagai N/A dan tidak dipaksakan memakai skor hari ini.</div></div>
-<div class="panel"><h2>Performance by Confluence</h2><div id="conf"></div><div class="note">Confluence = jumlah indikator utama yang sepakat pada saat rekomendasi dibuat, skala 0–4.</div></div>
+<div class="panel"><h2>Performance by Technical Score</h2><div id="scores"></div><div class="note">Technical Score dan Confluence memakai snapshot saat rekomendasi dibuat. Jika snapshot database lama belum tersedia, analytics merekonstruksi indikator dari OHLC historis pada tanggal rekomendasi; data hari ini tidak digunakan. Confluence menggunakan skala 0–5.</div></div>
+<div class="panel"><h2>Performance by Confluence</h2><div id="conf"></div><div class="note">Confluence = jumlah dari 5 indikator utama yang sepakat pada saat rekomendasi dibuat: Trend, RSI, Stochastic, MACD, dan Volume. Skala 0–5.</div></div>
 <div class="panel"><h2>Methodology</h2><div class="note">Win Rate = TP1/TP2 hit ÷ seluruh outcome TP/SL. TP2 dihitung sebagai win dan tidak dihitung dua kali terhadap TP1. Setelah TP1 tercapai, milestone dikunci di TP1; jika harga kemudian turun di bawah TP1, Post-TP menampilkan TS (trailing stop). Setelah TP2 tercapai, milestone dikunci di TP2 dan Post-TP menampilkan DONE. Profit Factor = gross profit ÷ gross loss absolut. Expectancy = rata-rata realized P/L per rekomendasi dengan outcome. Holding Period = hari kalender dari entry hit ke outcome; jika entry_hit_at tidak tersedia, tanggal rekomendasi digunakan sebagai fallback. P/L menggunakan entry midpoint. Open P/L ditampilkan di journal tetapi tidak masuk Win Rate, Profit Factor, atau Expectancy.</div></div>
 </div>
 <script>
@@ -33,12 +33,44 @@ function outcome(x){
 function dateLabel(v){return v?new Date(v).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"}):"—"}
 function median(a){if(!a.length)return null;const b=[...a].sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2}
 function groupStats(arr){const r=arr.filter(x=>x.realized),wins=r.filter(x=>x.cls==="win"),loss=r.filter(x=>x.cls==="loss"),gp=wins.reduce((s,x)=>s+x.pl,0),gl=Math.abs(loss.reduce((s,x)=>s+x.pl,0));return {n:r.length,w:wins.length,l:loss.length,wr:r.length?wins.length/r.length*100:null,avg:r.length?r.reduce((s,x)=>s+x.pl,0)/r.length:null,med:median(r.map(x=>x.pl)),pf:gl?gp/gl:(gp?null:0),exp:r.length?r.reduce((s,x)=>s+x.pl,0)/r.length:null,hold:r.length?r.reduce((s,x)=>s+x.hold,0)/r.length:null}}
+function ema(a,n){const out=Array(a.length).fill(NaN);let vals=[];for(let i=0;i<a.length;i++){const x=Number(a[i]);if(!Number.isFinite(x))continue;vals.push(x);if(vals.length<n)continue;if(vals.length===n)out[i]=vals.reduce((s,v)=>s+v,0)/n;else out[i]=x*(2/(n+1))+out[i-1]*(1-2/(n+1));}return out}
+function sma(a,n){const out=Array(a.length).fill(NaN);for(let i=n-1;i<a.length;i++){const w=a.slice(i-n+1,i+1).map(Number);if(w.every(Number.isFinite))out[i]=w.reduce((s,v)=>s+v,0)/n}return out}
+function rsiHist(c,n=14){const out=Array(c.length).fill(NaN);if(c.length<=n)return out;let ag,al;const gains=[],losses=[];for(let i=1;i<c.length;i++){const d=Number(c[i])-Number(c[i-1]);gains.push(Math.max(d,0));losses.push(Math.max(-d,0));if(i<n)continue;if(i===n){ag=gains.slice(-n).reduce((s,v)=>s+v,0)/n;al=losses.slice(-n).reduce((s,v)=>s+v,0)/n}else{ag=(ag*(n-1)+gains[gains.length-1])/n;al=(al*(n-1)+losses[losses.length-1])/n}out[i]=al===0?100:100-(100/(1+ag/al))}return out}
+function stochasticHist(h,l,c,k=14,s=5,d=5){const raw=Array(c.length).fill(NaN);for(let i=k-1;i<c.length;i++){const hh=Math.max(...h.slice(i-k+1,i+1).map(Number)),ll=Math.min(...l.slice(i-k+1,i+1).map(Number));raw[i]=hh===ll?50:100*(Number(c[i])-ll)/(hh-ll)}return [sma(raw,s),sma(sma(raw,s),d)]}
+function macdHist(c,f=10,s=20,g=9){const ef=ema(c,f),es=ema(c,s),line=c.map((_,i)=>Number.isFinite(ef[i])&&Number.isFinite(es[i])?ef[i]-es[i]:NaN),sig=ema(line,g),hist=line.map((_,i)=>Number.isFinite(line[i])&&Number.isFinite(sig[i])?line[i]-sig[i]:NaN);return hist}
+function historicalSnapshot(x,stocks){
+  if(x.technical_score!=null&&x.confluence!=null)return {...x,snapshot_source:"stored"};
+  const stock=stocks[String(x.ticker||"").toUpperCase()]; if(!stock||!Array.isArray(stock.d))return x;
+  const target=String(x.created_at||"").slice(0,10);
+  let i=stock.d.findIndex(v=>String(v).slice(0,10)===target);
+  if(i<0){i=stock.d.map(v=>String(v).slice(0,10)).reduce((best,v,j)=>v<=target?j:best,-1)}
+  if(i<59)return x;
+  const c=stock.c.map(Number),h=stock.h.map(Number),l=stock.l.map(Number),v=stock.v.map(Number);
+  const rr=rsiHist(c,14),[sk,sd]=stochasticHist(h,l,c,14,5,5),mh=macdHist(c,10,20,9),e20=ema(c,20),e50=ema(c,50);
+  const avgVol=v.slice(i-19,i+1).reduce((s,z)=>s+z,0)/20,rv=avgVol>0?v[i]/avgVol:NaN;
+  if(![rr[i],sk[i],sd[i],mh[i],e20[i],e50[i],rv,c[i]].every(Number.isFinite))return x;
+  const trend=c[i]>e20[i]&&e20[i]>e50[i]?1:c[i]<e20[i]&&e20[i]<e50[i]?-1:0;
+  let rs=Math.max(-1,Math.min(1,(rr[i]-50)/15)); if(rr[i]>=70&&rs>0)rs*=.35;if(rr[i]<=30&&rs<0)rs*=.35;
+  const sts=sk[i]>sd[i]&&sk[i]<85?1:sk[i]<sd[i]&&sk[i]>15?-1:0;
+  let ms=Math.max(-1,Math.min(1,(mh[i]/Math.max(Math.abs(c[i])*.01,1e-9))*5));
+  if(i>0&&mh[i]>0&&mh[i]<mh[i-1])ms*=.65;if(i>0&&mh[i]<0&&mh[i]>mh[i-1])ms*=.65;
+  const pd=c[i]>c[i-1]?1:c[i]<c[i-1]?-1:0,vs=!Number.isFinite(rv)||rv<.9?0:pd*Math.min(1,(rv-.9)/.9);
+  const score=25*trend+20*rs+15*sts+25*ms+15*vs;
+  const agree=score>=0?[trend,rs,sts,ms,vs].filter(z=>z>=.25).length:[trend,rs,sts,ms,vs].filter(z=>z<=-.25).length;
+  return {...x,technical_score:Number(score.toFixed(2)),confluence:agree,signal_at_recommendation:score>=25&&agree>=3?"Bullish":score<=-25&&agree>=3?"Bearish":"Neutral",snapshot_asof:String(stock.d[i]).slice(0,10),snapshot_source:"historical"};
+}
 async function load(){
  try{
-  const r=await fetch(SB_URL+"/rest/v1/recommendations?select=*&order=created_at.desc",{headers:{apikey:SB_KEY}}),data=await r.json();
-  if(!r.ok)throw new Error(data?.message||"Supabase HTTP "+r.status);
-  const latest=data.reduce((m,x)=>x.created_at>m?x.created_at:m,"");const end=latest?new Date(latest):new Date(),start=new Date(end);start.setDate(start.getDate()-30);
-  report={start,latest:end};rows=data.filter(x=>new Date(x.created_at)>=start&&new Date(x.created_at)<=new Date(end.getTime()+86400000)).map(outcome);
+  const [rr,rs]=await Promise.all([
+    fetch(SB_URL+"/rest/v1/recommendations?select=*&order=created_at.desc",{headers:{apikey:SB_KEY}}),
+    fetch("./data/screener.json?v="+Date.now(),{cache:"no-store"})
+  ]);
+  const data=await rr.json(),screener=await rs.json();
+  if(!rr.ok)throw new Error(data?.message||"Supabase HTTP "+rr.status);
+  const stocks=Object.fromEntries((screener.stocks||[]).map(s=>[String(s.t).toUpperCase(),s]));
+  const enriched=data.map(x=>historicalSnapshot(x,stocks));
+  const latest=enriched.reduce((m,x)=>x.created_at>m?x.created_at:m,"");const end=latest?new Date(latest):new Date(),start=new Date(end);start.setDate(start.getDate()-30);
+  report={start,latest:end};rows=enriched.filter(x=>new Date(x.created_at)>=start&&new Date(x.created_at)<=new Date(end.getTime()+86400000)).map(outcome);
   render();$("#period").textContent="Periode: "+dateLabel(start)+" — "+dateLabel(end); 
  }catch(e){$("#period").textContent="Gagal: "+e.message;$("#journal").innerHTML='<div class="empty">Data belum dapat dimuat.</div>'}
 }
@@ -51,7 +83,7 @@ function render(){
  $("#targets").innerHTML='<table><thead><tr><th>Metric</th><th>Count</th><th>% dari total rekomendasi</th></tr></thead><tbody>'+
  [["Entry Hit",entry],["TP1 Hit",tp1],["TP2 Hit",tp2],["Stop Loss Hit",sl]].map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td><td>'+fmt(rows.length?x[1]/rows.length*100:0)+'%</td></tr>').join("")+'</tbody></table>';
  renderGroups("#scores",[["<15",x=>x.technical_score!=null&&x.technical_score<15],["15–34",x=>x.technical_score>=15&&x.technical_score<35],["35–49",x=>x.technical_score>=35&&x.technical_score<50],["50+",x=>x.technical_score>=50]]);
- renderGroups("#conf",[["0–2",x=>x.confluence!=null&&x.confluence<=2],["3",x=>x.confluence===3],["4",x=>x.confluence===4]]);
+ renderGroups("#conf",[["0–2",x=>x.confluence!=null&&x.confluence<=2],["3",x=>x.confluence===3],["4",x=>x.confluence===4],["5",x=>x.confluence===5]]);
 }
 function renderGroups(sel,defs){
  let h='<table><thead><tr><th>Group</th><th>Recommendations</th><th>Win Rate</th><th>Avg P/L</th><th>Median P/L</th><th>Profit Factor</th><th>Expectancy</th><th>Avg Holding</th></tr></thead><tbody>';
