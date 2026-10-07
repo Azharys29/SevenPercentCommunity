@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-06T10:29:15.161765+00:00",
+  "generated": "2026-10-07T02:07:44.040906+00:00",
   "asof": "2026-10-06",
   "universe": "KOMPAS100",
   "sector_count": 10,
@@ -660,15 +660,15 @@
     {
       "sector": "Technology",
       "count": 4,
-      "avg_score": -33.09,
-      "median_score": -36.43,
-      "avg_score_delta": 0.0,
-      "breadth": -75.0,
+      "avg_score": -29.34,
+      "median_score": -28.93,
+      "avg_score_delta": 3.75,
+      "breadth": -50.0,
       "bullish": 0,
-      "neutral": 1,
-      "bearish": 3,
+      "neutral": 2,
+      "bearish": 2,
       "bullish_pct": 0.0,
-      "bearish_pct": 75.0,
+      "bearish_pct": 50.0,
       "stocks": [
         {
           "ticker": "BUKA",
@@ -678,9 +678,9 @@
         },
         {
           "ticker": "GOTO",
-          "score": -33.25,
-          "signal": "Bearish",
-          "score_delta": 0.0
+          "score": -18.25,
+          "signal": "Neutral",
+          "score_delta": 15.0
         },
         {
           "ticker": "WIRG",
@@ -696,7 +696,7 @@
         }
       ],
       "phase": "Improving",
-      "relative_score": -24.5
+      "relative_score": -20.74
     },
     {
       "sector": "Financials",
