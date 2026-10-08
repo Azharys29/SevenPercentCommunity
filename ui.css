@@ -1,0 +1,95 @@
+/* Seven Percent Community — shared UI layer
+   Visual-only system: no data, logic, or interaction behavior is changed. */
+:root{
+  --spc-bg:#070B12;
+  --spc-surface:#101827;
+  --spc-surface-2:#172235;
+  --spc-surface-3:#1D2B40;
+  --spc-border:#385271;
+  --spc-border-soft:#22334A;
+  --spc-accent:#7DD3FC;
+  --spc-accent-2:#A78BFA;
+  --spc-text:#F5F8FC;
+  --spc-muted:#AAB6C7;
+  --spc-dim:#78869A;
+}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%,rgba(125,211,252,.09),transparent 60%),
+    radial-gradient(800px 520px at 92% 4%,rgba(167,139,250,.08),transparent 62%),
+    var(--spc-bg)!important;
+  color:var(--spc-text)!important;
+}
+.wrap{position:relative}
+.top{
+  border-bottom-color:var(--spc-border-soft)!important;
+}
+.brand{color:var(--spc-accent)!important}
+.menu summary{
+  background:linear-gradient(135deg,rgba(29,43,64,.98),rgba(16,24,39,.98))!important;
+  border-color:var(--spc-border)!important;
+  border-radius:9px!important;
+  transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.menu summary:hover{
+  border-color:var(--spc-accent)!important;
+  box-shadow:0 0 0 3px rgba(125,211,252,.07);
+  transform:translateY(-1px);
+}
+.menu-panel{
+  background:linear-gradient(160deg,rgba(24,37,57,.99),rgba(11,18,30,.99))!important;
+  border-color:var(--spc-border)!important;
+  border-radius:11px!important;
+  box-shadow:0 20px 50px rgba(0,0,0,.42)!important;
+}
+.menu-panel a{
+  border-radius:7px!important;
+  transition:background .16s ease,color .16s ease;
+}
+.menu-panel a:hover{background:rgba(125,211,252,.09)!important}
+.card,.stat,.panel,.filters,.tw,.table-wrap,.tablewrap,.tile,.big,.banner,.metric,.ci,.section,.chart-card{
+  background:linear-gradient(145deg,rgba(24,36,56,.96),rgba(13,21,34,.98))!important;
+  border-color:var(--spc-border)!important;
+  border-radius:12px!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.14);
+}
+.stat,.card,.metric,.tile{transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+.stat:hover,.card:hover,.metric:hover,.tile:hover{
+  border-color:rgba(125,211,252,.72)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.22);
+}
+.stat:hover,.card:hover{transform:translateY(-1px)}
+.panel h2,.panel h3{color:var(--spc-text)}
+.btn,.chip,.x,input[type=number],input[type=search],input[type=text],select,textarea{
+  border-radius:8px!important;
+}
+.btn,.chip{
+  background:linear-gradient(135deg,rgba(29,43,64,.96),rgba(17,27,43,.96))!important;
+}
+.btn:hover,.chip:hover{border-color:var(--spc-accent)!important}
+.btn.pri,.chip[aria-pressed=true],.seg button[aria-pressed=true]{
+  background:linear-gradient(135deg,#7DD3FC,#A78BFA)!important;
+  border-color:#7DD3FC!important;
+  color:#07101B!important;
+}
+.seg{border-radius:9px!important;overflow:hidden}
+input[type=number],input[type=search],input[type=text],select,textarea{
+  background:rgba(7,12,21,.86)!important;
+  border-color:var(--spc-border)!important;
+}
+table{border-color:var(--spc-border-soft)}
+thead th,th{
+  background:linear-gradient(180deg,#1C2B42,#142137)!important;
+  border-bottom-color:var(--spc-border)!important;
+}
+tbody tr:hover{background:rgba(125,211,252,.045)!important}
+td,tbody td{border-bottom-color:var(--spc-border-soft)!important}
+.badge,.pill{border-radius:999px!important}
+a{transition:color .16s ease}
+:focus-visible{outline-color:var(--spc-accent)!important}
+.foot,.note{border-top-color:var(--spc-border-soft)!important}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .stat,.card,.metric,.tile,.menu summary{transition:none}
+}
