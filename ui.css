@@ -308,3 +308,13 @@ body:not(:has(.command-center)) h1{font-size:38px!important}
   .cc-regime{grid-template-columns:1fr 1fr}
   .cc-monitor-grid{grid-template-columns:1fr}
 }
+
+
+.terminal-nav-panel{
+  position:absolute;left:0;top:calc(100% + 4px);z-index:100;
+  min-width:210px;padding:6px;
+  background:linear-gradient(160deg,rgba(22,35,54,.99),rgba(8,14,23,.99));
+  border:1px solid var(--spc-line-strong);border-radius:9px;
+  box-shadow:0 20px 45px rgba(0,0,0,.48);backdrop-filter:blur(12px);
+}
+.terminal-nav-panel a{border:0!important;background:transparent!important}
