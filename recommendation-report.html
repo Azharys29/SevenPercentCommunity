@@ -16,11 +16,12 @@ table{border-collapse:collapse;width:100%;min-width:1050px;font-size:13px}th{bac
 .foot{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-soft);color:var(--tx3);font-size:12px;line-height:1.7}.empty{padding:45px;text-align:center;color:var(--tx3)}
 @media(max-width:950px){.stats{grid-template-columns:repeat(3,1fr)}.period{margin-left:0;width:100%}}@media(max-width:600px){h1{font-size:31px}.stats{grid-template-columns:repeat(2,1fr)}.wrap{padding:0 14px 40px}}
 </style>
+<link rel="stylesheet" href="./ui.css">
 </head>
 <body>
 <div class="wrap">
 <header class="top"><div class="brand">SEVENPERCENTCOMMUNITY</div><nav>
-<details class="menu"><summary>☰ Menu</summary><div class="menu-panel"><a href="./index.html">Screener</a><a href="./fundamental.html">Fundamental</a><a href="./teknikal.html">Teknikal</a><a href="./market-intelligence.html">Market Intelligence</a><a href="./recommendations.html">Rekomendasi</a><a href="./admin.html">Admin</a></div></details></nav></header>
+<details class="menu"><summary>☰ Menu</summary><div class="menu-panel"><a href="./index.html">Screener</a><a href="./fundamental.html">Fundamental</a><a href="./teknikal.html">Technical</a><a href="./market-intelligence.html">Market Intelligence</a><a href="./recommendations.html">Recommendations</a><a href="./admin.html">Admin</a></div></details></nav></header>
 <h1>Rekap Rekomendasi</h1>
 <p class="lead">Evaluasi rekomendasi yang dibuat dalam 30 hari terakhir: jumlah rekomendasi, win rate, rata-rata P/L, return IHSG, dan detail setiap rekomendasi.</p>
 <div class="toolbar"><button class="btn" id="refresh">↻ Refresh</button><button class="btn pri" id="export">↓ Download Excel</button><span class="period" id="period">Periode: —</span></div>
