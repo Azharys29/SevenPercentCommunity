@@ -1038,6 +1038,22 @@ function exportCsv() {
 }
 
 
+/* Command-center polish */
+body:has(.command-center) .top .brand{display:none!important}
+#ccSectors .cc-row{
+  grid-template-columns:minmax(105px,1.2fr) minmax(58px,.8fr) 54px 38px;
+}
+#ccSectors .cc-row b{
+  white-space:normal;
+  line-height:1.15;
+}
+#ccSectors .cc-row span{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-align:left;
+}
+
 /* ================= terminal command center ================= */
 async function renderCommandCenter() {
   const total = ROWS.length;
