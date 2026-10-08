@@ -195,6 +195,36 @@ def main():
         if rebuilt:
             for key in ("direction","swing_low","swing_high","fib_range","fib_1272","fib_1618","entry","stop_loss","tp1","tp2","risk_pct","rr_tp1","rr_tp2","anchor_low_index","anchor_high_index","atr14","atr_buffer","stop_method"):
                 trade[key]=rebuilt[key]
+        else:
+            # Existing trades may retain valid historical anchors even when the
+            # current pivot reconstruction rejects the setup. Migrate the stop
+            # using the same 0.5 ATR(14) volatility buffer.
+            try:
+                end=dates.index(start_date)+1
+                atr=atr_wilder(
+                    list(map(float,highs[:end])),
+                    list(map(float,lows[:end])),
+                    list(map(float,stock["c"][:end])),
+                    ATR_PERIOD
+                )
+                low=float(trade["swing_low"])
+                entry=float(trade["entry"])
+                tp1=float(trade["tp1"])
+                tp2=float(trade["tp2"])
+                if atr is not None and finite(atr) and atr>0 and entry>low:
+                    sl=low-(ATR_BUFFER*atr)
+                    risk=entry-sl
+                    reward=tp1-entry
+                    if risk>0 and reward>0:
+                        trade["stop_loss"]=round(sl,2)
+                        trade["risk_pct"]=round(risk/entry*100,2)
+                        trade["rr_tp1"]=round(reward/risk,2)
+                        trade["rr_tp2"]=round(abs(tp2-entry)/risk,2)
+                        trade["atr14"]=round(atr,2)
+                        trade["atr_buffer"]=round(ATR_BUFFER*atr,2)
+                        trade["stop_method"]="Swing Low - 0.5 ATR(14)"
+            except (ValueError, TypeError, KeyError, IndexError):
+                pass
         try: start_idx=dates.index(start_date)
         except ValueError: start_idx=max(0,len(dates)-1)
         # Recalculate the complete trade lifecycle under the current methodology,
