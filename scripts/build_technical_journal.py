@@ -266,6 +266,18 @@ def main():
             if age>=MAX_ACTIVE_DAYS:
                 trade["status"]="EXPIRED"; trade["closed"]=True; trade["close_date"]=dates[-1]; trade["close_price"]=float(stock["c"][-1])
 
+    valid_by_id={}
+    rejected_after_migration=0
+    for setup_id, trade in by_id.items():
+        try:
+            ok=(float(trade["entry"])>float(trade["stop_loss"]) and float(trade["rr_tp1"])>=MIN_RR and finite(float(trade["atr14"])))
+        except (KeyError,TypeError,ValueError):
+            ok=False
+        if ok: valid_by_id[setup_id]=trade
+        else: rejected_after_migration+=1
+    by_id=valid_by_id
+    diagnostics["rejected_after_migration"]=rejected_after_migration
+
     trades=sorted(by_id.values(),key=lambda x:(x.get("signal_date") or "",x.get("ticker") or ""),reverse=True)
     payload={"generated":dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),"asof":today,"trade_count":len(trades),"active_count":sum(not x.get("closed") for x in trades),"new_count":new_count,"diagnostics":diagnostics,"trades":trades}
     OUT.write_text(json.dumps(payload,separators=(",",":"),allow_nan=False))
