@@ -232,13 +232,20 @@ body:has(.command-center) .top{
 }
 body:has(.command-center) .terminal-nav{display:none}
 body:has(.command-center) .terminal-status{
-  position:absolute!important;
-  right:0;
-  top:50%;
-  transform:translateY(-50%);
+  position:fixed!important;
+  right:24px;
+  top:16px;
+  z-index:1000;
   margin-left:0!important;
   white-space:nowrap;
-  max-width:calc(100% - 12px);
+  max-width:calc(100vw - 36px);
+}
+@media(max-width:720px){
+  body:has(.command-center) .terminal-status{
+    right:12px;
+    top:12px;
+    max-width:calc(100vw - 24px);
+  }
 }
 .terminal-sidebar{
   position:fixed;left:16px;top:16px;bottom:16px;width:214px;z-index:20;
