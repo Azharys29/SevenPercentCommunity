@@ -187,7 +187,6 @@ def main():
 
     # Rebuild the state of active trades using available daily OHLC.
     for trade in by_id.values():
-        if trade.get("closed"): continue
         stock=stocks.get(trade["ticker"])
         if not stock: continue
         dates=stock.get("d",[]); highs=stock.get("h",[]); lows=stock.get("l",[])
@@ -198,6 +197,8 @@ def main():
                 trade[key]=rebuilt[key]
         try: start_idx=dates.index(start_date)
         except ValueError: start_idx=max(0,len(dates)-1)
+        # Recalculate the complete trade lifecycle under the current methodology,
+        # including previously closed trades, so historical records stay consistent.
         trade["entry_hit"]=False
         trade["tp1_hit"]=False
         trade["tp2_hit"]=False
