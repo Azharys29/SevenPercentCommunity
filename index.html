@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Screener Teknikal Saham IDX — Azharys.hr Capital Markets Desk</title>
+<title>SPC / Quant Research Terminal — Azharys.hr Capital Markets Desk</title>
 <meta name="description" content="Screener Seven Percent Community: Stochastic, MACD, RSI, volume, dan indikator TradingView kustom dengan skor kekuatan sinyal.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -189,16 +189,101 @@ textarea.code{min-height:250px;font:400 12.5px/1.55 var(--f-mono);tab-size:2;whi
 <div class="wrap">
   <header class="top">
     <div class="brand">@azharys.hr — Capital Markets Desk</div>
-    <nav class="menu-wrap"><details class="menu"><summary>☰ Menu</summary><div class="menu-panel"><a href="./index.html">Screener</a><a href="./fundamental.html">Fundamental</a><a href="./teknikal.html">Technical</a><a href="./early-signals.html">Early Signals</a><a href="./technical-journal.html">Technical Trade Journal</a><a href="./market-intelligence.html">Market Intelligence</a><a href="./recommendations.html">Recommendations</a><a href="./admin.html">Admin</a></div></details><span id="status" class="pill">Memuat data…</span></nav>
+    <nav class="terminal-nav" aria-label="Primary navigation">
+  <details class="terminal-nav-group"><summary>MARKET</summary><div class="terminal-nav-panel">
+    <a href="./index.html">Market Overview</a>
+    <a href="./index.html#screener">Screener</a>
+    <a href="./heatmap.html">Heatmap</a>
+    <a href="./sector-rotation.html">Sector Rotation</a>
+    <a href="./volume-intelligence.html">Volume Intelligence</a>
+  </div></details>
+  <details class="terminal-nav-group"><summary>RESEARCH</summary><div class="terminal-nav-panel">
+    <a href="./fundamental.html">Fundamental</a>
+    <a href="./teknikal.html">Technical</a>
+    <a href="./value-gap.html">Value Gap</a>
+    <a href="./relative-strength.html">Relative Strength</a>
+    <a href="./market-intelligence.html">Market Intelligence</a>
+  </div></details>
+  <details class="terminal-nav-group"><summary>SIGNALS</summary><div class="terminal-nav-panel">
+    <a href="./early-signals.html">Early Signals</a>
+    <a href="./technical-journal.html">Technical Trade Journal</a>
+    <a href="./recommendations.html">Recommendations</a>
+    <a href="./recommendation-analytics.html">Recommendation Analytics</a>
+  </div></details>
+  <details class="terminal-nav-group"><summary>QUANT</summary><div class="terminal-nav-panel">
+    <a href="./backtest.html">Backtest All Setup</a>
+    <a href="./momentum-dashboard.html">Momentum Dashboard</a>
+    <a href="./catalyst-calendar.html">Catalyst Calendar</a>
+  </div></details>
+  <details class="terminal-nav-group"><summary>SYSTEM</summary><div class="terminal-nav-panel">
+    <a href="./stock-detail.html">Stock Detail</a>
+    <a href="./system-health.html">System Health</a>
+    <a href="./admin.html">Admin</a>
+  </div></details>
+</nav>\n  <span id="status" class="pill terminal-status">SYSTEM READY</span>
+  <span id="status" class="pill terminal-status">SYSTEM READY</span>
   </header>
+  <aside class="terminal-sidebar" aria-label="Quant research terminal navigation">
+  <div class="terminal-sidebar-brand"><span>SPC</span><b>QUANT RESEARCH</b><small>MARKET ANALYTICS WORKSTATION</small></div>
+  <div class="terminal-sidebar-section">
+    <div class="terminal-sidebar-title">MARKET</div>
+    <a class="active" href="./index.html">Market Overview</a>
+    <a href="./index.html#screener">Screener</a>
+    <a href="./heatmap.html">Heatmap</a>
+    <a href="./sector-rotation.html">Sector Rotation</a>
+    <a href="./volume-intelligence.html">Volume Intelligence</a>
+  </div>
+  <div class="terminal-sidebar-section">
+    <div class="terminal-sidebar-title">RESEARCH</div>
+    <a href="./fundamental.html">Fundamental</a><a href="./teknikal.html">Technical</a>
+    <a href="./value-gap.html">Value Gap</a><a href="./relative-strength.html">Relative Strength</a>
+    <a href="./market-intelligence.html">Market Intelligence</a>
+  </div>
+  <div class="terminal-sidebar-section">
+    <div class="terminal-sidebar-title">SIGNALS</div>
+    <a href="./early-signals.html">Early Signals</a><a href="./technical-journal.html">Technical Trade Journal</a>
+    <a href="./recommendations.html">Recommendations</a><a href="./recommendation-analytics.html">Recommendation Analytics</a>
+  </div>
+  <div class="terminal-sidebar-section">
+    <div class="terminal-sidebar-title">QUANT</div>
+    <a href="./backtest.html">Backtest All Setup</a><a href="./momentum-dashboard.html">Momentum Dashboard</a>
+    <a href="./catalyst-calendar.html">Catalyst Calendar</a>
+  </div>
+  <div class="terminal-sidebar-section">
+    <div class="terminal-sidebar-title">SYSTEM</div>
+    <a href="./stock-detail.html">Stock Detail</a><a href="./system-health.html">System Health</a><a href="./admin.html">Admin</a>
+  </div>
+</aside>
   <div id="banner" class="banner" hidden></div>
 
-  <section class="hero">
+  <section class="command-center" aria-label="Market Command Center">
+  <div class="cc-head">
+    <div><span class="cc-kicker">MARKET COMMAND CENTER</span><h1>SPC / QUANT RESEARCH TERMINAL</h1><p>Systematic market monitor — technical breadth, quantitative signals, sector rotation and market intelligence.</p></div>
+    <div class="cc-clock"><span id="ccMarketState">MARKET OPEN</span><b id="ccClock">--:-- WIB</b><small id="ccAsOf">AS OF --</small></div>
+  </div>
+  <div class="cc-regime">
+    <div class="cc-metric"><span>MARKET REGIME</span><b id="ccRegime">—</b><small id="ccRegimeSub">Loading breadth</small></div>
+    <div class="cc-metric"><span>BREADTH</span><b id="ccBreadth">—</b><small id="ccBreadthSub">—</small></div>
+    <div class="cc-metric"><span>QUANT SIGNALS</span><b id="ccSignals">—</b><small id="ccSignalsSub">Bullish / Bearish</small></div>
+    <div class="cc-metric"><span>RISK / DISPERSION</span><b id="ccRisk">—</b><small id="ccRiskSub">Score dispersion</small></div>
+  </div>
+  <div class="cc-grid">
+    <section class="cc-panel cc-top-signals"><header><span>TOP QUANT SIGNALS</span><a href="#screener">OPEN SCREENER →</a></header><div id="ccTopSignals" class="cc-list"></div></section>
+    <section class="cc-panel"><header><span>SECTOR ROTATION</span><a href="./sector-rotation.html">VIEW →</a></header><div id="ccSectors" class="cc-list"></div></section>
+    <section class="cc-panel"><header><span>MARKET INTELLIGENCE</span><a href="./market-intelligence.html">VIEW →</a></header><div id="ccIntel" class="cc-list"></div></section>
+  </div>
+  <section class="cc-panel cc-monitor" id="screener">
+    <header><span>SCREENER / MARKET MONITOR</span><span id="ccMonitorMeta">—</span></header>
+    <div class="cc-monitor-grid"><div><span>TOP BULLISH</span><b id="ccBullTickers">—</b></div><div><span>TOP BEARISH</span><b id="ccBearTickers">—</b></div><div><span>STRONGEST CONFLUENCE</span><b id="ccConfTickers">—</b></div></div>
+  </section>
+</section>
+
+  <section class="hero legacy-hero">
     <h1>Screener Seven Percent Community</h1>
     <p class="lead">Stochastic, MACD, RSI, dan volume dihitung dari harga penutupan harian, lalu digabung menjadi satu skor kekuatan sinyal dari −100 sampai +100. Skor makin jauh dari nol, konfluensi antarindikator makin tinggi. Indikator TradingView Anda sendiri bisa ditambahkan sebagai kolom dan bobot skor.</p>
   </section>
 
-  <section class="stats" aria-label="Ringkasan hasil" id="stats"></section>
+  <section class="stats legacy-stats" aria-label="Ringkasan hasil" id="stats"></section>
 
   <div class="layout">
     <aside class="filters" id="filters" aria-label="Filter">
@@ -832,7 +917,7 @@ function bindSettings() {
     Object.keys(DEF.p).forEach(k => p[k] = Math.max(1, Math.round(+$('#p_' + k).value || DEF.p[k])));
     if (p.mf >= p.ms) { p.mf = DEF.p.mf; p.ms = DEF.p.ms; }
     S = {mode, w, p}; store.set('azhs.screener.settings', S);
-    $('#dlgSet').close(); recompute(); render();
+    $('#dlgSet').close(); recompute(); render(); renderCommandCenter();
   });
   $('#resetSet').addEventListener('click', () => { S = JSON.parse(JSON.stringify(DEF)); store.set('azhs.screener.settings', S); fillSettings(); recompute(); render(); });
 }
@@ -951,6 +1036,58 @@ function exportCsv() {
   const lines = rows.map(({s, a}) => [s.t, s.n, s.sec, s.ix.join('|'), a.price, a.chg.toFixed(2), Math.round(s.mc), s.b, a.rsi.toFixed(1), a.K.toFixed(1), a.D.toFixed(1), a.histN.toFixed(3), fin(a.rvol) ? a.rvol.toFixed(2) : '', ...cu.map(c => a.custom[c.id] ? (a.custom[c.id].value ?? '') : ''), a.score.toFixed(0), dirOf(a.score) > 0 ? 'Bullish' : dirOf(a.score) < 0 ? 'Bearish' : 'Netral', strengthOf(a.score), `${a.agree}/${a.total}`].map(q).join(','));
   download(`screener-idx-${DATA.asof || 'data'}.csv`, '\ufeff' + [head.map(q).join(','), ...lines].join('\n'), 'text/csv;charset=utf-8');
 }
+
+
+/* ================= terminal command center ================= */
+async function renderCommandCenter() {
+  const total = ROWS.length;
+  const bull = ROWS.filter(r => r.a.score >= 25).length;
+  const bear = ROWS.filter(r => r.a.score <= -25).length;
+  const neutral = Math.max(total - bull - bear, 0);
+  const breadth = total ? (bull - bear) / total * 100 : 0;
+  const avg = total ? ROWS.reduce((s, r) => s + r.a.score, 0) / total : 0;
+  const dispersion = total ? Math.sqrt(ROWS.reduce((s, r) => s + (r.a.score - avg) ** 2, 0) / total) : 0;
+  const regime = breadth >= 20 ? 'BULLISH' : breadth <= -20 ? 'BEARISH' : 'NEUTRAL';
+  const risk = dispersion >= 38 ? 'HIGH' : dispersion >= 28 ? 'ELEVATED' : 'CONTROLLED';
+  const $c = id => document.getElementById(id);
+  if (!$c('ccRegime')) return;
+  $c('ccRegime').textContent = regime;
+  $c('ccRegime').className = regime === 'BULLISH' ? 'positive' : regime === 'BEARISH' ? 'negative' : 'warning';
+  $c('ccRegimeSub').textContent = 'Breadth ' + (breadth >= 0 ? '+' : '') + breadth.toFixed(1) + ' pts';
+  $c('ccBreadth').textContent = bull + ' / ' + bear;
+  $c('ccBreadthSub').textContent = neutral + ' neutral · ' + total + ' universe';
+  $c('ccSignals').textContent = bull;
+  $c('ccSignalsSub').textContent = bull + ' bullish · ' + bear + ' bearish';
+  $c('ccRisk').textContent = risk;
+  $c('ccRiskSub').textContent = 'σ score ' + dispersion.toFixed(1);
+  $c('ccAsOf').textContent = 'AS OF ' + (DATA.asof || '—');
+  $c('ccMonitorMeta').textContent = total + ' instruments · score engine';
+
+  const topBull = ROWS.filter(r => r.a.score > 0).sort((a,b)=>b.a.score-a.a.score).slice(0,6);
+  const topBear = ROWS.filter(r => r.a.score < 0).sort((a,b)=>a.a.score-b.a.score).slice(0,6);
+  const topConf = [...ROWS].sort((a,b)=>(b.a.agree/Math.max(b.a.total,1))-(a.a.agree/Math.max(a.a.total,1)) || b.a.score-a.a.score).slice(0,5);
+  const row = r => '<div class="cc-row"><b>' + esc(r.s.t) + '</b><span>' + esc(r.s.sec || '—') + '</span><strong class="' + (r.a.score >= 0 ? 'positive':'negative') + '">' + (r.a.score >= 0 ? '+' : '') + r.a.score.toFixed(1) + '</strong><em>' + r.a.agree + '/' + r.a.total + '</em></div>';
+  $c('ccTopSignals').innerHTML = topBull.length ? topBull.map(row).join('') : '<div class="cc-empty">No bullish signal above zero.</div>';
+
+  $c('ccBullTickers').textContent = topBull.slice(0,4).map(r=>r.s.t).join(' · ') || '—';
+  $c('ccBearTickers').textContent = topBear.slice(0,4).map(r=>r.s.t).join(' · ') || '—';
+  $c('ccConfTickers').textContent = topConf.map(r=>r.s.t + ' ' + r.a.agree + '/' + r.a.total).join(' · ') || '—';
+
+  try {
+    const [sr, mi] = await Promise.all([
+      fetch('data/sector-rotation.json?v='+Date.now(), {cache:'no-store'}).then(x=>x.ok?x.json():null).catch(()=>null),
+      fetch('data/market-intelligence.json?v='+Date.now(), {cache:'no-store'}).then(x=>x.ok?x.json():null).catch(()=>null)
+    ]);
+    if (sr && Array.isArray(sr.sectors)) {
+      const sectors = [...sr.sectors].sort((a,b)=>b.avg_score-a.avg_score).slice(0,6);
+      $c('ccSectors').innerHTML = sectors.map(s=>'<div class="cc-row"><b>'+esc(s.sector)+'</b><span>'+esc(s.phase || '—')+'</span><strong class="'+(s.avg_score>=0?'positive':'negative')+'">'+(s.avg_score>=0?'+':'')+Number(s.avg_score).toFixed(1)+'</strong><em>'+Number(s.breadth).toFixed(0)+'%</em></div>').join('');
+    } else $c('ccSectors').innerHTML='<div class="cc-empty">Sector data unavailable.</div>';
+    if (mi && Array.isArray(mi.items)) {
+      $c('ccIntel').innerHTML = mi.items.slice(0,5).map(x=>'<div class="cc-row"><b>'+esc(x.ticker)+'</b><span>'+esc(x.market_sentiment || '—')+'</span><strong class="'+(x.score>=25?'positive':'negative')+'">'+(x.score>=0?'+':'')+Number(x.score).toFixed(1)+'</strong><em>'+esc(x.confluence || '—')+'</em></div>').join('');
+    } else $c('ccIntel').innerHTML='<div class="cc-empty">Market intelligence unavailable.</div>';
+  } catch {}
+}
+
 
 /* ================= init ================= */
 function status() {
