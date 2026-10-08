@@ -35,7 +35,7 @@ NAV = """<nav class="terminal-nav" aria-label="Primary navigation">
     <a href="./system-health.html">System Health</a>
     <a href="./admin.html">Admin</a>
   </details>
-</nav>"""
+</nav>\n  <span id="status" class="pill terminal-status">SYSTEM READY</span>"""
 
 SIDEBAR = """<aside class="terminal-sidebar" aria-label="Quant research terminal navigation">
   <div class="terminal-sidebar-brand"><span>SPC</span><b>QUANT RESEARCH</b><small>MARKET ANALYTICS WORKSTATION</small></div>
