@@ -180,8 +180,9 @@ def main():
         rr2 = finite_number(trade["rr_tp2"], "rr_tp2", ticker)
         atr14 = finite_number(trade["atr14"], "atr14", ticker)
         atr_buffer = finite_number(trade["atr_buffer"], "atr_buffer", ticker)
-        if trade["stop_method"] != "Swing Low - 0.5 ATR(14)":
-            fail(f"{ticker}: unexpected stop method {trade["stop_method"]!r}")
+        stop_method = trade["stop_method"]
+        if stop_method != "Swing Low - 0.5 ATR(14)":
+            fail(f"{ticker}: unexpected stop method {stop_method!r}")
         if atr14 <= 0 or atr_buffer <= 0:
             fail(f"{ticker}: ATR values must be > 0")
         if abs(atr_buffer - (ATR_BUFFER * atr14)) > 0.02:
