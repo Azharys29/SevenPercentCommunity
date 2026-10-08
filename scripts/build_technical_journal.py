@@ -15,12 +15,30 @@ MIN_AGREE=3
 LOOKBACK=90
 PIVOT=3
 MIN_RR=1.5
+ATR_PERIOD=14
+ATR_BUFFER=0.5
 RSI_MIN=50
 RSI_MAX=70
 MAX_ACTIVE_DAYS=20
 
 def finite(x):
     return isinstance(x,(int,float)) and math.isfinite(x)
+
+def atr_wilder(h,l,c,period=14):
+    """Return the latest Wilder ATR for the supplied OHLC series."""
+    if len(c) < period + 1: return None
+    tr=[]
+    for i in range(len(c)):
+        if i == 0:
+            tr.append(float(h[i])-float(l[i]))
+        else:
+            prev=float(c[i-1]); hi=float(h[i]); lo=float(l[i])
+            tr.append(max(hi-lo,abs(hi-prev),abs(lo-prev)))
+    if len(tr) < period: return None
+    atr=sum(tr[:period])/period
+    for value in tr[period:]:
+        atr=((atr*(period-1))+value)/period
+    return atr
 
 def pivots(h,l,n=3):
     ph=[]; pl=[]
@@ -32,9 +50,17 @@ def pivots(h,l,n=3):
             pl.append(i)
     return ph,pl
 
-def fib_setup(stock,signal):
-    c=list(map(float,stock["c"])); h=list(map(float,stock["h"])); l=list(map(float,stock["l"]))
+def fib_setup(stock,signal,asof_date=None):
+    c_all=list(map(float,stock["c"])); h_all=list(map(float,stock["h"])); l_all=list(map(float,stock["l"]))
+    dates=stock.get("d",[])
+    end=len(c_all)
+    if asof_date:
+        try: end=dates.index(asof_date)+1
+        except ValueError: return None
+    c=c_all[:end]; h=h_all[:end]; l=l_all[:end]
     if len(c)<LOOKBACK: return None
+    atr=atr_wilder(h,l,c,ATR_PERIOD)
+    if atr is None or not finite(atr) or atr<=0: return None
     start=max(0,len(c)-LOOKBACK)
     hh=h[start:]; ll=l[start:]; cc=c[start:]
     ph,pl=pivots(hh,ll,PIVOT)
@@ -51,7 +77,7 @@ def fib_setup(stock,signal):
         entry=c[-1]
         tp1=high+rng*0.272
         tp2=high+rng*0.618
-        sl=low
+        sl=low-(ATR_BUFFER*atr)
         direction="LONG"
     else:
         return None
@@ -76,6 +102,9 @@ def fib_setup(stock,signal):
         "tp1":round(tp1,2),
         "tp2":round(tp2,2),
         "risk_pct":round(risk/entry*100,2),
+        "atr14":round(atr,2),
+        "atr_buffer":round(ATR_BUFFER*atr,2),
+        "stop_method":"Swing Low - 0.5 ATR(14)",
         "rr_tp1":round(rr,2),
         "rr_tp2":round(abs(tp2-entry)/risk,2),
         "anchor_low_index":start+lo,
@@ -143,7 +172,7 @@ def main():
         if setup in by_id:
             diagnostics["already_recorded"] += 1
             continue
-        fib=fib_setup(stock,"Bullish")
+        fib=fib_setup(stock,"Bullish",s.get("asof") or today)
         if not fib: continue
         diagnostics["fib_rr_ok"] += 1
         trade={
