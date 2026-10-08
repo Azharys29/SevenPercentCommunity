@@ -30,6 +30,7 @@ on:
       - "technical-journal.html"
       - "early-signals.html"
       - "scripts/**"
+      - "ui.css"
       - "universe.csv"
       - ".github/workflows/update-screener.yml"
   schedule:
