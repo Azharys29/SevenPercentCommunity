@@ -1060,7 +1060,7 @@ async function renderCommandCenter() {
   $c('ccSignalsSub').textContent = bull + ' bullish · ' + bear + ' bearish';
   $c('ccRisk').textContent = risk;
   $c('ccRiskSub').textContent = 'σ score ' + dispersion.toFixed(1);
-  $c('ccAsOf').textContent = 'AS OF ' + (DATA.asof || '—');
+  $c('ccAsOf').textContent = 'AS OF ' + (DATA.asof || '—'); const now = new Date(); $c('ccClock').textContent = now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}) + ' WIB';
   $c('ccMonitorMeta').textContent = total + ' instruments · score engine';
 
   const topBull = ROWS.filter(r => r.a.score > 0).sort((a,b)=>b.a.score-a.a.score).slice(0,6);
@@ -1105,7 +1105,7 @@ async function init() {
   DATA = await loadData();
   await loadCustom();
   status(); buildFilterUI(); bindFilters(); bindSettings(); bindCustom(); syncFilterUI();
-  recompute(); render();
+  recompute(); render(); renderCommandCenter();
   const qsStock = new URLSearchParams(location.search).get("stock");
   if (qsStock) setTimeout(() => openDetail(qsStock.toUpperCase()), 0);
   $('#exportCsv').addEventListener('click', exportCsv);
