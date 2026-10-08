@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-08T13:11:04.884998+00:00",
+  "generated": "2026-10-08T13:14:28.635943+00:00",
   "asof": "2026-10-08",
   "universe": "KOMPAS100",
   "sector_count": 10,
@@ -16,7 +16,7 @@
       "count": 3,
       "avg_score": 25.62,
       "median_score": 39.13,
-      "avg_score_delta": 0.0,
+      "avg_score_delta": -0.0,
       "breadth": 33.3,
       "bullish": 1,
       "neutral": 2,
@@ -28,7 +28,7 @@
           "ticker": "KLBF",
           "score": 56.77,
           "signal": "Bullish",
-          "score_delta": 0.01
+          "score_delta": 0.0
         },
         {
           "ticker": "MIKA",
@@ -182,13 +182,13 @@
           "ticker": "RATU",
           "score": -8.79,
           "signal": "Neutral",
-          "score_delta": 0.03
+          "score_delta": -0.0
         },
         {
           "ticker": "BULL",
           "score": -15.95,
           "signal": "Neutral",
-          "score_delta": -0.01
+          "score_delta": 0.0
         },
         {
           "ticker": "HRUM",
@@ -224,7 +224,7 @@
           "ticker": "BIPI",
           "score": -52.38,
           "signal": "Bearish",
-          "score_delta": -0.01
+          "score_delta": 0.0
         },
         {
           "ticker": "TOBA",
@@ -236,7 +236,7 @@
           "ticker": "CUAN",
           "score": -55.21,
           "signal": "Bearish",
-          "score_delta": -0.03
+          "score_delta": -0.0
         },
         {
           "ticker": "PTRO",
@@ -312,7 +312,7 @@
       "count": 8,
       "avg_score": -16.74,
       "median_score": -29.64,
-      "avg_score_delta": -0.0,
+      "avg_score_delta": 0.0,
       "breadth": -25.0,
       "bullish": 1,
       "neutral": 4,
@@ -366,7 +366,7 @@
           "ticker": "INET",
           "score": -48.6,
           "signal": "Neutral",
-          "score_delta": -0.01
+          "score_delta": 0.0
         }
       ],
       "phase": "Leading",
@@ -413,7 +413,7 @@
           "ticker": "GGRM",
           "score": -0.49,
           "signal": "Neutral",
-          "score_delta": -0.01
+          "score_delta": 0.0
         },
         {
           "ticker": "PANI",
@@ -478,7 +478,7 @@
       "count": 16,
       "avg_score": -18.2,
       "median_score": -18.16,
-      "avg_score_delta": -0.0,
+      "avg_score_delta": 0.0,
       "breadth": -37.5,
       "bullish": 0,
       "neutral": 10,
@@ -538,13 +538,13 @@
           "ticker": "BRPT",
           "score": -18.96,
           "signal": "Neutral",
-          "score_delta": -0.01
+          "score_delta": 0.0
         },
         {
           "ticker": "AMMN",
           "score": -23.57,
           "signal": "Neutral",
-          "score_delta": -0.05
+          "score_delta": 0.0
         },
         {
           "ticker": "INCO",
@@ -580,7 +580,7 @@
           "ticker": "TPIA",
           "score": -68.12,
           "signal": "Bearish",
-          "score_delta": -0.01
+          "score_delta": -0.0
         }
       ],
       "phase": "Improving",
@@ -645,7 +645,7 @@
           "ticker": "HRTA",
           "score": -52.91,
           "signal": "Bearish",
-          "score_delta": -0.01
+          "score_delta": -0.0
         },
         {
           "ticker": "KPIG",
@@ -662,7 +662,7 @@
       "count": 11,
       "avg_score": -27.84,
       "median_score": -36.08,
-      "avg_score_delta": -0.0,
+      "avg_score_delta": 0.0,
       "breadth": -36.4,
       "bullish": 1,
       "neutral": 5,
@@ -728,7 +728,7 @@
           "ticker": "BRIS",
           "score": -66.16,
           "signal": "Bearish",
-          "score_delta": -0.02
+          "score_delta": 0.0
         },
         {
           "ticker": "COIN",
