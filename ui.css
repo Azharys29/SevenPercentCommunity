@@ -224,9 +224,22 @@ a{color:var(--spc-cyan)}
 
 /* Homepage: command-center workstation */
 body:has(.command-center) .wrap{max-width:none!important;padding-left:258px!important;padding-right:28px!important}
-body:has(.command-center) .top{margin-left:-230px;padding-left:0}
+body:has(.command-center) .top{
+  margin-left:-230px;
+  padding-left:0;
+  position:relative;
+  flex-wrap:nowrap;
+}
 body:has(.command-center) .terminal-nav{display:none}
-body:has(.command-center) .terminal-status{margin-left:auto!important}
+body:has(.command-center) .terminal-status{
+  position:absolute!important;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  margin-left:0!important;
+  white-space:nowrap;
+  max-width:calc(100% - 12px);
+}
 .terminal-sidebar{
   position:fixed;left:16px;top:16px;bottom:16px;width:214px;z-index:20;
   overflow:auto;padding:15px 10px;
