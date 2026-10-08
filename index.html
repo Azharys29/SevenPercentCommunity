@@ -184,6 +184,22 @@ textarea.code{min-height:250px;font:400 12.5px/1.55 var(--f-mono);tab-size:2;whi
 @media(max-width:700px){.menu-panel{left:50%;right:auto;transform:translateX(-50%);min-width:210px}.menu summary{padding:8px 11px}}
 </style></style>
 <link rel="stylesheet" href="./ui.css">
+<style id="command-center-polish">
+body:has(.command-center) .top .brand{display:none!important}
+#ccSectors .cc-row{
+  grid-template-columns:minmax(105px,1.2fr) minmax(58px,.8fr) 54px 38px;
+}
+#ccSectors .cc-row b{
+  white-space:normal;
+  line-height:1.15;
+}
+#ccSectors .cc-row span{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-align:left;
+}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -1037,22 +1053,6 @@ function exportCsv() {
   download(`screener-idx-${DATA.asof || 'data'}.csv`, '\ufeff' + [head.map(q).join(','), ...lines].join('\n'), 'text/csv;charset=utf-8');
 }
 
-
-/* Command-center polish */
-body:has(.command-center) .top .brand{display:none!important}
-#ccSectors .cc-row{
-  grid-template-columns:minmax(105px,1.2fr) minmax(58px,.8fr) 54px 38px;
-}
-#ccSectors .cc-row b{
-  white-space:normal;
-  line-height:1.15;
-}
-#ccSectors .cc-row span{
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  text-align:left;
-}
 
 /* ================= terminal command center ================= */
 async function renderCommandCenter() {
