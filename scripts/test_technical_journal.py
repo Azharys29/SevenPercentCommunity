@@ -10,6 +10,7 @@ JOURNAL = ROOT / "data/technical-journal.json"
 MIN_SCORE = 25
 MIN_AGREE = 3
 MIN_RR = 1.5
+ATR_BUFFER = 0.5
 RSI_MIN = 50
 RSI_MAX = 70
 
@@ -129,6 +130,9 @@ def main():
             "risk_pct",
             "rr_tp1",
             "rr_tp2",
+            "atr14",
+            "atr_buffer",
+            "stop_method",
             "status",
             "entry_hit",
             "tp1_hit",
@@ -174,6 +178,14 @@ def main():
         risk_pct = finite_number(trade["risk_pct"], "risk_pct", ticker)
         rr1 = finite_number(trade["rr_tp1"], "rr_tp1", ticker)
         rr2 = finite_number(trade["rr_tp2"], "rr_tp2", ticker)
+        atr14 = finite_number(trade["atr14"], "atr14", ticker)
+        atr_buffer = finite_number(trade["atr_buffer"], "atr_buffer", ticker)
+        if trade["stop_method"] != "Swing Low - 0.5 ATR(14)":
+            fail(f"{ticker}: unexpected stop method {trade["stop_method"]!r}")
+        if atr14 <= 0 or atr_buffer <= 0:
+            fail(f"{ticker}: ATR values must be > 0")
+        if abs(atr_buffer - (ATR_BUFFER * atr14)) > 0.02:
+            fail(f"{ticker}: ATR buffer is inconsistent with 0.5 ATR")
 
         if not (entry > sl):
             fail(f"{ticker}: LONG requires Entry > Stop Loss")
@@ -183,6 +195,8 @@ def main():
             fail(f"{ticker}: LONG requires TP2 > TP1")
         if not (risk_pct > 0):
             fail(f"{ticker}: risk_pct must be > 0")
+        if not (sl < trade["swing_low"]):
+            fail(f"{ticker}: ATR-buffered SL must be below swing low")
         if rr1 < MIN_RR:
             fail(f"{ticker}: TP1 R:R {rr1} < {MIN_RR}")
         if rr2 < rr1:
