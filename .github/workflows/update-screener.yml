@@ -151,9 +151,9 @@ jobs:
         run: python scripts/build_sector_rotation.py
       - name: Build Signal Backtest
         run: python scripts/build_backtest.py
-      - name: Build Phase D All-Setup Backtest
+      - name: Build Backtest All Setup
         run: python scripts/build_backtest_all.py
-      - name: Test Phase D All-Setup Backtest
+      - name: Test Backtest All Setup
         run: python scripts/test_backtest_all.py
       - name: Build Relative Strength
         run: python scripts/build_relative_strength.py
@@ -202,6 +202,8 @@ jobs:
           git add data/screener.json data/signals.json data/signal-history.json data/market-intelligence.json data/sector-rotation.json data/backtest.json data/backtest-all.json data/relative-strength.json data/momentum.json data/catalysts.json data/value-gap.json data/technical-journal.json data/early-signals.json
           git diff --cached --quiet || git commit -m "chore: update screener, signals and market intelligence"
           git push origin HEAD:main
+      - name: Apply Quant Research Terminal UI
+        run: python scripts/apply_ui_theme.py
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
