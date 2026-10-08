@@ -192,10 +192,21 @@ def main():
         if not stock: continue
         dates=stock.get("d",[]); highs=stock.get("h",[]); lows=stock.get("l",[])
         start_date=trade.get("signal_date")
+        rebuilt=fib_setup(stock,trade.get("signal"),start_date)
+        if rebuilt:
+            for key in ("direction","swing_low","swing_high","fib_range","fib_1272","fib_1618","entry","stop_loss","tp1","tp2","risk_pct","rr_tp1","rr_tp2","anchor_low_index","anchor_high_index","atr14","atr_buffer","stop_method"):
+                trade[key]=rebuilt[key]
         try: start_idx=dates.index(start_date)
         except ValueError: start_idx=max(0,len(dates)-1)
-        entered=bool(trade.get("entry_hit"))
-        status=trade.get("status","WAITING ENTRY")
+        trade["entry_hit"]=False
+        trade["tp1_hit"]=False
+        trade["tp2_hit"]=False
+        trade["sl_hit"]=False
+        trade["closed"]=False
+        trade["close_date"]=None
+        trade["close_price"]=None
+        entered=False
+        status="WAITING ENTRY"
         for i in range(start_idx,len(dates)):
             high=float(highs[i]); low=float(lows[i])
             day_status,entered,tp1hit,slhit=touch_status(trade["direction"],high,low,trade["entry"],trade["tp1"],trade["tp2"],trade["stop_loss"],entered)
