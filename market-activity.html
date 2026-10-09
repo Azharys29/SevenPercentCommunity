@@ -11,14 +11,14 @@
 </head>
 <body><div class="wrap">
 <header class="top"><div class="brand">SEVENPERCENTCOMMUNITY / MARKET ACTIVITY</div><details class="menu"><summary>☰ Menu</summary><div class="menu-panel"><a href="./index.html">Market Overview / Screener</a><a href="./heatmap.html">Heatmap</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./volume-intelligence.html">Volume Intelligence</a><a href="./market-intelligence.html">Market Intelligence</a><a href="./relative-strength.html">Relative Strength</a><a href="./system-health.html">System Health</a></div></details></header>
-<section class="hero"><div><div class="eyebrow">QUANT RESEARCH / ACTIVITY MONITOR</div><h1>Market Activity</h1><p>Deteksi aktivitas tidak biasa, konfluensi momentum–volume, dan uji sederhana atas sinyal historis pada universe KOMPAS100. Halaman ini membaca data screener statis yang sudah tersedia—tanpa API baru atau perubahan workflow.</p></div><div class="meta" id="asof">MEMUAT DATA…</div></section>
+<section class="hero"><div><div class="eyebrow">QUANT RESEARCH / ACTIVITY MONITOR</div><h1>Market Activity</h1><p>Deteksi aktivitas tidak biasa, konfluensi momentum–volume, dan regime pasar berbasis Gaussian HMM. Model dihitung terjadwal di GitHub Actions; halaman hanya membaca JSON statis agar tetap ringan.</p></div><div class="meta" id="asof">MEMUAT DATA…</div></section>
 <section class="stats"><div class="stat"><span>Saham dianalisis</span><b id="nStocks">—</b><small>Universe data screener</small></div><div class="stat"><span>Volume anomali</span><b id="nAnomaly">—</b><small>RVOL ≥ 1.5x</small></div><div class="stat"><span>Momentum + volume</span><b id="nConfluence">—</b><small>Return 5D positif & RVOL tinggi</small></div><div class="stat"><span>Sinyal backtest</span><b id="nSignals">—</b><small>Aturan historis sederhana</small></div></section>
 <div class="grid"><section class="panel"><h2>Activity Anomaly & Confluence</h2><p class="sub">RVOL membandingkan volume sesi terakhir dengan rerata 20 sesi sebelumnya. Return dihitung dari seri penutupan yang tersedia.</p><div class="controls"><input id="search" type="search" placeholder="Cari ticker…"><select id="filter"><option value="all">Semua saham</option><option value="anomaly">RVOL ≥ 1.5x</option><option value="confluence">Momentum + volume</option><option value="negative">Return 5D negatif</option></select><button class="btn" id="export">Ekspor CSV</button></div><div class="tablewrap"><table><thead><tr><th>Ticker</th><th>Harga</th><th>Return 5D</th><th>RVOL</th><th>Aktivitas</th><th>Confluence</th><th>Skor</th></tr></thead><tbody id="activityRows"><tr><td colspan="7" class="empty">Memuat data…</td></tr></tbody></table></div><p class="note">Skor aktivitas 0–100 menggabungkan RVOL dan besar perubahan harga 5D; skor ini adalah indikator screening, bukan probabilitas profit atau rekomendasi transaksi.</p></section>
 <section class="panel"><h2>Statistical Edge Backtest</h2><p class="sub">Simulasi sinyal historis pada data OHLCV yang tersedia. Entry diasumsikan pada penutupan hari sinyal; return forward tidak memasukkan biaya, slippage, atau batas likuiditas.</p><div class="flow"><div class="mini"><span>Sampel sinyal</span><b id="btN">—</b></div><div class="mini"><span>Win rate 5D</span><b id="btWin">—</b></div><div class="mini"><span>Rata-rata 5D</span><b id="btAvg">—</b></div></div><div class="tablewrap" style="margin-top:14px"><table style="min-width:440px"><thead><tr><th>Horizon</th><th>Sampel</th><th>Win rate</th><th>Avg return</th><th>Median</th></tr></thead><tbody id="btRows"><tr><td colspan="5" class="empty">Menghitung…</td></tr></tbody></table></div><p class="note">Aturan sinyal: close harian positif dan volume ≥ 1.5× rerata 20 sesi sebelumnya. Setiap ticker/hari dihitung sebagai observasi; observasi berdekatan dapat saling tumpang tindih. Gunakan hasil sebagai eksplorasi, bukan bukti edge yang tervalidasi out-of-sample.</p></section></div>
 
 <section class="panel" id="regimePanel" style="margin-top:14px">
 <h2>Market Regime Switching</h2>
-<p class="sub">Klasifikasi Bull / Sideways / Bear berbasis return agregat harian universe, lalu matriks transisi dihitung dari urutan state historis. Ini Markov regime proxy yang transparan, bukan HMM terlatih.</p>
+<p class="sub">Gaussian Hidden Markov Model (3 state) yang dilatih di GitHub Actions dari return harian IHSG, volatilitas 20 sesi, dan market breadth KOMPAS100. Browser hanya menampilkan JSON hasil model—tanpa training atau library ML di sisi pengguna.</p>
 <div class="flow">
  <div class="mini"><span>Regime saat ini</span><b id="regimeNow">—</b></div>
  <div class="mini"><span>Probabilitas bertahan 1 sesi</span><b id="regimeStay">—</b></div>
@@ -31,7 +31,7 @@
  <div id="regimeForecast" class="flow"><div class="mini"><span>Bull</span><b>—</b></div><div class="mini"><span>Sideways</span><b>—</b></div><div class="mini"><span>Bear</span><b>—</b></div></div>
  <p class="note">Probabilitas adalah frekuensi transisi historis yang teramati pada data yang tersedia, bukan probabilitas terkalibrasi atau jaminan arah pasar. Gunakan sebagai konteks risiko, bukan sinyal beli/jual tunggal.</p></div>
 </div>
-<p class="note">Metode: return equal-weighted lintas saham untuk setiap tanggal, lalu return kumulatif 20 sesi: Bull ≥ +3%, Bear ≤ −3%, selain itu Sideways. Matriks dihitung dari perpindahan state berurutan. Transisi dengan sampel nol ditampilkan sebagai 0%; state dengan sampel sedikit dapat menghasilkan estimasi tidak stabil.</p>
+<p class="note">Metode: Gaussian HMM dengan 3 state; label Bull / Sideways / Bear ditetapkan berdasarkan urutan rata-rata return harian IHSG pada tiap state. Probabilitas regime berasal dari posterior model; matriks adalah probabilitas transisi terestimasi. Hasil tetap estimasi statistik, bukan jaminan arah pasar.</p>
 </section>
 <section class="panel" style="margin-top:14px"><h2>Foreign Flow</h2><p class="sub">Kolom foreign buy/sell tidak tersedia pada file screener historis yang digunakan halaman ini, sehingga net foreign flow tidak dihitung atau diestimasi.</p><p>Untuk data resmi harian, cek <a href="https://www.idx.co.id/id/data-pasar/ringkasan-perdagangan/ringkasan-saham/" target="_blank" rel="noopener noreferrer">Ringkasan Saham BEI</a>. Otomatisasi foreign flow memerlukan feed data yang memuat foreign buy dan foreign sell; fitur ini tidak mengklaim mengakses feed tersebut.</p></section>
 <p class="note">Sumber harga/volume: <code>data/screener.json</code> dari workflow repository. Data bersifat sesuai timestamp pembaruan file. Bila file gagal dimuat, pastikan GitHub Pages melayani file JSON tersebut. Analisis bersifat informasional.</p>
@@ -123,6 +123,27 @@ function buildRegime(stocks){
  const forecast=last?probs[last.state]:[0,0,0];
  $('regimeForecast').innerHTML=labels.map((label,i)=>'<div class="mini"><span>'+label+'</span><b class="'+(i===0?'positive':i===2?'negative':'neutral')+'">'+(forecast[i]*100).toFixed(1)+'%</b><div class="bar"><i style="width:'+(forecast[i]*100)+'%"></i></div></div>').join('');
 }
+function applyHMM(data){
+ if(!data||!data.current_probabilities||!data.transition_matrix)return;
+ const labels=['BULL','SIDEWAYS','BEAR'], current=data.current_regime;
+ $('regimeNow').textContent=current||'—';
+ $('regimeNow').className=current==='BULL'?'positive':current==='BEAR'?'negative':'neutral';
+ $('regimeObs').textContent=Number(data.observations||0).toLocaleString('id-ID')+' · HMM';
+ const stay=Number(data.stay_probability);
+ $('regimeStay').textContent=Number.isFinite(stay)?(stay*100).toFixed(1)+'%':'—';
+ const matrix=data.transition_matrix;
+ $('regimeMatrix').innerHTML=labels.map(label=>{
+  const row=matrix[label]||{};
+  return '<tr><td><b>'+label+'</b></td>'+labels.map(next=>'<td>'+((Number(row[next]||0)*100).toFixed(1))+'%</td>').join('')+'</tr>';
+ }).join('');
+ const probs=data.current_probabilities;
+ $('regimeForecast').innerHTML=labels.map((label,i)=>{
+  const p=Math.max(0,Math.min(1,Number(probs[label]||0)));
+  return '<div class="mini"><span>'+label+'</span><b class="'+(i===0?'positive':i===2?'negative':'neutral')+'">'+(p*100).toFixed(1)+'%</b><div class="bar"><i style="width:'+(p*100)+'%"></i></div></div>';
+ }).join('');
+ const notes=document.querySelectorAll('#regimePanel .note');
+ if(notes.length)notes[notes.length-1].textContent='Model: '+(data.model||'Gaussian HMM')+' · As of '+(data.asof||'—')+' · '+(data.method||'')+'. Probabilitas adalah estimasi model dan dapat berubah saat model dilatih ulang; bukan sinyal beli/jual tunggal.';
+}
 function fmt(v){return Number.isFinite(v)?pct(v):'—'}
 function boot(data){
  const stocks=Array.isArray(data.stocks)?data.stocks:[];
@@ -130,6 +151,7 @@ function boot(data){
  $('asof').textContent='AS OF '+(data.asof||data.generated||'timestamp tidak tersedia')+' · '+(data.universe_name||data.universe||'universe data');
  $('nStocks').textContent=rows.length;
  buildRegime(stocks);
+ fetch('./data/market-regime.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(applyHMM).catch(()=>{});
  $('nAnomaly').textContent=rows.filter(r=>r.anomaly).length;
  $('nConfluence').textContent=rows.filter(r=>r.confluence).length;
  $('nSignals').textContent=buildBacktest(stocks).find(x=>x.h===5).n.toLocaleString('id-ID');
