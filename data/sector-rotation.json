@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-09T09:51:32.273199+00:00",
+  "generated": "2026-10-09T15:33:23.738823+00:00",
   "asof": "2026-10-09",
   "universe": "KOMPAS100",
   "sector_count": 10,
@@ -63,7 +63,7 @@
           "ticker": "SMIL",
           "score": 62.24,
           "signal": "Bullish",
-          "score_delta": 0.01
+          "score_delta": 0.0
         },
         {
           "ticker": "ASII",
@@ -98,7 +98,7 @@
       "count": 16,
       "avg_score": 1.32,
       "median_score": -2.83,
-      "avg_score_delta": 0.01,
+      "avg_score_delta": -0.0,
       "breadth": -6.2,
       "bullish": 3,
       "neutral": 9,
@@ -116,13 +116,13 @@
           "ticker": "ARCI",
           "score": 74.85,
           "signal": "Bullish",
-          "score_delta": 0.06
+          "score_delta": -0.0
         },
         {
           "ticker": "PSAB",
           "score": 42.55,
           "signal": "Bullish",
-          "score_delta": 0.03
+          "score_delta": 0.0
         },
         {
           "ticker": "SMGR",
@@ -164,7 +164,7 @@
           "ticker": "INCO",
           "score": -15.41,
           "signal": "Neutral",
-          "score_delta": 0.08
+          "score_delta": 0.0
         },
         {
           "ticker": "BRPT",
@@ -194,7 +194,7 @@
           "ticker": "TINS",
           "score": -44.83,
           "signal": "Neutral",
-          "score_delta": -0.02
+          "score_delta": 0.0
         },
         {
           "ticker": "TPIA",
@@ -211,7 +211,7 @@
       "count": 14,
       "avg_score": -0.09,
       "median_score": -1.53,
-      "avg_score_delta": 0.02,
+      "avg_score_delta": -0.0,
       "breadth": -7.1,
       "bullish": 2,
       "neutral": 9,
@@ -223,7 +223,7 @@
           "ticker": "GGRM",
           "score": 48.25,
           "signal": "Bullish",
-          "score_delta": 0.34
+          "score_delta": 0.0
         },
         {
           "ticker": "ICBP",
@@ -312,7 +312,7 @@
       "count": 23,
       "avg_score": -3.67,
       "median_score": -3.98,
-      "avg_score_delta": 0.05,
+      "avg_score_delta": 0.0,
       "breadth": -13.0,
       "bullish": 4,
       "neutral": 12,
@@ -354,7 +354,7 @@
           "ticker": "ITMG",
           "score": 21.78,
           "signal": "Neutral",
-          "score_delta": 1.11
+          "score_delta": 0.0
         },
         {
           "ticker": "SGER",
@@ -372,7 +372,7 @@
           "ticker": "DEWA",
           "score": 10.1,
           "signal": "Neutral",
-          "score_delta": 0.07
+          "score_delta": -0.0
         },
         {
           "ticker": "PGAS",
@@ -526,7 +526,7 @@
       "count": 8,
       "avg_score": -9.86,
       "median_score": -23.02,
-      "avg_score_delta": 0.05,
+      "avg_score_delta": 0.0,
       "breadth": -12.5,
       "bullish": 1,
       "neutral": 5,
@@ -556,7 +556,7 @@
           "ticker": "TLKM",
           "score": -21.75,
           "signal": "Neutral",
-          "score_delta": 0.43
+          "score_delta": 0.0
         },
         {
           "ticker": "JSMR",
@@ -662,7 +662,7 @@
       "count": 11,
       "avg_score": -23.79,
       "median_score": -28.16,
-      "avg_score_delta": 0.08,
+      "avg_score_delta": 0.0,
       "breadth": -36.4,
       "bullish": 0,
       "neutral": 7,
@@ -722,7 +722,7 @@
           "ticker": "BBRI",
           "score": -32.97,
           "signal": "Bearish",
-          "score_delta": 0.84
+          "score_delta": 0.0
         },
         {
           "ticker": "BRIS",
