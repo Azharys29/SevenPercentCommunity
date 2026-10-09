@@ -15,6 +15,24 @@
 <section class="stats"><div class="stat"><span>Saham dianalisis</span><b id="nStocks">—</b><small>Universe data screener</small></div><div class="stat"><span>Volume anomali</span><b id="nAnomaly">—</b><small>RVOL ≥ 1.5x</small></div><div class="stat"><span>Momentum + volume</span><b id="nConfluence">—</b><small>Return 5D positif & RVOL tinggi</small></div><div class="stat"><span>Sinyal backtest</span><b id="nSignals">—</b><small>Aturan historis sederhana</small></div></section>
 <div class="grid"><section class="panel"><h2>Activity Anomaly & Confluence</h2><p class="sub">RVOL membandingkan volume sesi terakhir dengan rerata 20 sesi sebelumnya. Return dihitung dari seri penutupan yang tersedia.</p><div class="controls"><input id="search" type="search" placeholder="Cari ticker…"><select id="filter"><option value="all">Semua saham</option><option value="anomaly">RVOL ≥ 1.5x</option><option value="confluence">Momentum + volume</option><option value="negative">Return 5D negatif</option></select><button class="btn" id="export">Ekspor CSV</button></div><div class="tablewrap"><table><thead><tr><th>Ticker</th><th>Harga</th><th>Return 5D</th><th>RVOL</th><th>Aktivitas</th><th>Confluence</th><th>Skor</th></tr></thead><tbody id="activityRows"><tr><td colspan="7" class="empty">Memuat data…</td></tr></tbody></table></div><p class="note">Skor aktivitas 0–100 menggabungkan RVOL dan besar perubahan harga 5D; skor ini adalah indikator screening, bukan probabilitas profit atau rekomendasi transaksi.</p></section>
 <section class="panel"><h2>Statistical Edge Backtest</h2><p class="sub">Simulasi sinyal historis pada data OHLCV yang tersedia. Entry diasumsikan pada penutupan hari sinyal; return forward tidak memasukkan biaya, slippage, atau batas likuiditas.</p><div class="flow"><div class="mini"><span>Sampel sinyal</span><b id="btN">—</b></div><div class="mini"><span>Win rate 5D</span><b id="btWin">—</b></div><div class="mini"><span>Rata-rata 5D</span><b id="btAvg">—</b></div></div><div class="tablewrap" style="margin-top:14px"><table style="min-width:440px"><thead><tr><th>Horizon</th><th>Sampel</th><th>Win rate</th><th>Avg return</th><th>Median</th></tr></thead><tbody id="btRows"><tr><td colspan="5" class="empty">Menghitung…</td></tr></tbody></table></div><p class="note">Aturan sinyal: close harian positif dan volume ≥ 1.5× rerata 20 sesi sebelumnya. Setiap ticker/hari dihitung sebagai observasi; observasi berdekatan dapat saling tumpang tindih. Gunakan hasil sebagai eksplorasi, bukan bukti edge yang tervalidasi out-of-sample.</p></section></div>
+
+<section class="panel" id="regimePanel" style="margin-top:14px">
+<h2>Market Regime Switching</h2>
+<p class="sub">Klasifikasi Bull / Sideways / Bear berbasis return agregat harian universe, lalu matriks transisi dihitung dari urutan state historis. Ini Markov regime proxy yang transparan, bukan HMM terlatih.</p>
+<div class="flow">
+ <div class="mini"><span>Regime saat ini</span><b id="regimeNow">—</b></div>
+ <div class="mini"><span>Probabilitas bertahan 1 sesi</span><b id="regimeStay">—</b></div>
+ <div class="mini"><span>Data state historis</span><b id="regimeObs">—</b></div>
+</div>
+<div class="grid" style="margin-top:14px">
+ <div><h3 style="font:400 20px Georgia,serif;color:var(--cream);margin:0 0 8px">Matriks Transisi Empiris</h3>
+ <div class="tablewrap"><table style="min-width:420px"><thead><tr><th>State saat ini ↓ / berikutnya →</th><th>Bull</th><th>Sideways</th><th>Bear</th></tr></thead><tbody id="regimeMatrix"><tr><td colspan="4" class="empty">Menunggu data historis…</td></tr></tbody></table></div></div>
+ <div><h3 style="font:400 20px Georgia,serif;color:var(--cream);margin:0 0 8px">Distribusi State Berikutnya</h3>
+ <div id="regimeForecast" class="flow"><div class="mini"><span>Bull</span><b>—</b></div><div class="mini"><span>Sideways</span><b>—</b></div><div class="mini"><span>Bear</span><b>—</b></div></div>
+ <p class="note">Probabilitas adalah frekuensi transisi historis yang teramati pada data yang tersedia, bukan probabilitas terkalibrasi atau jaminan arah pasar. Gunakan sebagai konteks risiko, bukan sinyal beli/jual tunggal.</p></div>
+</div>
+<p class="note">Metode: return equal-weighted lintas saham untuk setiap tanggal, lalu return kumulatif 20 sesi: Bull ≥ +3%, Bear ≤ −3%, selain itu Sideways. Matriks dihitung dari perpindahan state berurutan. Transisi dengan sampel nol ditampilkan sebagai 0%; state dengan sampel sedikit dapat menghasilkan estimasi tidak stabil.</p>
+</section>
 <section class="panel" style="margin-top:14px"><h2>Foreign Flow</h2><p class="sub">Kolom foreign buy/sell tidak tersedia pada file screener historis yang digunakan halaman ini, sehingga net foreign flow tidak dihitung atau diestimasi.</p><p>Untuk data resmi harian, cek <a href="https://www.idx.co.id/id/data-pasar/ringkasan-perdagangan/ringkasan-saham/" target="_blank" rel="noopener noreferrer">Ringkasan Saham BEI</a>. Otomatisasi foreign flow memerlukan feed data yang memuat foreign buy dan foreign sell; fitur ini tidak mengklaim mengakses feed tersebut.</p></section>
 <p class="note">Sumber harga/volume: <code>data/screener.json</code> dari workflow repository. Data bersifat sesuai timestamp pembaruan file. Bila file gagal dimuat, pastikan GitHub Pages melayani file JSON tersebut. Analisis bersifat informasional.</p>
 </div>
@@ -60,12 +78,58 @@ function buildBacktest(stocks){
  }
  return [1,3,5].map(h=>{const a=obs.map(x=>x[h]).filter(Number.isFinite);return {h,n:a.length,win:a.length?a.filter(x=>x>0).length/a.length*100:NaN,avg:a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN,med:median(a)}})
 }
+
+function buildRegime(stocks){
+ const byDate=new Map();
+ for(const s of stocks){
+  const c=Array.isArray(s.c)?s.c:[],d=Array.isArray(s.d)?s.d:[];
+  const n=Math.min(c.length,d.length);
+  for(let i=0;i<n;i++){
+   const close=num(c[i]),date=String(d[i]);
+   if(!date||!Number.isFinite(close)||close<=0)continue;
+   if(!byDate.has(date))byDate.set(date,[]);
+   byDate.get(date).push({ticker:s.t||s.ticker||'',close:close,i:i});
+  }
+ }
+ const dates=[...byDate.keys()].sort();
+ const daily=[];
+ for(const date of dates){
+  const arr=byDate.get(date),rets=[];
+  for(const p of arr){
+   const s=stocks.find(x=>(x.t||x.ticker||'')===p.ticker);
+   if(!s||!Array.isArray(s.c)||p.i<1)continue;
+   const prev=num(s.c[p.i-1]);
+   if(prev>0)rets.push(p.close/prev-1);
+  }
+  if(rets.length>=Math.max(5,Math.ceil(stocks.length*.2)))daily.push({date:date,ret:rets.reduce((a,b)=>a+b,0)/rets.length,n:rets.length});
+ }
+ const hist=[];
+ for(let i=19;i<daily.length;i++){
+  const cum=daily.slice(i-19,i+1).reduce((a,x)=>a*(1+x.ret),1)-1;
+  const state=cum>=.03?0:cum<=-.03?2:1;
+  hist.push({date:daily[i].date,state:state,cum:cum,n:daily[i].n});
+ }
+ const counts=[[0,0,0],[0,0,0],[0,0,0]];
+ for(let i=1;i<hist.length;i++)counts[hist[i-1].state][hist[i].state]++;
+ const probs=counts.map(row=>{const n=row.reduce((a,b)=>a+b,0);return row.map(x=>n?x/n:0)});
+ const last=hist.length?hist[hist.length-1]:null;
+ const labels=['BULL','SIDEWAYS','BEAR'];
+ $('regimeNow').textContent=last?labels[last.state]:'—';
+ $('regimeNow').className=last?(last.state===0?'positive':last.state===2?'negative':'neutral'):'';
+ $('regimeObs').textContent=hist.length.toLocaleString('id-ID');
+ const stay=last&&counts[last.state].reduce((a,b)=>a+b,0)?probs[last.state][last.state]:NaN;
+ $('regimeStay').textContent=Number.isFinite(stay)?(stay*100).toFixed(1)+'%':'—';
+ $('regimeMatrix').innerHTML=labels.map((label,i)=>'<tr><td><b>'+label+'</b><br><span style="color:var(--tx3)">n='+counts[i].reduce((a,b)=>a+b,0)+'</span></td>'+probs[i].map(p=>'<td>'+(p*100).toFixed(1)+'%</td>').join('')+'</tr>').join('');
+ const forecast=last?probs[last.state]:[0,0,0];
+ $('regimeForecast').innerHTML=labels.map((label,i)=>'<div class="mini"><span>'+label+'</span><b class="'+(i===0?'positive':i===2?'negative':'neutral')+'">'+(forecast[i]*100).toFixed(1)+'%</b><div class="bar"><i style="width:'+(forecast[i]*100)+'%"></i></div></div>').join('');
+}
 function fmt(v){return Number.isFinite(v)?pct(v):'—'}
 function boot(data){
  const stocks=Array.isArray(data.stocks)?data.stocks:[];
  rows=stocks.map(calcStock).filter(Boolean);
  $('asof').textContent='AS OF '+(data.asof||data.generated||'timestamp tidak tersedia')+' · '+(data.universe_name||data.universe||'universe data');
  $('nStocks').textContent=rows.length;
+ buildRegime(stocks);
  $('nAnomaly').textContent=rows.filter(r=>r.anomaly).length;
  $('nConfluence').textContent=rows.filter(r=>r.confluence).length;
  $('nSignals').textContent=buildBacktest(stocks).find(x=>x.h===5).n.toLocaleString('id-ID');
