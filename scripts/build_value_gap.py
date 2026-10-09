@@ -245,6 +245,9 @@ def main():
         "errors": errors,
         "stocks": rows,
     }
+    # Fail safely: preserve the last published snapshot if Yahoo returns too few valid rows.
+    if payload["valid_count"] < max(10, int(payload["universe_count"] * 0.20)):
+        raise RuntimeError("Value Gap refresh rejected; preserving previous snapshot because too few rows are valid")
     OUT.write_text(json.dumps(payload, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
     print(f"Value Gap: {payload['valid_count']}/{payload['universe_count']} valid, asof {payload['asof']}, errors {payload['error_count']}")
 
