@@ -1,0 +1,39 @@
+name: Monthly Value Gap Refresh
+
+on:
+  schedule:
+    # Monthly on the 2nd at 03:40 UTC (10:40 WIB).
+    - cron: "40 3 2 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "monthly-value-gap"
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "yfinance>=0.2.50,<1" "pandas>=2.2,<3" "numpy>=1.26,<3"
+      - name: Refresh Value Gap fundamentals
+        run: python scripts/build_value_gap.py
+      - name: Commit Value Gap only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/value-gap.json
+          git diff --cached --quiet || git commit -m "chore: monthly Value Gap refresh"
+          git push origin HEAD:main
