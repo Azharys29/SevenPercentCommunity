@@ -11,6 +11,7 @@ NAV = """<nav class="terminal-nav" aria-label="Primary navigation">
     <a href="./heatmap.html">Heatmap</a>
     <a href="./sector-rotation.html">Sector Rotation</a>
     <a href="./volume-intelligence.html">Volume Intelligence</a>
+    <a href="./market-activity.html">Market Activity</a>
   </details>
   <details class="terminal-nav-group"><summary>RESEARCH</summary>
     <a href="./fundamental.html">Fundamental</a>
@@ -20,6 +21,7 @@ NAV = """<nav class="terminal-nav" aria-label="Primary navigation">
     <a href="./market-intelligence.html">Market Intelligence</a>
   </details>
   <details class="terminal-nav-group"><summary>SIGNALS</summary>
+    <a href="./signal-intelligence.html">Signal Intelligence</a>
     <a href="./early-signals.html">Early Signals</a>
     <a href="./technical-journal.html">Technical Trade Journal</a>
     <a href="./recommendations.html">Recommendations</a>
@@ -29,6 +31,7 @@ NAV = """<nav class="terminal-nav" aria-label="Primary navigation">
     <a href="./backtest.html">Backtest All Setup</a>
     <a href="./momentum-dashboard.html">Momentum Dashboard</a>
     <a href="./catalyst-calendar.html">Catalyst Calendar</a>
+    <a href="./ou-mean-reversion.html">OU Mean Reversion</a>
   </details>
   <details class="terminal-nav-group"><summary>SYSTEM</summary>
     <a href="./stock-detail.html">Stock Detail</a>
@@ -45,7 +48,7 @@ SIDEBAR = """<aside class="terminal-sidebar" aria-label="Quant research terminal
     <a href="./index.html#screener">Screener</a>
     <a href="./heatmap.html">Heatmap</a>
     <a href="./sector-rotation.html">Sector Rotation</a>
-    <a href="./volume-intelligence.html">Volume Intelligence</a>
+    <a href="./volume-intelligence.html">Volume Intelligence</a><a href="./market-activity.html">Market Activity</a>
   </div>
   <div class="terminal-sidebar-section">
     <div class="terminal-sidebar-title">RESEARCH</div>
@@ -55,13 +58,14 @@ SIDEBAR = """<aside class="terminal-sidebar" aria-label="Quant research terminal
   </div>
   <div class="terminal-sidebar-section">
     <div class="terminal-sidebar-title">SIGNALS</div>
+    <a href="./signal-intelligence.html">Signal Intelligence</a>
     <a href="./early-signals.html">Early Signals</a><a href="./technical-journal.html">Technical Trade Journal</a>
     <a href="./recommendations.html">Recommendations</a><a href="./recommendation-analytics.html">Recommendation Analytics</a>
   </div>
   <div class="terminal-sidebar-section">
     <div class="terminal-sidebar-title">QUANT</div>
     <a href="./backtest.html">Backtest All Setup</a><a href="./momentum-dashboard.html">Momentum Dashboard</a>
-    <a href="./catalyst-calendar.html">Catalyst Calendar</a>
+    <a href="./catalyst-calendar.html">Catalyst Calendar</a><a href="./ou-mean-reversion.html">OU Mean Reversion</a>
   </div>
   <div class="terminal-sidebar-section">
     <div class="terminal-sidebar-title">SYSTEM</div>
