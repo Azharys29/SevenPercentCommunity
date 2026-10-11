@@ -29,6 +29,7 @@ on:
       - "stock-detail.html"
       - "technical-journal.html"
       - "early-signals.html"
+      - "signal-intelligence.html"
       - "scripts/**"
       - "ui.css"
       - "universe.csv"
