@@ -30,6 +30,7 @@ on:
       - "technical-journal.html"
       - "early-signals.html"
       - "signal-intelligence.html"
+      - "ou-mean-reversion.html"
       - "scripts/**"
       - "ui.css"
       - "universe.csv"
