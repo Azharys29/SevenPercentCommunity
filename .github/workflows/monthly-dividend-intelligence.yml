@@ -1,6 +1,13 @@
 name: Monthly Dividend Intelligence Refresh
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_dividend_intelligence.py"
+      - "scripts/test_dividend_intelligence.py"
+      - ".github/workflows/monthly-dividend-intelligence.yml"
+      - "universe.csv"
   schedule:
     # Monthly on the 3rd at 04:10 UTC (11:10 WIB).
     - cron: "10 4 3 * *"
