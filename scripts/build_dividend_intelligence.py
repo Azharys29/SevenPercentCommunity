@@ -92,12 +92,23 @@ def build_stock(ticker, meta, now_year):
     net_income = row_year_values(annual, ["Net Income", "Net Income Common Stockholders", "Net Income Continuous Operations"], 5)
     eps = row_year_values(annual, ["Diluted EPS", "Basic EPS", "DilutedEPS", "BasicEPS"], 5)
     divs = series_year_sums(t.dividends)
-    shares = num(info.get("sharesOutstanding"))
+    shares_raw = num(info.get("sharesOutstanding"))
+    market_cap = num(info.get("marketCap"))
 
     history = t.history(period="5d", auto_adjust=False)
     price = num(history["Close"].dropna().iloc[-1]) if history is not None and not history.empty else None
     if not price or price <= 0:
         price = num(info.get("currentPrice") or info.get("regularMarketPrice"))
+    # Yahoo's sharesOutstanding can occasionally reflect float/incorrect units for IDX tickers.
+    # Prefer implied shares from market cap / price when the two disagree materially.
+    shares_from_market_cap = market_cap / price if market_cap and price and price > 0 else None
+    if shares_from_market_cap and shares_from_market_cap > 0:
+        if not shares_raw or shares_raw <= 0 or max(shares_raw, shares_from_market_cap) / min(shares_raw, shares_from_market_cap) > 1.5:
+            shares = shares_from_market_cap
+        else:
+            shares = shares_raw
+    else:
+        shares = shares_raw
 
     years = sorted(set(revenue) | set(net_income) | set(eps), reverse=True)
     hist = []
@@ -164,12 +175,17 @@ def build_stock(ticker, meta, now_year):
         net_est = revenue_runrate * npm / 100 if revenue_runrate is not None and npm is not None else None
         total_dividend = net_est * dpr / 100 if net_est is not None and dpr is not None else None
         dps_est = total_dividend / shares if total_dividend is not None and shares and shares > 0 else None
+        yield_est = dps_est / price * 100 if dps_est is not None and price and price > 0 else None
+        # Extremely high modeled yields usually indicate faulty share count or source data.
+        if yield_est is not None and (yield_est < 0 or yield_est > 35):
+            yield_est = None
         scenarios.append({
             "scenario": label, "revenue_estimate": rounded(revenue_runrate, 0),
             "npm_assumption_pct": rounded(npm), "dpr_assumption_pct": rounded(dpr),
             "net_income_estimate": rounded(net_est, 0), "total_dividend_estimate": rounded(total_dividend, 0),
             "dps_estimate": rounded(dps_est),
-            "yield_estimate_pct": rounded(dps_est / price * 100) if dps_est is not None and price and price > 0 else None,
+            "yield_estimate_pct": rounded(yield_est),
+            "yield_flag": "review_required" if dps_est is not None and price and dps_est / price * 100 > 35 else None,
         })
 
     valid_divs = [x for x in hist if x["dividend_per_share"] is not None]
@@ -193,6 +209,7 @@ def build_stock(ticker, meta, now_year):
             "has_3y_npm": len(npm_values) >= 2,
             "has_3y_dpr": len(dpr_values) >= 2,
             "price_available": price is not None,
+            "shares_source": "marketCap/price" if shares_from_market_cap and shares == shares_from_market_cap else "sharesOutstanding",
             "source": "Yahoo Finance; cross-check financial statements and corporate actions against IDX/issuer disclosures",
             "validation_url": IDX_URL,
         },
