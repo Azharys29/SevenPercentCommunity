@@ -223,9 +223,7 @@ def main():
                 "data_quality": {"status": "error", "message": str(exc)[:160], "validation_url": IDX_URL},
             })
         time.sleep(0.08)
-    rows.sort(key=lambda x: (-(x.get("scenarios") or [{}])[1].get("yield_estimate_pct", -1)
-                            if (x.get("scenarios") or [{}])[1].get("yield_estimate_pct") is not None else 1e9,
-                            x["ticker"]))
+    rows.sort(key=lambda x: (-(next((s.get("yield_estimate_pct") for s in x.get("scenarios", []) if s.get("scenario") == "Base"), None) or -1), x["ticker"]))
     payload = {
         "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "asof": asof, "universe": "KOMPAS100", "source": "Yahoo Finance; official IDX/issuer filings for validation",
