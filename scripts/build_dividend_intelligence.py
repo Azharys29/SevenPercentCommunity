@@ -1,3 +1,4 @@
+# Dashboard refresh note: includes 3-year dividend payment-month pattern.
 #!/usr/bin/env python3
 """Build monthly Dividend Intelligence data for the Kompas 100 universe.
 
