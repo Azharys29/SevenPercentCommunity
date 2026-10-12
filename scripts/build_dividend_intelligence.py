@@ -73,6 +73,49 @@ def series_year_sums(series):
     return out
 
 
+def dividend_payment_pattern(series, current_year, years=3):
+    """Summarize observed cash dividend payment dates; multiple payments/year are only an interim indicator."""
+    if series is None or len(series) == 0:
+        return {"years": [], "month_range": "Belum ada data", "pattern_note": "Riwayat tanggal pembayaran tidak tersedia"}
+    month_names = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
+    by_year = {}
+    try:
+        for date, value in series.items():
+            amount = num(value)
+            if amount is None or amount <= 0:
+                continue
+            d = pd.Timestamp(date)
+            if d.year < current_year - years + 1 or d.year > current_year:
+                continue
+            by_year.setdefault(d.year, []).append({"date": d.strftime("%Y-%m-%d"), "month": int(d.month), "amount_per_share": rounded(amount)})
+    except Exception:
+        pass
+    summaries = []
+    months = []
+    for year in sorted(by_year):
+        items = sorted(by_year[year], key=lambda x: x["date"])
+        for item in items:
+            if item["month"] not in months:
+                months.append(item["month"])
+        multi = len(items) > 1
+        summaries.append({
+            "year": year,
+            "payments": len(items),
+            "months": [month_names[x["month"] - 1] for x in items],
+            "dates": [x["date"] for x in items],
+            "amounts_per_share": [x["amount_per_share"] for x in items],
+            "interim_indicator": multi,
+            "note": ("Beberapa pembayaran dalam setahun; indikasi interim/lebih dari satu tahap, perlu verifikasi pengumuman resmi" if multi else "Satu pembayaran tercatat; kemungkinan dividen tahunan/final, perlu verifikasi pengumuman resmi")
+        })
+    month_range = ", ".join(month_names[m - 1] for m in sorted(months)) if months else "Belum ada data"
+    if summaries:
+        interim_years = [str(x["year"]) for x in summaries if x["interim_indicator"]]
+        note = "Indikasi pembayaran interim/bertahap pada " + ", ".join(interim_years) if interim_years else "Belum terdeteksi pembayaran lebih dari sekali per tahun"
+    else:
+        note = "Riwayat tanggal pembayaran 3 tahun tidak tersedia"
+    return {"years": summaries, "month_range": month_range, "pattern_note": note, "source_note": "Tanggal pembayaran historis dari Yahoo Finance; klasifikasi interim hanya indikasi, cek pengumuman resmi BEI/KSEI/emiten."}
+
+
 def safe_mean(values):
     vals = [num(x) for x in values]
     vals = [x for x in vals if x is not None]
@@ -91,7 +134,9 @@ def build_stock(ticker, meta, now_year):
     revenue = row_year_values(annual, ["Total Revenue", "Operating Revenue", "Revenue"], 5)
     net_income = row_year_values(annual, ["Net Income", "Net Income Common Stockholders", "Net Income Continuous Operations"], 5)
     eps = row_year_values(annual, ["Diluted EPS", "Basic EPS", "DilutedEPS", "BasicEPS"], 5)
-    divs = series_year_sums(t.dividends)
+    dividend_series = t.dividends
+    divs = series_year_sums(dividend_series)
+    payment_pattern = dividend_payment_pattern(dividend_series, now_year, 3)
     shares_raw = num(info.get("sharesOutstanding"))
     market_cap = num(info.get("marketCap"))
 
@@ -199,7 +244,7 @@ def build_stock(ticker, meta, now_year):
     return {
         "ticker": ticker, "name": str(meta.get("name") or ticker), "sector": str(meta.get("sector") or "Lainnya"),
         "price": rounded(price), "currency": "IDR", "shares_outstanding": rounded(shares, 0),
-        "history": hist, "npm_avg_3y_pct": rounded(npm_avg), "dpr_avg_3y_pct": rounded(dpr_avg),
+        "history": hist, "dividend_payment_pattern_3y": payment_pattern, "npm_avg_3y_pct": rounded(npm_avg), "dpr_avg_3y_pct": rounded(dpr_avg),
         "revenue_estimation_basis": forecast_basis, "revenue_ytd": rounded(ytd_revenue, 0),
         "revenue_estimate_next_fy": rounded(revenue_runrate, 0), "scenarios": scenarios,
         "dividend_consistency": consistency,
@@ -244,12 +289,13 @@ def main():
     payload = {
         "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "asof": asof, "universe": "KOMPAS100", "source": "Yahoo Finance; official IDX/issuer filings for validation",
-        "validation_url": IDX_URL, "model_history_years": 3, "consistency_history_years": 5,
+        "validation_url": IDX_URL, "model_history_years": 3, "consistency_history_years": 5, "dividend_payment_history_years": 3,
         "universe_count": len(rows), "valid_price_count": sum(1 for x in rows if x.get("price") is not None),
         "error_count": len(errors), "errors": errors, "stocks": rows,
         "methodology": {
             "revenue_estimate": "Current-year reported quarterly revenue annualized by reported months; fallback to latest annual revenue when YTD data unavailable.",
             "dividend_estimate": "Estimated revenue × scenario NPM × scenario DPR ÷ shares outstanding; estimated yield = DPS ÷ latest price.",
+            "payment_pattern": "Actual historical dividend payment dates from Yahoo Finance over three years; months are historical windows, not guaranteed future payment dates. Multiple payments in a year are flagged as a possible interim/instalment pattern and must be verified against official IDX/KSEI/issuer announcements.",
             "scenario_factors": {"Conservative": {"npm": 0.85, "dpr": 0.8}, "Base": {"npm": 1.0, "dpr": 1.0}, "Optimistic": {"npm": 1.1, "dpr": 1.1}},
             "caveat": "Exploratory estimate only. Fiscal periods, special dividends, share changes, corporate actions and incomplete Yahoo data may distort results. Validate against official filings.",
         },
