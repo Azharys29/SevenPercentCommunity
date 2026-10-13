@@ -13,6 +13,13 @@
 <header class="top"><div class="brand">SEVENPERCENTCOMMUNITY / MARKET ACTIVITY</div><details class="menu"><summary>☰ Menu</summary><div class="menu-panel"><a href="./index.html">Market Overview / Screener</a><a href="./heatmap.html">Heatmap</a><a href="./sector-rotation.html">Sector Rotation</a><a href="./volume-intelligence.html">Volume Intelligence</a><a href="./market-intelligence.html">Market Intelligence</a><a href="./relative-strength.html">Relative Strength</a><a href="./system-health.html">System Health</a></div></details></header>
 <section class="hero"><div><div class="eyebrow">QUANT RESEARCH / ACTIVITY MONITOR</div><h1>Market Activity</h1><p>Deteksi aktivitas tidak biasa, konfluensi momentum–volume, dan regime pasar berbasis Gaussian HMM. Model dihitung terjadwal di GitHub Actions; halaman hanya membaca JSON statis agar tetap ringan.</p></div><div class="meta" id="asof">MEMUAT DATA…</div></section>
 <section class="stats"><div class="stat"><span>Saham dianalisis</span><b id="nStocks">—</b><small>Universe data screener</small></div><div class="stat"><span>Volume anomali</span><b id="nAnomaly">—</b><small>RVOL ≥ 1.5x</small></div><div class="stat"><span>Momentum + volume</span><b id="nConfluence">—</b><small>Return 5D positif & RVOL tinggi</small></div><div class="stat"><span>Sinyal backtest</span><b id="nSignals">—</b><small>Aturan historis sederhana</small></div></section>
+<section class="panel" id="distributionPanel" style="margin-bottom:14px">
+<h2>Distribution Plot — Return KOMPAS100</h2>
+<p class="sub">Distribusi return saham dari data screener historis yang tersedia. Pilih horizon untuk melihat sebaran return, bukan hanya rata-rata pasar.</p>
+<div class="controls"><select id="distHorizon" aria-label="Horizon return"><option value="ret5">Return 5 Hari</option><option value="ret20">Return 20 Hari</option></select><span id="distMeta" class="note" style="margin:0">Menunggu data…</span></div>
+<div id="returnDistribution" style="width:100%;overflow:hidden"><div class="empty">Memuat distribusi return…</div></div>
+<p class="note">Setiap batang menunjukkan jumlah saham pada rentang return tertentu. Data berasal dari seri close yang tersedia di data/screener.json; ini bukan distribusi return seluruh BEI. Nilai ekstrem dapat memengaruhi rentang bin.</p>
+</section>
 <div class="grid"><section class="panel"><h2>Activity Anomaly & Confluence</h2><p class="sub">RVOL membandingkan volume sesi terakhir dengan rerata 20 sesi sebelumnya. Return dihitung dari seri penutupan yang tersedia.</p><div class="controls"><input id="search" type="search" placeholder="Cari ticker…"><select id="filter"><option value="all">Semua saham</option><option value="anomaly">RVOL ≥ 1.5x</option><option value="confluence">Momentum + volume</option><option value="negative">Return 5D negatif</option></select><button class="btn" id="export">Ekspor CSV</button></div><div class="tablewrap"><table><thead><tr><th>Ticker</th><th>Harga</th><th>Return 5D</th><th>RVOL</th><th>Aktivitas</th><th>Confluence</th><th>Skor</th></tr></thead><tbody id="activityRows"><tr><td colspan="7" class="empty">Memuat data…</td></tr></tbody></table></div><p class="note">Skor aktivitas 0–100 menggabungkan RVOL dan besar perubahan harga 5D; skor ini adalah indikator screening, bukan probabilitas profit atau rekomendasi transaksi.</p></section>
 <section class="panel"><h2>Statistical Edge Backtest</h2><p class="sub">Simulasi sinyal historis pada data OHLCV yang tersedia. Entry diasumsikan pada penutupan hari sinyal; return forward tidak memasukkan biaya, slippage, atau batas likuiditas.</p><div class="flow"><div class="mini"><span>Sampel sinyal</span><b id="btN">—</b></div><div class="mini"><span>Win rate 5D</span><b id="btWin">—</b></div><div class="mini"><span>Rata-rata 5D</span><b id="btAvg">—</b></div></div><div class="tablewrap" style="margin-top:14px"><table style="min-width:440px"><thead><tr><th>Horizon</th><th>Sampel</th><th>Win rate</th><th>Avg return</th><th>Median</th></tr></thead><tbody id="btRows"><tr><td colspan="5" class="empty">Menghitung…</td></tr></tbody></table></div><p class="note">Aturan sinyal: close harian positif dan volume ≥ 1.5× rerata 20 sesi sebelumnya. Setiap ticker/hari dihitung sebagai observasi; observasi berdekatan dapat saling tumpang tindih. Gunakan hasil sebagai eksplorasi, bukan bukti edge yang tervalidasi out-of-sample.</p></section></div>
 
@@ -61,6 +68,21 @@ function render(){
  const q=$('search').value.trim().toUpperCase(),f=$('filter').value;
  const filtered=rows.filter(r=>(!q||r.ticker.includes(q)||r.name.toUpperCase().includes(q))&&(f==='all'||(f==='anomaly'&&r.anomaly)||(f==='confluence'&&r.confluence)||(f==='negative'&&r.ret5<0)));
  $('activityRows').innerHTML=filtered.length?filtered.sort((a,b)=>b.activityScore-a.activityScore).map(r=>'<tr><td><b>'+r.ticker+'</b><br><span style="color:var(--tx3)">'+r.sector+'</span></td><td>'+Math.round(r.price).toLocaleString('id-ID')+'</td><td class="'+(r.ret5>=0?'positive':'negative')+'">'+pct(r.ret5)+'</td><td class="'+(r.rvol>=1.5?'positive':'neutral')+'">'+(Number.isFinite(r.rvol)?r.rvol.toFixed(2)+'x':'—')+'</td><td><span class="tag '+(r.anomaly?'positive':'')+'">'+(r.anomaly?'ANOMALY':'NORMAL')+'</span></td><td><span class="tag '+(r.confluence?'positive':'')+'">'+(r.confluence?'CONFIRMED':'—')+'</span></td><td>'+r.activityScore+'</td></tr>').join(''):'<tr><td colspan="7" class="empty">Tidak ada saham yang cocok dengan filter.</td></tr>';
+}
+function renderDistribution(){
+ const key=$('distHorizon').value,values=rows.map(r=>r[key]).filter(Number.isFinite);
+ if(!values.length){$('returnDistribution').innerHTML='<div class="empty">Data return belum tersedia.</div>';return}
+ const min=Math.min(...values),max=Math.max(...values),bins=12;
+ const lo=Math.floor(min/5)*5,hi=Math.max(lo+5,Math.ceil(max/5)*5),step=(hi-lo)/bins;
+ const counts=Array(bins).fill(0);
+ values.forEach(v=>{let i=Math.floor((v-lo)/step);i=Math.max(0,Math.min(bins-1,i));counts[i]++});
+ const maxCount=Math.max(...counts,1),mean=values.reduce((a,b)=>a+b,0)/values.length,med=median(values);
+ const w=720,h=270,pad={l:38,r:12,t:12,b:48},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,bw=pw/bins;
+ let svg='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Histogram return saham" style="display:block;width:100%;max-height:320px;font:11px Arial,sans-serif">';
+ [0,.5,1].forEach(t=>{const y=pad.t+ph-t*ph;svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="#2E4A68" stroke-dasharray="3 4"/><text x="'+(pad.l-8)+'" y="'+(y+4)+'" fill="#A3ADBC" text-anchor="end">'+Math.round(maxCount*t)+'</text>'});
+ counts.forEach((n,i)=>{const x=pad.l+i*bw+2,bh=n/maxCount*ph,y=pad.t+ph-bh,mid=lo+(i+.5)*step;svg+='<rect x="'+x+'" y="'+y+'" width="'+Math.max(1,bw-4)+'" height="'+bh+'" rx="2" fill="'+(mid>=0?'#86EFAC':'#FDA4AF')+'" opacity=".82"><title>'+ (lo+i*step).toFixed(1)+'% sampai '+(lo+(i+1)*step).toFixed(1)+'%: '+n+' saham</title></rect><text x="'+(x+(bw-4)/2)+'" y="'+(h-25)+'" fill="#A3ADBC" text-anchor="middle">'+(lo+i*step).toFixed(0)+'</text>'});
+ svg+='<line x1="'+pad.l+'" y1="'+(pad.t+ph)+'" x2="'+(w-pad.r)+'" y2="'+(pad.t+ph)+'" stroke="#55789E"/><text x="'+(w/2)+'" y="'+(h-7)+'" fill="#A3ADBC" text-anchor="middle">Return (%) · batas bawah rentang</text></svg>';
+ $('returnDistribution').innerHTML=svg;$('distMeta').textContent=values.length+' saham · mean '+pct(mean)+' · median '+pct(med)+' · positif '+values.filter(v=>v>0).length+' / '+values.length;
 }
 function buildBacktest(stocks){
  const obs=[];
@@ -159,9 +181,9 @@ function boot(data){
  const b5=backtest.find(x=>x.h===5);
  $('btN').textContent=b5.n.toLocaleString('id-ID');$('btWin').textContent=Number.isFinite(b5.win)?b5.win.toFixed(1)+'%':'—';$('btAvg').textContent=fmt(b5.avg);
  $('btRows').innerHTML=backtest.map(x=>'<tr><td>'+x.h+' hari</td><td>'+x.n.toLocaleString('id-ID')+'</td><td>'+ (Number.isFinite(x.win)?x.win.toFixed(1)+'%':'—')+'</td><td>'+fmt(x.avg)+'</td><td>'+fmt(x.med)+'</td></tr>').join('');
- render();
+ render();renderDistribution();
 }
-$('search').addEventListener('input',render);$('filter').addEventListener('change',render);
+$('search').addEventListener('input',render);$('filter').addEventListener('change',render);$('distHorizon').addEventListener('change',renderDistribution);
 $('export').addEventListener('click',()=>{const header=['ticker','sector','price','return_5d_pct','return_20d_pct','rvol','anomaly','momentum_volume_confluence','activity_score'];const lines=[header.join(','),...rows.map(r=>[r.ticker,r.sector,r.price,r.ret5,r.ret20,r.rvol,r.anomaly,r.confluence,r.activityScore].map(x=>typeof x==='string'&&x.includes(',')?'"'+x.replaceAll('"','""')+'"':x).join(','))];const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='spc-market-activity.csv';a.click();URL.revokeObjectURL(a.href)});
 fetch('./data/screener.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(boot).catch(e=>{ $('asof').textContent='DATA UNAVAILABLE';$('activityRows').innerHTML='<tr><td colspan="7" class="empty">Gagal memuat data/screener.json. Coba refresh setelah workflow selesai. ('+String(e.message).replace(/[<>]/g,'')+')</td></tr>';$('btRows').innerHTML='<tr><td colspan="5" class="empty">Backtest tidak tersedia tanpa data historis.</td></tr>'});
 })();
