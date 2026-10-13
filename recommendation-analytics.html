@@ -12,6 +12,7 @@
 <p class="lead">Journal performa rekomendasi: Win Rate, Average/Median P/L, Profit Factor, Expectancy, holding period, statistik TP1/TP2/SL, serta performa berdasarkan Technical Score dan Confluence.</p>
 <div class="toolbar"><button class="btn" id="refresh">↻ Refresh</button><button class="btn pri" id="export">↓ Download Excel</button><span class="period" id="period">Periode: —</span></div>
 <section class="stats" id="stats"></section>
+<div class="panel"><h2>Risk–Reward Map</h2><div id="riskRewardMap"><div class="empty">Memuat peta risk–reward…</div></div><div class="note">Setiap titik adalah rekomendasi dalam periode laporan. Sumbu X = risiko dari entry midpoint ke stop loss (%); sumbu Y = potensi return menuju TP1 (%). Garis putus-putus menunjukkan reward/risk 1:1. Grafik menggunakan target yang tercatat, bukan probabilitas keberhasilan.</div></div>
 <div class="panel"><h2>Recommendation Journal</h2><div id="journal"><div class="empty">Memuat data…</div></div></div>
 <div class="panel"><h2>TP1 / TP2 / Stop Loss Statistics</h2><div id="targets"></div></div>
 <div class="panel"><h2>Performance by Technical Score</h2><div id="scores"></div><div class="note">Technical Score dan Confluence memakai snapshot saat rekomendasi dibuat. Jika snapshot database lama belum tersedia, analytics merekonstruksi indikator dari OHLC historis pada tanggal rekomendasi; data hari ini tidak digunakan. Confluence menggunakan skala 0–5.</div></div>
@@ -77,7 +78,20 @@ async function load(){
   render();$("#period").textContent="Periode: "+dateLabel(start)+" — "+dateLabel(end); 
  }catch(e){$("#period").textContent="Gagal: "+e.message;$("#journal").innerHTML='<div class="empty">Data belum dapat dimuat.</div>'}
 }
+function renderRiskReward(){
+ const data=rows.map(x=>{const entry=Number(x.entry),sl=Number(x.stop_loss),tp=Number(x.tp1);if(!(entry>0&&sl>0&&tp>0&&sl<entry&&tp>entry))return null;return {ticker:x.ticker,risk:(entry-sl)/entry*100,reward:(tp-entry)/entry*100}}).filter(Boolean);
+ if(!data.length){$("#riskRewardMap").innerHTML='<div class="empty">Belum ada rekomendasi valid dengan entry, TP1, dan stop loss pada periode ini.</div>';return}
+ const maxX=Math.max(5,Math.ceil(Math.max(...data.map(d=>d.risk))*1.2/5)*5),maxY=Math.max(5,Math.ceil(Math.max(...data.map(d=>d.reward))*1.2/5)*5);
+ const w=760,h=360,p={l:52,r:18,t:18,b:48},pw=w-p.l-p.r,ph=h-p.t-p.b,X=v=>p.l+v/maxX*pw,Y=v=>p.t+ph-v/maxY*ph;
+ let svg='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Peta risk reward rekomendasi" style="display:block;width:100%;max-height:420px;font:11px Arial,sans-serif">';
+ for(let i=0;i<=4;i++){const xv=maxX*i/4,yv=maxY*i/4;svg+='<line x1="'+X(xv)+'" y1="'+p.t+'" x2="'+X(xv)+'" y2="'+(p.t+ph)+'" stroke="#2E4A68" stroke-dasharray="3 4"/><text x="'+X(xv)+'" y="'+(h-25)+'" fill="#A3ADBC" text-anchor="middle">'+xv.toFixed(1)+'%</text><line x1="'+p.l+'" y1="'+Y(yv)+'" x2="'+(w-p.r)+'" y2="'+Y(yv)+'" stroke="#2E4A68" stroke-dasharray="3 4"/><text x="'+(p.l-8)+'" y="'+(Y(yv)+4)+'" fill="#A3ADBC" text-anchor="end">'+yv.toFixed(1)+'%</text>'}
+ const end=Math.min(maxX,maxY);svg+='<line x1="'+X(0)+'" y1="'+Y(0)+'" x2="'+X(end)+'" y2="'+Y(end)+'" stroke="#FDE68A" stroke-dasharray="6 5" opacity=".85"/>';
+ data.forEach(d=>{const color=d.reward/d.risk>=2?'#86EFAC':d.reward/d.risk>=1?'#85B7EB':'#FDA4AF';svg+='<circle cx="'+X(d.risk)+'" cy="'+Y(d.reward)+'" r="5" fill="'+color+'" stroke="#090D13" stroke-width="1.5"><title>'+esc(d.ticker)+' · Risk '+d.risk.toFixed(2)+'% · TP1 '+d.reward.toFixed(2)+'% · R/R '+(d.reward/d.risk).toFixed(2)+'x</title></circle>';if(data.length<=18)svg+='<text x="'+(X(d.risk)+7)+'" y="'+(Y(d.reward)-7)+'" fill="#F3F6FA">'+esc(d.ticker)+'</text>'});
+ svg+='<text x="'+(w/2)+'" y="'+(h-6)+'" fill="#A3ADBC" text-anchor="middle">Risiko menuju SL (%) →</text><text transform="translate(14 '+(h/2)+') rotate(-90)" fill="#A3ADBC" text-anchor="middle">Potensi return menuju TP1 (%) →</text></svg>';
+ const avg=data.reduce((a,d)=>a+d.reward/d.risk,0)/data.length;$("#riskRewardMap").innerHTML=svg+'<div class="note" style="border-top:0">Setup valid: '+data.length+' · R/R rata-rata: '+fmt(avg)+'x · R/R ≥ 2x: '+data.filter(d=>d.reward/d.risk>=2).length+'</div>';
+}
 function render(){
+ renderRiskReward();
  const s=groupStats(rows),open=rows.filter(x=>!x.realized),openAvg=open.length?open.reduce((a,x)=>a+(x.pl||0),0)/open.length:null;
  $("#stats").innerHTML=[["Rekomendasi",rows.length,""],["Win Rate",s.wr==null?"—":fmt(s.wr)+"%",s.wr==null?"":s.wr>=50?"up":"dn"],["Avg P/L",pct(s.avg),s.avg>=0?"up":"dn"],["Median P/L",pct(s.med),s.med>=0?"up":"dn"],["Profit Factor",s.pf==null?"—":fmt(s.pf),s.pf!=null&&s.pf>=1?"up":"dn"],["Expectancy",pct(s.exp),s.exp>=0?"up":"dn"],["Avg Holding",s.hold==null?"—":fmt(s.hold)+" hari",""]].map(x=>'<div class="stat"><small>'+x[0]+'</small><b class="'+x[2]+'">'+x[1]+'</b></div>').join("");
  const tr=rows.map((x,i)=>'<tr><td>'+ (i+1) +'</td><td><b>'+esc(x.ticker)+'</b><span class="muted"> · '+dateLabel(x.created_at)+'</span></td><td>'+fmt(x.technical_score)+'</td><td>'+ (x.confluence==null?"—":x.confluence+"/4") +'</td><td><span class="badge '+x.cls+'">'+esc(x.label)+'</span></td><td><span class="badge '+(x.post==="TS"?"open":x.post==="DONE"?"win":"")+'">'+esc(x.post)+'</span></td><td class="'+(x.pl>=0?"up":"dn")+'">'+pct(x.pl)+'</td><td>'+ (x.realized?fmt(x.hold)+" hari":"Open · "+fmt(x.hold)+" hari") +'</td><td>'+dateLabel(x.outAt)+'</td></tr>').join("");
