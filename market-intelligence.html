@@ -32,7 +32,10 @@
   color:var(--tx2);white-space:nowrap;
 }
 .catalyst-confluence{white-space:nowrap}
-.catalyst-sep{color:var(--dim);line-height:16px}.catalyst-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.catalyst-metrics div{border-top:1px solid var(--soft);padding-top:6px}.catalyst-metrics b{display:block}.catalyst-metrics span{font-size:10px;color:var(--tx3)}.research{margin-top:11px;color:var(--tx2);font-size:13px}.news-mini{margin-top:11px;border-top:1px solid var(--soft);padding-top:9px}.news-mini a{display:block;color:var(--bright);text-decoration:none;font-size:12px;margin-top:6px}.news-mini small{color:var(--tx3)}@media(max-width:850px){.catalyst-grid{grid-template-columns:1fr}}</style>
+.catalyst-sep{color:var(--dim);line-height:16px}.catalyst-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.catalyst-metrics div{border-top:1px solid var(--soft);padding-top:6px}.catalyst-metrics b{display:block}.catalyst-metrics span{font-size:10px;color:var(--tx3)}.research{margin-top:11px;color:var(--tx2);font-size:13px}.news-mini{margin-top:11px;border-top:1px solid var(--soft);padding-top:9px}.news-mini a{display:block;color:var(--bright);text-decoration:none;font-size:12px;margin-top:6px}.news-mini small{color:var(--tx3)}@media(max-width:850px){.catalyst-grid{grid-template-columns:1fr}}
+/* Trade Setup Visual */
+.trade-setup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.trade-setup-card{border:1px solid var(--soft);background:var(--panel);border-radius:12px;padding:16px;min-width:0}.trade-setup-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.trade-setup-ticker{font:600 20px 'IBM Plex Mono',monospace;color:var(--tx)}.trade-setup-meta{font-size:12px;color:var(--tx3);margin-top:3px}.setup-badge{font:11px 'IBM Plex Mono',monospace;letter-spacing:.03em;padding:5px 7px;border:1px solid var(--line);border-radius:5px;white-space:nowrap}.setup-badge.attractive{color:#9ee6be;border-color:#356e52}.setup-badge.extended{color:#f1c77d;border-color:#795f31}.setup-badge.pullback{color:var(--ice)}.setup-badge.avoid{color:#f19c9c;border-color:#794040}.trade-setup-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:16px}.setup-price{padding:10px 8px;background:var(--panel2);border-radius:7px;min-width:0}.setup-price span{display:block;color:var(--tx3);font-size:10px;letter-spacing:.04em;text-transform:uppercase}.setup-price b{display:block;font:500 13px 'IBM Plex Mono',monospace;margin-top:5px;overflow-wrap:anywhere}.setup-price.entry b{color:var(--ice)}.setup-price.tp b{color:#9ee6be}.setup-price.sl b{color:#f19c9c}.trade-setup-bottom{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:12px;color:var(--tx2);font-size:12px}.trade-setup-note{margin-top:9px;color:var(--tx3);font-size:12px}.trade-setup-empty{padding:18px;border:1px dashed var(--line);border-radius:9px;color:var(--tx2)}@media(max-width:760px){.trade-setup-grid{grid-template-columns:1fr}.trade-setup-prices{grid-template-columns:repeat(2,minmax(0,1fr))}.trade-setup-top{align-items:flex-start}}
+</style>
 <link rel="stylesheet" href="./ui.css">
 </head>
 <body><div class="wrap">
@@ -51,6 +54,7 @@
 
 <section class="section"><h2>Market Catalyst</h2><div id="catalysts" class="catalyst-grid"><div class="loading">Memuat...</div></div></section><section class="section"><h2>Top Opportunities</h2><div id="topgrid" class="topgrid"><div class="loading">Memuat...</div></div></section>
 <section class="section"><h2>Stock Opportunity Map</h2><div class="opportunity-wrap"><div class="opportunity-head"><div class="muted" style="font-size:12px">KOMPAS100 · Technical Score × Momentum Score</div><select id="opportunitySector" class="opportunity-filter" aria-label="Filter sektor"><option value="">Semua sektor</option></select></div><div class="opportunity-legend"><span><i class="legend-dot"></i>Skor momentum/teknikal</span><span><i class="legend-ring"></i>Kandidat Market Intelligence</span><span>Setiap titik dapat dibuka ke detail saham</span></div><div id="opportunityMap"><div class="loading">Memuat peta peluang...</div></div><div class="opportunity-foot"><span id="opportunityCount">— saham</span><span>Garis silang = Technical Score 0 dan Momentum Score 50</span></div></div></section>
+<section class="section"><h2>Trade Setup Visual</h2><p class="muted" style="margin:-5px 0 14px">Estimasi setup LONG dari harga, MA20/MA50, RSI, MACD, dan momentum yang tersedia. Entry di area pullback; target berdasarkan risk/reward.</p><div id="tradeSetupMeta" class="opportunity-foot" style="margin-bottom:12px"><span>Menyiapkan setup...</span><span>TP1 = 1.5R · TP2 = 2.5R</span></div><div id="tradeSetupGrid" class="trade-setup-grid"><div class="loading">Menghitung setup...</div></div><div class="trade-setup-note">Level adalah estimasi teknikal dari snapshot data terakhir, bukan support/resistance terverifikasi atau jaminan harga tercapai. Cek harga terkini sebelum transaksi.</div></section>
 <section class="section"><h2>Sector Strength</h2><div id="sectors" class="sectors"><div class="loading">Memuat...</div></div></section>
 
 <footer class="foot">Metodologi bersifat mekanis dan menggunakan data KOMPAS100 yang tersedia pada file hasil workflow. Market Score adalah ringkasan teknikal, bukan rekomendasi beli/jual. Nilai dapat berubah setelah workflow menghasilkan data baru.</footer>
@@ -95,9 +99,33 @@ function renderOpportunityMap(rows,catalyst){
  if(!filter.dataset.bound){filter.addEventListener('change',draw);filter.dataset.bound='1'}
  draw();
 }
+function renderTradeSetup(rows,asof){
+ const host=$('tradeSetupGrid'),meta=$('tradeSetupMeta');
+ const valid=rows.filter(x=>Number(x.price)>0&&Number(x.ma20)>0&&Number(x.ma50)>0&&Number.isFinite(Number(x.momentum_score)));
+ const setups=valid.map(x=>{
+  const price=Number(x.price),ma20=Number(x.ma20),ma50=Number(x.ma50),rsi=Number(x.rsi),tech=Number(x.technical_score)||0,mom=Number(x.momentum_score)||0,macd=Number(x.macd_hist_pct)||0;
+  const entryLow=Math.round(ma20*.99),entryHigh=Math.round(ma20*1.01),entry=(entryLow+entryHigh)/2;
+  const sl=Math.floor(Math.min(entryLow*.97,ma50*.985));
+  const risk=entry-sl;
+  if(!(entryLow>sl&&risk>0))return null;
+  const tp1=Math.ceil(entry+risk*1.5),tp2=Math.ceil(entry+risk*2.5);
+  const extension=(price/ma20-1)*100;
+  const aligned=price>ma20&&ma20>ma50;
+  let status='Wait for Pullback',cls='pullback',reason='Tunggu harga mendekati MA20 untuk entry yang lebih terukur.';
+  if(!aligned||tech<25||macd<=0){status='Setup Belum Valid';cls='avoid';reason='Konfirmasi tren atau momentum belum lengkap; jangan paksa entry.';}
+  else if(extension>4||rsi>=70){status='Jangan Kejar';cls='extended';reason='Harga terlalu jauh dari MA20 atau RSI sudah tinggi; tunggu pullback.';}
+  else if(extension>=-1&&extension<=4&&rsi>=50&&rsi<70){status='Entry Menarik';cls='attractive';reason='Tren searah dan harga relatif dekat dengan MA20; tetap tunggu konfirmasi harga.';}
+  return {...x,price,ma20,ma50,rsi,tech,mom,macd,entryLow,entryHigh,entry,sl,tp1,tp2,extension,status,cls,reason,rr1:((tp1-entry)/risk),rr2:((tp2-entry)/risk)};
+ }).filter(Boolean).sort((a,b)=>{const rank={attractive:0,pullback:1,extended:2,avoid:3};return rank[a.cls]-rank[b.cls]||b.mom-a.mom}).slice(0,12);
+ const rupiah=n=>'Rp'+Math.round(n).toLocaleString('id-ID');
+ if(!setups.length){host.innerHTML='<div class="trade-setup-empty">Belum ada data harga dan MA yang cukup untuk menghitung setup.</div>';meta.innerHTML='<span>Data belum cukup</span><span>Periksa hasil workflow</span>';return;}
+ host.innerHTML=setups.map(x=>'<article class="trade-setup-card"><div class="trade-setup-top"><div><a class="trade-setup-ticker" href="./index.html?stock='+encodeURIComponent(x.ticker)+'">'+esc(x.ticker)+'</a><div class="trade-setup-meta">'+esc(x.sector||'KOMPAS100')+' · Harga '+rupiah(x.price)+'</div></div><span class="setup-badge '+x.cls+'">'+esc(x.status)+'</span></div><div class="trade-setup-prices"><div class="setup-price entry"><span>Entry Range</span><b>'+rupiah(x.entryLow)+'–'+rupiah(x.entryHigh)+'</b></div><div class="setup-price tp"><span>Target Profit 1</span><b>'+rupiah(x.tp1)+'</b></div><div class="setup-price tp"><span>Target Profit 2</span><b>'+rupiah(x.tp2)+'</b></div><div class="setup-price sl"><span>Stop Loss</span><b>'+rupiah(x.sl)+'</b></div></div><div class="trade-setup-bottom"><span>Tech '+x.tech.toFixed(1)+' · Momentum '+x.mom.toFixed(1)+' · RSI '+(Number.isFinite(x.rsi)?x.rsi.toFixed(1):'—')+'</span><span>R:R '+x.rr1.toFixed(1)+':1 / '+x.rr2.toFixed(1)+':1</span></div><div class="trade-setup-note">'+esc(x.reason)+' Jarak harga dari MA20: '+(x.extension>=0?'+':'')+x.extension.toFixed(1)+'%.</div></article>').join('');
+ meta.innerHTML='<span>'+setups.length+' setup ditampilkan · data '+esc(asof||'terakhir tersedia')+'</span><span>Estimasi LONG · TP1 1.5R / TP2 2.5R</span>';
+}
 function render(d){
  renderCatalyst(d.catalyst||{});
  renderOpportunityMap(d.stocks||[],d.catalyst||{});
+ renderTradeSetup(d.stocks||[],d.asof);
  const rows=d.stocks||[], c=calc(rows), trend=classify(c.score);
  const validVol=rows.filter(x=>Number.isFinite(+x.rvol));
  const avgRvol=validVol.length?validVol.reduce((a,x)=>a+(+x.rvol||0),0)/validVol.length:0;
