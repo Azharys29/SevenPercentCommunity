@@ -1200,7 +1200,7 @@ async function init() {
   DATA = await loadData();
   await loadCustom();
   status(); buildFilterUI(); bindFilters(); bindSettings(); bindCustom(); syncFilterUI();
-  recompute(); render(); renderCommandCenter();
+  recompute(); render(); renderCommandCenter(); renderMarketResearch();
   const qsStock = new URLSearchParams(location.search).get("stock");
   if (qsStock) setTimeout(() => openDetail(qsStock.toUpperCase()), 0);
   $('#exportCsv').addEventListener('click', exportCsv);
