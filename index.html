@@ -182,6 +182,36 @@ textarea.code{min-height:250px;font:400 12.5px/1.55 var(--f-mono);tab-size:2;whi
 .menu-panel a{display:block!important;margin:0!important;padding:9px 11px;color:var(--tx2,#A3ADBC)!important;text-decoration:none!important;border-radius:3px;white-space:nowrap}
 .menu-panel a:hover{background:var(--panel2,#141C26);color:var(--tx,#F3F6FA)!important}
 @media(max-width:700px){.menu-panel{left:50%;right:auto;transform:translateX(-50%);min-width:210px}.menu summary{padding:8px 11px}}
+
+/* Phone-first command center: remove desktop sidebar offset and compress navigation */
+@media (max-width: 600px) {
+  body:has(.command-center) .wrap { padding:0 10px 32px!important; max-width:100%!important; }
+  body:has(.command-center) .top { margin-left:0!important; flex-wrap:wrap!important; padding:12px 0!important; gap:8px!important; }
+  body:has(.command-center) .terminal-status { position:static!important; max-width:100%!important; margin-left:auto!important; white-space:normal!important; font-size:10px!important; }
+  .terminal-sidebar { position:static!important; width:100%!important; max-height:none!important; margin:8px 0 12px!important; padding:8px!important; }
+  .terminal-sidebar-brand { padding:3px 6px 8px!important; margin-bottom:5px!important; }
+  .terminal-sidebar-brand span { font-size:17px!important; }
+  .terminal-sidebar-section { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:2px!important; width:100%!important; min-width:0!important; padding:6px 0!important; }
+  .terminal-sidebar-title { grid-column:1/-1!important; padding:0 6px 4px!important; }
+  .terminal-sidebar a { padding:7px 6px!important; font-size:11px!important; overflow-wrap:anywhere; }
+  .command-center { margin:10px 0 18px!important; }
+  .cc-head { padding:8px 0 12px!important; gap:10px!important; }
+  .cc-head h1 { font-size:21px!important; }
+  .cc-head p { font-size:11px!important; }
+  .cc-clock { min-width:0!important; text-align:left!important; }
+  .cc-regime { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+  .cc-metric { padding:9px!important; min-width:0!important; }
+  .cc-metric span { font-size:8px!important; }
+  .cc-metric b { font-size:17px!important; overflow-wrap:anywhere; }
+  .cc-grid { grid-template-columns:minmax(0,1fr)!important; }
+  .cc-row { grid-template-columns:48px minmax(0,1fr) 48px 30px!important; gap:5px!important; font-size:10px!important; }
+  .cc-monitor-grid { grid-template-columns:minmax(0,1fr)!important; }
+  .layout { display:block!important; }
+  .filters { position:static!important; max-height:none!important; }
+  .tw { max-width:calc(100vw - 20px)!important; }
+  .toolbar { align-items:stretch!important; }
+  .toolbar input, .toolbar select, .toolbar button { min-height:38px; }
+}
 </style></style>
 <link rel="stylesheet" href="./ui.css">
 <style id="command-center-polish">
