@@ -464,3 +464,64 @@ input,select,textarea,button{max-width:100%}
   .stat, .panel { padding:10px!important; }
   .brand { font-size:9px!important; }
 }
+
+
+/* TABLE VIEWPORT FIX: keep the table frame fixed to the page width;
+   allow only its columns/content to scroll horizontally on narrow screens. */
+.tablewrap,.table-wrap,.table-scroll,.table-container,.tw,.tablewrapper{
+  display:block;
+  box-sizing:border-box;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow-x:auto!important;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  scrollbar-width:thin;
+  scrollbar-color:var(--spc-line-strong) var(--spc-bg-soft);
+}
+.tablewrap table,.table-wrap table,.table-scroll table,.table-container table,.tw table,.tablewrapper table{
+  width:max-content!important;
+  min-width:100%;
+  max-width:none!important;
+  table-layout:auto;
+  border-collapse:separate;
+  border-spacing:0;
+}
+.tablewrap th,.tablewrap td,.table-wrap th,.table-wrap td,.table-scroll th,.table-scroll td,
+.table-container th,.table-container td,.tw th,.tw td,.tablewrapper th,.tablewrapper td{
+  white-space:nowrap;
+}
+.tablewrap,.table-wrap,.table-scroll,.table-container,.tw,.tablewrapper,
+.tablewrap table,.table-wrap table,.table-scroll table,.table-container table,.tw table,.tablewrapper table{
+  box-sizing:border-box;
+}
+@media(max-width:720px){
+  .layout>* ,.grid>* ,.charts>* ,.panel,.card,.section,.filters,.tw,.tablewrap,.table-wrap,.table-scroll,.table-container{
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  .tablewrap,.table-wrap,.table-scroll,.table-container,.tw,.tablewrapper{
+    width:100%!important;
+    max-width:calc(100vw - 24px)!important;
+    margin-right:0!important;
+  }
+  .tablewrap table,.table-wrap table,.table-scroll table,.table-container table,.tw table,.tablewrapper table{
+    width:max-content!important;
+    min-width:100%!important;
+  }
+  .tablewrap th,.tablewrap td,.table-wrap th,.table-wrap td,.table-scroll th,.table-scroll td,
+  .table-container th,.table-container td,.tw th,.tw td,.tablewrapper th,.tablewrapper td{
+    padding:8px 10px!important;
+    font-size:11px!important;
+  }
+  /* Tables embedded directly in cards also stay inside the card frame. */
+  .card:has(>table),.panel:has(>table),.section:has(>table){overflow-x:auto!important}
+  .card>table,.panel>table,.section>table{width:max-content!important;min-width:100%!important;max-width:none!important}
+}
+@media(max-width:380px){
+  .tablewrap,.table-wrap,.table-scroll,.table-container,.tw,.tablewrapper{
+    max-width:calc(100vw - 18px)!important;
+  }
+}
