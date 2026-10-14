@@ -430,3 +430,37 @@ input,select,textarea,button{max-width:100%}
   .cc-monitor-grid{grid-template-columns:minmax(0,1fr)!important}
   .terminal-sidebar-section{flex-basis:145px;width:145px!important;min-width:145px!important}
 }
+
+
+/* Responsive adaptation: compact phone layout, desktop density retained */
+@media (max-width: 600px) {
+  html, body { max-width:100%; overflow-x:hidden; }
+  .wrap { width:100%!important; max-width:100%!important; padding-left:12px!important; padding-right:12px!important; }
+  .top { flex-wrap:wrap!important; gap:10px!important; }
+  .brand { max-width:calc(100vw - 92px); overflow-wrap:anywhere; letter-spacing:.08em!important; }
+  .hero { display:flex!important; flex-direction:column!important; align-items:stretch!important; gap:12px!important; padding:20px 0 16px!important; }
+  .hero h1, h1 { font-size:clamp(27px,8vw,36px)!important; line-height:1.08!important; overflow-wrap:anywhere; }
+  .hero p, .lead { font-size:14px!important; line-height:1.55!important; }
+  .meta { text-align:left!important; font-size:11px!important; overflow-wrap:anywhere; }
+  .stats, .summary { grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:8px!important; margin:10px 0 16px!important; }
+  .stat, .panel, .card, .section { min-width:0!important; padding:12px!important; }
+  .stat b, .stat .v { font-size:clamp(20px,6vw,25px)!important; }
+  .grid, .layout, .charts, .indicator-grid, .catalyst-grid, .trade-setup-grid { grid-template-columns:minmax(0,1fr)!important; }
+  .controls, .toolbar, .bar { gap:7px!important; }
+  .controls > *, .toolbar > * { max-width:100%; }
+  .controls input, .controls select, input, select, textarea { min-width:0; max-width:100%; }
+  .tablewrap, .table-wrap, .tw, .heatmap-wrap { max-width:100%; overflow-x:auto!important; -webkit-overflow-scrolling:touch; }
+  table { max-width:none; }
+  .menu-panel { max-width:calc(100vw - 24px)!important; right:0!important; left:auto!important; }
+  .terminal-nav { display:none!important; }
+  dialog.modal { width:calc(100vw - 16px)!important; max-width:calc(100vw - 16px)!important; }
+  .dw { padding:14px!important; }
+  .grid4, .grid3 { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+  .foot { gap:10px!important; }
+}
+@media (max-width:380px) {
+  .wrap { padding-left:9px!important; padding-right:9px!important; }
+  .stats, .summary, .grid4, .grid3 { gap:6px!important; }
+  .stat, .panel { padding:10px!important; }
+  .brand { font-size:9px!important; }
+}
