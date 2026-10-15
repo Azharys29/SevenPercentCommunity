@@ -599,3 +599,41 @@ html body table td {
     min-width: 100% !important;
   }
 }
+
+
+/* TABLE VERTICAL SCROLL FIX: keep long tables in a bounded viewport.
+   Both axes scroll inside the table frame; short tables remain naturally short. */
+html body .tablewrap,
+html body .table-wrap,
+html body .table-scroll,
+html body .table-container,
+html body .tablewrapper,
+html body .tw {
+  max-height: min(70vh, 650px) !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
+  scrollbar-width: thin;
+}
+html body .tablewrap table,
+html body .table-wrap table,
+html body .table-scroll table,
+html body .table-container table,
+html body .tablewrapper table,
+html body .tw table {
+  overflow: visible !important;
+}
+@media (max-width: 720px) {
+  html body .tablewrap,
+  html body .table-wrap,
+  html body .table-scroll,
+  html body .table-container,
+  html body .tablewrapper,
+  html body .tw {
+    max-height: 65vh !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+  }
+}
