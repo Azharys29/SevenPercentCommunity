@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Research Pack — SevenPercentCommunity</title>
+<style>
+:root{color-scheme:dark;--bg:#090d13;--panel:#101822;--line:#2e4a68;--ink:#f3f6fa;--muted:#a3adbc;--ice:#add6ff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:24px}.nav{display:flex;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}.nav a{color:var(--ice)}h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:28px 0 10px}p,.muted{color:var(--muted)}.panel{border:1px solid var(--line);background:var(--panel);padding:18px;margin:16px 0;border-radius:5px}.btn{display:inline-block;background:var(--ice);color:#08101a;font-weight:700;border:0;border-radius:3px;padding:11px 15px;cursor:pointer;margin:5px 7px 5px 0}.btn.secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}.status{white-space:pre-wrap;font:13px ui-monospace,monospace;color:#c5d8eb}.step{display:flex;gap:12px;margin:12px 0}.num{flex:0 0 28px;height:28px;border:1px solid var(--ice);border-radius:50%;text-align:center;color:var(--ice)}code{overflow-wrap:anywhere;color:#d5e8ff}ul{padding-left:20px}@media(max-width:600px){.wrap{padding:15px}.panel{padding:14px}}
+</style></head><body><main class="wrap">
+<nav class="nav"><a href="./index.html">Market Overview</a><a href="./weekly-quant-report.html">Weekly Quant Report</a><a href="./research-report.html">Equity Research Builder</a></nav>
+<h1>AI Research Pack</h1><p>Ekspor snapshot riset dari terminal SPC, lalu unggah file JSON ke ChatGPT untuk diperkaya dengan berita terbaru, keterbukaan informasi BEI, corporate action, dan konteks makro. Semua pengayaan eksternal dilakukan saat Anda meminta ChatGPT menelusuri web—terminal tidak memerlukan API key atau token AI.</p>
+<div class="panel"><h2>1. Siapkan file untuk ChatGPT</h2><p>Ambil data JSON yang tersedia dari terminal dan buat satu paket yang rapi. Klik tombol pertama untuk paket data, tombol kedua untuk prompt analisis yang bisa langsung disalin/diunggah.</p><button class="btn" id="export">Ekspor AI Research Pack (.json)</button><button class="btn secondary" id="prompt">Unduh prompt analisis (.txt)</button><button class="btn secondary" id="reload">Muat ulang data</button><div id="status" class="status">Menyiapkan data…</div></div>
+<div class="panel"><h2>2. Cara menggunakan</h2><div class="step"><span class="num">1</span><div>Buka halaman ini setelah pipeline data SPC selesai berjalan, lalu ekspor JSON.</div></div><div class="step"><span class="num">2</span><div>Unggah JSON ke ChatGPT. Sertakan prompt analisis yang diunduh, atau salin instruksi dari file tersebut.</div></div><div class="step"><span class="num">3</span><div>Minta ChatGPT melakukan web research terbaru dan mencantumkan sumber serta tanggal publikasi untuk setiap berita dan corporate action material.</div></div><div class="step"><span class="num">4</span><div>Review ulang angka, tanggal cum/ex/record/payment, status aksi korporasi, dan sumber resmi sebelum report dipakai untuk keputusan investasi.</div></div></div>
+<div class="panel"><h2>Data yang dibundel</h2><ul><li>Sinyal teknikal dan momentum</li><li>Market Intelligence dan status pasar bila tersedia</li><li>Sector Rotation</li><li>Value Gap dan Dividend Intelligence</li><li>Relative Strength, Early Signals, commodity play dan catalyst data bila tersedia</li><li>Metadata: waktu ekspor, status sumber, jumlah baris, serta file yang gagal dimuat</li></ul><p class="muted">Hanya data yang tersedia di terminal yang disertakan. File kosong, stale, atau gagal dimuat akan ditandai—tidak diisi dengan angka rekaan. Paket ini tidak menyertakan kredensial atau token.</p></div>
+</main>
+<script>
+(()=>{'use strict';const files=['signals','momentum','market-intelligence','market-regime','sector-rotation','value-gap','dividend-intelligence','relative-strength','early-signals','commodity-play','catalysts','catalysts-manual','display','commodity-map','signal-intelligence'];let pack=null;const $=id=>document.getElementById(id);
+async function load(){pack={schema_version:'spc-ai-research-pack-v1',exported_at:new Date().toISOString(),source_terminal:'SevenPercentCommunity',source_url:location.origin+location.pathname,scope:'Snapshot lokal terminal; berita dan corporate action eksternal belum di-scrape oleh terminal.',files:{},data_quality:{loaded:[],missing_or_failed:[]}};let status=[];for(const name of files){try{const r=await fetch('./data/'+name+'.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const j=await r.json();pack.files[name]={status:'loaded',row_count:countRows(j),data:j};pack.data_quality.loaded.push(name);status.push('OK  '+name+' · '+countRows(j)+' baris');}catch(e){pack.files[name]={status:'missing_or_failed',error:String(e)};pack.data_quality.missing_or_failed.push({file:name,error:String(e)});status.push('MISS '+name+' · '+String(e));}}pack.data_quality.loaded_count=pack.data_quality.loaded.length;pack.data_quality.failed_count=pack.data_quality.missing_or_failed.length;$('status').textContent='Data siap: '+pack.data_quality.loaded_count+'/'+files.length+' file.\n'+status.join('\n');}
+function countRows(x){if(Array.isArray(x))return x.length;if(x&&typeof x==='object'){for(const k of ['stocks','signals','items','sectors','rows','data'])if(Array.isArray(x[k]))return x[k].length;}return x&&typeof x==='object'?1:0}
+function save(name,text,type){const b=new Blob([text],{type}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+const promptText=`PERAN
+Anda bertindak sebagai equity research analyst Indonesia yang skeptis, berbasis bukti, dan transparan atas ketidakpastian. Analisis file SPC AI Research Pack yang saya unggah, lalu lakukan web research terbaru untuk melengkapi laporan. Jangan menganggap data terminal sebagai fakta yang sudah terverifikasi.
+
+TUGAS RISET WEB
+1. Tentukan tanggal dan waktu cut-off analisis. Cari berita material terbaru untuk saham-saham yang menonjol dalam paket dan konteks IHSG, suku bunga, rupiah, komoditas, serta sektor terkait.
+2. Cari keterbukaan informasi resmi BEI/IDX, situs resmi emiten, paparan publik, laporan keuangan, RUPS, dividen, stock split/reverse split, rights issue, buyback, private placement, tender offer, merger/akuisisi, perubahan pengendali, suspensi, dan aksi korporasi lain yang relevan.
+3. Prioritaskan sumber primer: IDX/BEI dan situs emiten/regulator. Gunakan media kredibel sebagai konteks tambahan. Cantumkan judul, penerbit, tanggal publikasi, tanggal kejadian/efektif (jika berbeda), dan URL untuk setiap klaim material.
+4. Bedakan fakta terkonfirmasi, laporan media, rumor, interpretasi analis, dan data yang belum dapat diverifikasi. Jangan menyebut berita sebagai katalis jika tidak ditemukan sumber yang memadai.
+5. Untuk corporate action, jelaskan status (rencana/diumumkan/disetujui/efektif/selesai), tanggal penting (cum date, ex date, recording date, payment date bila relevan), rasio/harga/nominal, dan potensi dampaknya. Jika tanggal atau detail belum tersedia, tulis belum diumumkan—jangan menebak.
+6. Cocokkan berita dan aksi korporasi dengan data terminal: technical score/signal, momentum, sector rotation, market regime, Value Gap, dividend estimate, relative strength dan early signals jika tersedia. Tandai data stale, konflik angka, missing values, dan anomali.
+7. Buat ranking peluang dengan thesis, catalyst, confirmation, invalidation/risk, time horizon, dan key levels hanya jika data mendukung. Jangan membuat target harga atau entry/stop loss dari data yang tidak tersedia.
+8. Sertakan counter-thesis, downside risks, potensi priced-in, likuiditas, dan faktor yang bisa membatalkan thesis. Jangan menjanjikan return.
+9. Untuk tiap saham prioritas, buat ringkasan: bull/base/bear case kualitatif; katalis terdekat; corporate action; data teknikal/kuantitatif dari paket; risiko utama; dan pertanyaan yang masih harus dijawab.
+
+FORMAT OUTPUT
+A. Executive summary dan market regime
+B. Macro & market-moving news (dengan sumber)
+C. Sector rotation dan implikasi lintas sektor
+D. Top opportunities: tabel ticker | thesis | faktor kuantitatif dari paket | berita/catalyst terverifikasi | corporate action | risiko/invalidation | horizon | confidence
+E. Corporate action calendar: ticker | aksi | status | tanggal penting | detail | sumber resmi
+F. Watchlist: sinyal awal, konfirmasi yang dibutuhkan, kondisi invalidasi
+G. Risk register dan counter-thesis
+H. Data quality audit: data kosong, stale, konflik, metodologi yang tidak jelas
+I. Sources: URL, penerbit, tanggal publikasi/akses, klaim yang didukung
+
+ATURAN WAJIB
+- Gunakan web browsing; jika tidak dapat mengakses web, nyatakan keterbatasan dan jangan mengarang hasil pencarian.
+- Kutip/link sumber di dekat klaim yang didukung. Prioritaskan sumber resmi dan tanggal terbaru.
+- Pisahkan tanggal snapshot terminal dari tanggal berita. Jangan menganggap snapshot terminal real-time.
+- Jangan mengarang harga, valuasi, EPS, dividen, volume, berita, aksi korporasi, statistik backtest, atau hasil scraping.
+- Jika data historis tidak tersedia, jangan menyimpulkan perubahan mingguan atau kinerja strategi.
+- Jelaskan rumus/definisi metrik jika ambigu. Tunjukkan asumsi dan keterbatasan.
+- Ini adalah bahan riset, bukan instruksi transaksi atau jaminan kinerja.
+- Mulai dengan memeriksa metadata dan data_quality pada JSON; sebutkan file yang gagal dimuat sebelum menarik kesimpulan.`;
+$('export').addEventListener('click',()=>{if(!pack){$('status').textContent='Data belum siap. Klik Muat ulang.';return}save('SPC_AI_Research_Pack_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(pack,null,2),'application/json')});
+$('prompt').addEventListener('click',()=>save('SPC_AI_Research_Prompt.txt',promptText,'text/plain;charset=utf-8'));
+$('reload').addEventListener('click',load);load();
+})();
+</script></body></html>
