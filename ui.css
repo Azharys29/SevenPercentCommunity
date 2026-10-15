@@ -525,3 +525,77 @@ input,select,textarea,button{max-width:100%}
     max-width:calc(100vw - 18px)!important;
   }
 }
+
+
+/* UNIVERSAL TABLE SCROLL FIX
+   Keep every table's visible frame within its parent; scroll wide columns
+   inside the table so page/body overflow clipping cannot disable the gesture. */
+html body .tablewrap,
+html body .table-wrap,
+html body .table-scroll,
+html body .table-container,
+html body .tablewrapper,
+html body .tw,
+html body .card,
+html body .panel,
+html body .section {
+  min-width: 0 !important;
+}
+html body .tablewrap,
+html body .table-wrap,
+html body .table-scroll,
+html body .table-container,
+html body .tablewrapper,
+html body .tw {
+  display: block !important;
+  position: relative;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
+  overscroll-behavior-x: contain;
+}
+html body table {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: max-content !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  table-layout: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
+}
+html body table th,
+html body table td {
+  white-space: nowrap;
+}
+@media (max-width: 720px) {
+  html body .tablewrap,
+  html body .table-wrap,
+  html body .table-scroll,
+  html body .table-container,
+  html body .tablewrapper,
+  html body .tw {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    min-width: 0 !important;
+  }
+  html body table {
+    min-width: max-content !important;
+    max-width: none !important;
+  }
+  html body .tablewrap table,
+  html body .table-wrap table,
+  html body .table-scroll table,
+  html body .table-container table,
+  html body .tablewrapper table,
+  html body .tw table {
+    width: max-content !important;
+    min-width: 100% !important;
+  }
+}
