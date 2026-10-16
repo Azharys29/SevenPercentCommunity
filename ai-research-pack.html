@@ -58,4 +58,4 @@ $('export').addEventListener('click',()=>{if(!pack){$('status').textContent='Dat
 $('prompt').addEventListener('click',()=>save('SPC_AI_Research_Prompt.txt',promptText,'text/plain;charset=utf-8'));
 $('previousFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file){previousPack=null;return}try{const parsed=JSON.parse(await file.text());if(!parsed.files||!parsed.exported_at)throw Error('File bukan AI Research Pack yang dikenali.');previousPack=parsed;$('compareStatus').textContent='Snapshot pembanding siap.\nTanggal ekspor sebelumnya: '+parsed.exported_at+'\nSaat ekspor, paket terbaru akan menyertakan perbandingan per file dan perubahan field per ticker.'}catch(err){previousPack=null;$('compareStatus').textContent='Gagal membaca snapshot: '+String(err)}});$('reload').addEventListener('click',load);load();
 })();
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
