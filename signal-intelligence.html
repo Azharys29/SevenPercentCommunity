@@ -22,4 +22,4 @@ function detail(x){if(!x)return;const risk=x.risk_flags?.length?x.risk_flags.map
 $('search').addEventListener('input',render);$('filter').addEventListener('change',render);$('sort').addEventListener('change',render);
 try{const res=await fetch('./data/signal-intelligence.json?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);DATA=await res.json();stocks=DATA.stocks||[];renderModules();render();if(stocks.length)detail(stocks[0]);}catch(e){$('asof').textContent='DATA ERROR';$('rows').innerHTML='<tr><td colspan="8" class="empty">Data belum tersedia. Jalankan workflow Update Screener & Deploy.</td></tr>';console.error(e);}
 })();
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
