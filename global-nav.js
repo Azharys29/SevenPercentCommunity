@@ -14,7 +14,7 @@ const groups=[
 ['Value Gap','value-gap.html','PER historis dan gap valuasi'],
 ['Dividend Intelligence','dividend-intelligence.html','Analisis dividen dan estimasi yield'],
 ['Equity Research Builder','research-report.html','Menyusun laporan riset emiten'],
-['Earnings Quality','fundamental.html#quality','Kembali ke modul fundamental']]},
+]},
 {title:'Sector, Macro & Market Structure',items:[
 ['Sector Rotation','sector-rotation.html','Rotasi dan kekuatan sektor'],
 ['Commodity Play','commodity-play.html','Paparan saham terhadap komoditas'],
