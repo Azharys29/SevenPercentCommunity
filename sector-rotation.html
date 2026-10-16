@@ -29,4 +29,4 @@ function render(d){
  }).join('');
 }
 fetch('./data/sector-rotation.json?t='+Date.now()).then(r=>r.json()).then(render).catch(()=>document.getElementById('grid').innerHTML='<div class="muted">Data sector rotation belum tersedia.</div>');
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
