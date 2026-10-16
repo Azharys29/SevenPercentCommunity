@@ -58,4 +58,4 @@ $('copy').addEventListener('click',async()=>{const t=render().fields;const text=
 $('importBtn').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const d=JSON.parse(await file.text());const f=d.fields||d;fields.forEach(k=>{if(f[k]!==undefined)$(k).value=f[k]});const ev=d.evidence||{};checks.forEach(k=>$(k).checked=!!ev[k]);render()}catch(err){alert('File JSON tidak valid atau format tidak didukung.')}e.target.value=''});
 Promise.all(['data/market-intelligence.json','data/value-gap.json','data/dividend-intelligence.json','data/commodity-play.json'].map(async p=>{try{const r=await fetch('./'+p,{cache:'no-store'});return r.ok}catch(e){return false}})).then(a=>{$('dataStatus').textContent=a.filter(Boolean).length+'/4 files reachable';$('dataStatus').className=a.every(Boolean)?'good':'bad'}).catch(()=>$('dataStatus').textContent='Tidak tersedia');render();
 })();
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
