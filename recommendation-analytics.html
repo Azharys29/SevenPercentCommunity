@@ -115,4 +115,4 @@ function exportExcel(){
  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(summary),"Summary");XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),"Journal");XLSX.writeFile(wb,"Recommendation_Analytics_"+report.latest.toISOString().slice(0,10)+".xlsx");
 }
 $("#refresh").onclick=load;$("#export").onclick=exportExcel;load();
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
