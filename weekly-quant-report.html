@@ -20,4 +20,4 @@ $('report').innerHTML=[
 async function load(){ $('status').textContent='Memuat JSON…';const out=await Promise.all(Object.entries(src).map(async([k,file])=>{try{const r=await fetch('./data/'+file+'.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error(r.status);db[k]=await r.json();return true}catch(e){db[k]={};return false}}));render();$('meta').textContent='AS-OF '+(db.momentum?.asof||db.technical?.asof||'—')+' · Generated '+(db.momentum?.generated||'—');$('status').textContent+='' ;$('status').textContent=out.filter(Boolean).length+'/'+out.length+' sumber dimuat. Periksa tanggal data tiap modul.'}
 $('refresh').addEventListener('click',load);$('print').addEventListener('click',()=>window.print());load();
 })();
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
