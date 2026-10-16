@@ -94,4 +94,4 @@ async function load(){
 window.edit=x=>{Object.keys(x).forEach(k=>{if($('#'+k))$('#'+k).value=x[k]??''});$('#id').value=x.id;scrollTo({top:0,behavior:'smooth'})};
 window.del=async id=>{if(!confirm('Hapus rekomendasi ini?'))return;try{await api('/rest/v1/recommendations?id=eq.'+encodeURIComponent(id),{method:'DELETE'},accessToken);await load()}catch(e){alert(e.message)}};
 check();
-</script></script></body></html>
+</script></script><script src="./global-nav.js" defer></script></body></html>
