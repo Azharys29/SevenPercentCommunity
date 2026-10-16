@@ -59,4 +59,4 @@ async function init(){
 }
 document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{state.filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));render()}));
 document.getElementById("search").addEventListener("input",render);document.getElementById("sector").addEventListener("change",render);init();
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
