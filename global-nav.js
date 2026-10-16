@@ -3,6 +3,7 @@ const groups=[
 {title:'Overview & Intelligence',items:[
 ['Market Overview','index.html','Ringkasan terminal dan akses seluruh modul'],
 ['Equity Intelligence Graph','equity-intelligence-graph.html','Transmisi ekonomi, valuasi, dan tesis'],
+['Investment Decision Engine','investment-decision-engine.html','Tesis, valuasi, katalis, dan risiko'],
 ['Market Intelligence','market-intelligence.html','Kondisi pasar dan confluence'],
 ['Market Activity','market-activity.html','Aktivitas dan ringkasan perdagangan'],
 ['Market Catalyst','market-catalyst.html','Katalis pasar dan faktor penggerak'],
@@ -42,6 +43,7 @@ const groups=[
 ];
 const current=decodeURI(location.pathname.split('/').pop()||'index.html');
 const all=groups.flatMap(g=>g.items);
+const fontLink=document.createElement('link');fontLink.rel='stylesheet';fontLink.href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap';document.head.appendChild(fontLink);
 const style=document.createElement('style');style.textContent=`
 #spcNavButton{position:fixed;z-index:10001;top:12px;right:14px;display:flex;align-items:center;gap:9px;border:1px solid #45627f;background:rgba(12,20,31,.97);color:#f3f6fa;padding:10px 13px;border-radius:7px;font:600 13px/1.2 system-ui,sans-serif;box-shadow:0 5px 22px #0008;cursor:pointer}
 #spcNavButton .spcHamb{font-size:18px;color:#add6ff}
@@ -78,7 +80,7 @@ const style=document.createElement('style');style.textContent=`
 .spcSideLink{display:block;padding:7px;border-radius:4px;color:#b9c7d7!important;text-decoration:none!important;font:12px/1.3 system-ui,sans-serif;border:1px solid transparent}.spcSideLink:hover{background:#142236;color:#fff!important}.spcSideLink.active{background:#152a40;border-color:#45627f;color:#add6ff!important}
 body{padding-left:218px!important;box-sizing:border-box}
 @media(max-width:1000px){#spcSideNav{display:none}body{padding-left:0!important}}
-\nbody.spcNavOpen{overflow:hidden}
+\nbody{font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif!important}\nbutton,input,select,textarea{font-family:Inter,system-ui,sans-serif}\n.spcNavGroupTitle,.spcSideGroupTitle,.spcNavBrand,.spcSideBrand{font-family:'IBM Plex Mono',ui-monospace,monospace}\nbody.spcNavOpen{overflow:hidden}
 .menu-wrap,details.menu{display:none!important}
 `;document.head.appendChild(style);
 const btn=document.createElement('button');btn.id='spcNavButton';btn.type='button';btn.setAttribute('aria-label','Buka semua menu terminal');btn.innerHTML='<span class="spcHamb">☰</span><span>Semua Menu</span>';document.body.appendChild(btn);
