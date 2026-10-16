@@ -71,7 +71,14 @@ const style=document.createElement('style');style.textContent=`
 @media(max-width:420px){.spcHubGrid{grid-template-columns:1fr 1fr}.spcHubCard{padding:10px 8px}}
 .top{padding-right:145px!important}
 @media(max-width:800px){.top{padding-right:0!important;padding-top:58px!important}}
-body.spcNavOpen{overflow:hidden}
+#spcSideNav{position:fixed;z-index:9998;left:0;top:0;bottom:0;width:218px;box-sizing:border-box;background:#0b121d;border-right:1px solid #263b51;display:flex;flex-direction:column;color:#dbe7f5;font-family:system-ui,sans-serif}
+.spcSideBrand{padding:19px 15px 14px;border-bottom:1px solid #25394f;font:700 11px/1.7 ui-monospace,monospace;letter-spacing:.12em;color:#add6ff}.spcSideBrand span{color:#7f91a6;font-weight:500}
+.spcSideSearch{padding:10px;border-bottom:1px solid #25394f}.spcSideSearch input{width:100%;box-sizing:border-box;background:#080e16;color:#f3f6fa;border:1px solid #304966;border-radius:5px;padding:9px;font:12px system-ui,sans-serif}
+#spcSideLinks{overflow:auto;padding:4px 9px 20px}.spcSideGroup{margin:12px 0}.spcSideGroupTitle{padding:0 7px 5px;color:#7fa3cb;font:600 9px/1.4 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
+.spcSideLink{display:block;padding:7px;border-radius:4px;color:#b9c7d7!important;text-decoration:none!important;font:12px/1.3 system-ui,sans-serif;border:1px solid transparent}.spcSideLink:hover{background:#142236;color:#fff!important}.spcSideLink.active{background:#152a40;border-color:#45627f;color:#add6ff!important}
+body{padding-left:218px!important;box-sizing:border-box}
+@media(max-width:1000px){#spcSideNav{display:none}body{padding-left:0!important}}
+\nbody.spcNavOpen{overflow:hidden}
 .menu-wrap,details.menu{display:none!important}
 `;document.head.appendChild(style);
 const btn=document.createElement('button');btn.id='spcNavButton';btn.type='button';btn.setAttribute('aria-label','Buka semua menu terminal');btn.innerHTML='<span class="spcHamb">☰</span><span>Semua Menu</span>';document.body.appendChild(btn);
@@ -82,9 +89,12 @@ function render(filter=''){list.innerHTML='';let count=0;groups.forEach(g=>{cons
 function open(){shade.classList.add('open');document.body.classList.add('spcNavOpen');btn.setAttribute('aria-expanded','true');setTimeout(()=>query.focus(),80)}
 function close(){shade.classList.remove('open');document.body.classList.remove('spcNavOpen');btn.setAttribute('aria-expanded','false');btn.focus()}
 btn.setAttribute('aria-expanded','false');btn.addEventListener('click',open);shade.querySelector('#spcNavClose').addEventListener('click',close);shade.addEventListener('click',e=>{if(e.target===shade)close()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&shade.classList.contains('open'))close()});query.addEventListener('input',()=>render(query.value.trim()));render();
-if(current==='index.html'){
-const header=document.querySelector('.top,header.top,header');
-if(header){const hub=document.createElement('section');hub.id='spcModuleHub';hub.innerHTML='<h2>Semua Modul Terminal</h2><p>Akses seluruh fitur dari satu tempat. Gunakan pencarian pada tombol “Semua Menu” untuk berpindah modul tanpa kembali ke halaman utama.</p>';
-groups.forEach(g=>{const sec=document.createElement('section');sec.className='spcHubGroup';const h=document.createElement('h3');h.textContent=g.title;sec.appendChild(h);const grid=document.createElement('div');grid.className='spcHubGrid';g.items.forEach(i=>{const a=document.createElement('a');a.className='spcHubCard';a.href='./'+i[1];a.innerHTML='<strong>'+i[0]+'</strong><span>'+i[2]+'</span>';grid.appendChild(a)});sec.appendChild(grid);hub.appendChild(sec)});header.insertAdjacentElement('afterend',hub)}
-}
+// Persistent left navigation on desktop. The same complete menu remains available in the burger drawer.
+const side=document.createElement('nav');side.id='spcSideNav';side.setAttribute('aria-label','Semua modul terminal');
+side.innerHTML='<div class="spcSideBrand">SEVENPERCENT<br><span>TERMINAL MENU</span></div><div class="spcSideSearch"><input id="spcSideQuery" type="search" placeholder="Cari modul…" aria-label="Cari modul"></div><div id="spcSideLinks"></div>';
+document.body.appendChild(side);
+const sideLinks=side.querySelector('#spcSideLinks'),sideQuery=side.querySelector('#spcSideQuery');
+function renderSide(filter=''){sideLinks.innerHTML='';let count=0;groups.forEach(g=>{const matches=g.items.filter(i=>(i[0]+' '+i[1]+' '+i[2]+' '+g.title).toLowerCase().includes(filter.toLowerCase()));if(!matches.length)return;count+=matches.length;const section=document.createElement('section');section.className='spcSideGroup';const h=document.createElement('div');h.className='spcSideGroupTitle';h.textContent=g.title;section.appendChild(h);matches.forEach(i=>{const a=document.createElement('a');a.className='spcSideLink'+(i[1].split('#')[0]===current?' active':'');a.href='./'+i[1];a.textContent=i[0];section.appendChild(a)});sideLinks.appendChild(section)});sideLinks.dataset.count=String(count)}
+sideQuery.addEventListener('input',()=>renderSide(sideQuery.value.trim()));renderSide();
+if(current==='index.html'){const hub=document.getElementById('spcModuleHub');if(hub)hub.remove();}
 })();
