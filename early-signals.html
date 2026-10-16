@@ -33,4 +33,4 @@ function render(){
 async function load(){const r=await fetch("./data/early-signals.json?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error("data unavailable");DATA=await r.json();render()}
 document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");FILTER=b.dataset.filter;render()}));
 $("#refresh").addEventListener("click",load);load().catch(e=>{$("#rows").innerHTML='<tr><td colspan="15" class="empty">Data Early Signals belum tersedia. Jalankan workflow screener terlebih dahulu.</td></tr>'});
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
