@@ -121,4 +121,4 @@ async function render(){
 $("#go").onclick=()=>{const t=$("#ticker").value.trim().toUpperCase();if(t)history.replaceState(null,"","?stock="+encodeURIComponent(t));render()};
 $("#ticker").addEventListener("keydown",e=>{if(e.key==="Enter")$("#go").click()});
 load();
-</script></body></html>
+</script><script src="./global-nav.js" defer></script></body></html>
