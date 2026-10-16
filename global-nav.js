@@ -69,6 +69,8 @@ const style=document.createElement('style');style.textContent=`
 .spcHubCard:hover{border-color:#85b7eb;background:#142236}.spcHubCard strong{display:block;font-size:13px;font-weight:600}.spcHubCard span{display:block;color:#91a1b4;font-size:11px;line-height:1.4;margin-top:5px}
 @media(max-width:800px){.spcHubGrid{grid-template-columns:repeat(2,minmax(0,1fr))}#spcNavButton{top:8px;right:8px;padding:9px 10px}.spcNavHead{padding-top:58px}}
 @media(max-width:420px){.spcHubGrid{grid-template-columns:1fr 1fr}.spcHubCard{padding:10px 8px}}
+.top{padding-right:145px!important}
+@media(max-width:800px){.top{padding-right:0!important;padding-top:58px!important}}
 body.spcNavOpen{overflow:hidden}
 .menu-wrap,details.menu{display:none!important}
 `;document.head.appendChild(style);
