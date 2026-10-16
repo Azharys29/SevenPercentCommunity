@@ -160,6 +160,11 @@ def main():
         for u, symbol in zip(batch, symbols):
             df = extract(raw, symbol)
             if df is None or len(df) < 120:
+                # Keep last known-good bars if this ticker temporarily fails.
+                old = previous.get(u["t"])
+                if old and len(old.get("d", [])) == len(old.get("c", [])) and old.get("c"):
+                    stocks.append(old)
+                    print("Using stored history for temporarily unavailable ticker:", u["t"])
                 failed.append(u["t"])
                 continue
 
