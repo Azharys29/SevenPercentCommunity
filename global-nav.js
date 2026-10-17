@@ -45,6 +45,8 @@ const groups=[
 ['AI Settings','ai-settings.html','Atur menu yang menggunakan Gemini']]}
 ];
 const current=decodeURI(location.pathname.split('/').pop()||'index.html');
+// Cache-bust shared navigation after menu updates so GitHub Pages/mobile browsers do not keep an older menu script.
+
 const all=groups.flatMap(g=>g.items);
 const fontLink=document.createElement('link');fontLink.rel='stylesheet';fontLink.href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap';document.head.appendChild(fontLink);
 const style=document.createElement('style');style.textContent=`
