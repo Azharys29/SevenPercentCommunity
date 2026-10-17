@@ -39,7 +39,10 @@ const groups=[
 ['System Health','system-health.html','Kesehatan data dan sistem'],
 ['Research Manual','research-manual.html','Panduan metodologi terminal'],
 ['Admin','admin.html','Pengaturan administratif'],
-['AI Insights','ai-insights.html','Insight berbantuan AI'],\n['Gemini AI Research','market-intelligence.html','Buka panel analisis Gemini'],\n['AI Login','ai-login.html','Masuk atau buat akun AI'],\n['AI Settings','ai-settings.html','Atur menu yang menggunakan Gemini']]}
+['AI Insights','ai-insights.html','Insight berbantuan AI'],
+['Gemini AI Research','market-intelligence.html','Buka panel analisis Gemini'],
+['AI Login','ai-login.html','Masuk atau buat akun AI'],
+['AI Settings','ai-settings.html','Atur menu yang menggunakan Gemini']]}
 ];
 const current=decodeURI(location.pathname.split('/').pop()||'index.html');
 const all=groups.flatMap(g=>g.items);
