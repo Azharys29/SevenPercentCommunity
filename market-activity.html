@@ -20,12 +20,6 @@
 <div id="returnDistribution" style="width:100%;overflow:hidden"><div class="empty">Memuat distribusi return…</div></div>
 <p class="note">Setiap batang menunjukkan jumlah saham pada rentang return tertentu. Data berasal dari seri close yang tersedia di data/screener.json; ini bukan distribusi return seluruh BEI. Nilai ekstrem dapat memengaruhi rentang bin.</p>
 </section>
-<section class="panel" id="volumeTimelinePanel" style="margin-bottom:14px">
-<h2>Volume Anomaly Timeline</h2>
-<p class="sub">Jumlah saham dengan RVOL ≥ 1.5x per tanggal, dihitung dari 20 sesi sebelumnya per ticker. Timeline memakai histori OHLCV yang tersedia di data/screener.json.</p>
-<div id="volumeTimeline" style="width:100%;overflow:hidden"><div class="empty">Menghitung histori anomali volume…</div></div>
-<p id="volumeTimelineMeta" class="note">Anomali volume adalah aktivitas tidak biasa, bukan sinyal bullish dengan sendirinya. Tanggal dengan cakupan saham tipis ditampilkan sesuai data yang tersedia.</p>
-</section>
 <div class="grid"><section class="panel"><h2>Activity Anomaly & Confluence</h2><p class="sub">RVOL membandingkan volume sesi terakhir dengan rerata 20 sesi sebelumnya. Return dihitung dari seri penutupan yang tersedia.</p><div class="controls"><input id="search" type="search" placeholder="Cari ticker…"><select id="filter"><option value="all">Semua saham</option><option value="anomaly">RVOL ≥ 1.5x</option><option value="confluence">Momentum + volume</option><option value="negative">Return 5D negatif</option></select><button class="btn" id="export">Ekspor CSV</button></div><div class="tablewrap"><table><thead><tr><th>Ticker</th><th>Harga</th><th>Return 5D</th><th>RVOL</th><th>Aktivitas</th><th>Confluence</th><th>Skor</th></tr></thead><tbody id="activityRows"><tr><td colspan="7" class="empty">Memuat data…</td></tr></tbody></table></div><p class="note">Skor aktivitas 0–100 menggabungkan RVOL dan besar perubahan harga 5D; skor ini adalah indikator screening, bukan probabilitas profit atau rekomendasi transaksi.</p></section>
 <section class="panel"><h2>Statistical Edge Backtest</h2><p class="sub">Simulasi sinyal historis pada data OHLCV yang tersedia. Entry diasumsikan pada penutupan hari sinyal; return forward tidak memasukkan biaya, slippage, atau batas likuiditas.</p><div class="flow"><div class="mini"><span>Sampel sinyal</span><b id="btN">—</b></div><div class="mini"><span>Win rate 5D</span><b id="btWin">—</b></div><div class="mini"><span>Rata-rata 5D</span><b id="btAvg">—</b></div></div><div class="tablewrap" style="margin-top:14px"><table style="min-width:440px"><thead><tr><th>Horizon</th><th>Sampel</th><th>Win rate</th><th>Avg return</th><th>Median</th></tr></thead><tbody id="btRows"><tr><td colspan="5" class="empty">Menghitung…</td></tr></tbody></table></div><p class="note">Aturan sinyal: close harian positif dan volume ≥ 1.5× rerata 20 sesi sebelumnya. Setiap ticker/hari dihitung sebagai observasi; observasi berdekatan dapat saling tumpang tindih. Gunakan hasil sebagai eksplorasi, bukan bukti edge yang tervalidasi out-of-sample.</p></section></div>
 
@@ -89,21 +83,6 @@ function renderDistribution(){
  counts.forEach((n,i)=>{const x=pad.l+i*bw+2,bh=n/maxCount*ph,y=pad.t+ph-bh,mid=lo+(i+.5)*step;svg+='<rect x="'+x+'" y="'+y+'" width="'+Math.max(1,bw-4)+'" height="'+bh+'" rx="2" fill="'+(mid>=0?'#86EFAC':'#FDA4AF')+'" opacity=".82"><title>'+ (lo+i*step).toFixed(1)+'% sampai '+(lo+(i+1)*step).toFixed(1)+'%: '+n+' saham</title></rect><text x="'+(x+(bw-4)/2)+'" y="'+(h-25)+'" fill="#A3ADBC" text-anchor="middle">'+(lo+i*step).toFixed(0)+'</text>'});
  svg+='<line x1="'+pad.l+'" y1="'+(pad.t+ph)+'" x2="'+(w-pad.r)+'" y2="'+(pad.t+ph)+'" stroke="#55789E"/><text x="'+(w/2)+'" y="'+(h-7)+'" fill="#A3ADBC" text-anchor="middle">Return (%) · batas bawah rentang</text></svg>';
  $('returnDistribution').innerHTML=svg;$('distMeta').textContent=values.length+' saham · mean '+pct(mean)+' · median '+pct(med)+' · positif '+values.filter(v=>v>0).length+' / '+values.length;
-}
-function renderVolumeTimeline(stocks){
- const host=$('volumeTimeline'),meta=$('volumeTimelineMeta');if(!host)return;
- const daily=new Map();
- for(const s of stocks){const c=s.c||[],v=s.v||[],d=s.d||[],n=Math.min(c.length,v.length,d.length);
- for(let i=20;i<n;i++){const vol=num(v[i]);if(!Number.isFinite(vol)||vol<0)continue;const base=v.slice(i-20,i).map(num).filter(x=>Number.isFinite(x)&&x>=0);if(base.length<15)continue;const avg=base.reduce((a,b)=>a+b,0)/base.length;if(!(avg>0))continue;const rvol=vol/avg,date=String(d[i]);if(!daily.has(date))daily.set(date,{date,coverage:0,anomalies:0,high:0,rvolSum:0});const row=daily.get(date);row.coverage++;if(rvol>=1.5){row.anomalies++;row.rvolSum+=rvol}if(rvol>=2)row.high++}}
- const rows=[...daily.values()].sort((a,b)=>a.date.localeCompare(b.date)).slice(-120);
- if(rows.length<2){host.innerHTML='<div class="empty">Riwayat tanggal/volume tidak cukup untuk membuat timeline.</div>';meta.textContent='Tidak ada nilai yang dibuat karena cakupan data historis tidak cukup.';return}
- const max=Math.max(1,...rows.map(x=>x.anomalies)),W=1000,H=340,L=55,R=20,T=22,B=55,iw=W-L-R,ih=H-T-B,bw=iw/rows.length;
- let svg='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="Timeline anomali volume harian">';
- for(let j=0;j<=4;j++){const y=T+ih*j/4,val=max*(1-j/4);svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#26394d"/><text x="'+(L-8)+'" y="'+(y+4)+'" fill="#A3ADBC" font-size="11" text-anchor="end">'+Math.round(val)+'</text>'}
- rows.forEach((x,i)=>{const bh=x.anomalies/max*ih,xx=L+i*bw+1,yy=T+ih-bh;svg+='<rect x="'+xx+'" y="'+yy+'" width="'+Math.max(1,bw-2)+'" height="'+Math.max(1,bh)+'" fill="'+(x.high?'#FDE68A':'#85B7EB')+'" opacity=".82"><title>'+x.date+' · '+x.anomalies+' anomali dari '+x.coverage+' saham · ≥2x: '+x.high+' · rata-rata RVOL anomali '+(x.anomalies? (x.rvolSum/x.anomalies).toFixed(2)+'x':'—')+'</title></rect>'});
- [0,Math.floor((rows.length-1)/2),rows.length-1].forEach(i=>{const x=L+(i+.5)*bw;svg+='<text x="'+x+'" y="'+(H-26)+'" fill="#A3ADBC" font-size="11" text-anchor="middle">'+rows[i].date+'</text>'});
- svg+='<text x="'+(L+iw/2)+'" y="'+(H-7)+'" fill="#F3F6FA" font-size="12" text-anchor="middle">Tanggal perdagangan · 120 sesi terakhir yang tersedia</text></svg>';
- host.innerHTML=svg;const peak=rows.reduce((a,b)=>b.anomalies>a.anomalies?b:a,rows[0]);meta.textContent=rows.length+' tanggal · puncak '+peak.date+' ('+peak.anomalies+'/'+peak.coverage+' saham) · ambang RVOL ≥1.5x · kuning menandai ≥2x';
 }
 function buildBacktest(stocks){
  const obs=[];
@@ -193,7 +172,7 @@ function boot(data){
  rows=stocks.map(calcStock).filter(Boolean);
  $('asof').textContent='AS OF '+(data.asof||data.generated||'timestamp tidak tersedia')+' · '+(data.universe_name||data.universe||'universe data');
  $('nStocks').textContent=rows.length;
- buildRegime(stocks);renderVolumeTimeline(stocks);
+ buildRegime(stocks);
  fetch('./data/market-regime.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(applyHMM).catch(()=>{});
  $('nAnomaly').textContent=rows.filter(r=>r.anomaly).length;
  $('nConfluence').textContent=rows.filter(r=>r.confluence).length;
