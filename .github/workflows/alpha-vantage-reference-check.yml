@@ -30,7 +30,7 @@ jobs:
 
       - name: Commit sanitized diagnostic status
         run: |
-          if git diff --quiet -- data/alpha-vantage-reference-status.json; then
+          if [ -z "$(git status --porcelain -- data/alpha-vantage-reference-status.json)" ]; then
             echo "Diagnostic status unchanged."
             exit 0
           fi
