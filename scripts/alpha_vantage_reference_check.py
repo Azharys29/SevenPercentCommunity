@@ -190,7 +190,26 @@ def main():
         if item["status"] == "ok" and item["valid_ohlcv_rows"] > 0 and item.get("ticker")
     })
     ok_count = len(valid_tickers)
-    report["overall_status"] = "idx_symbols_responding" if ok_count else "idx_support_not_confirmed"
+    control_check = next((x for x in report["checks"] if x.get("is_control")), {})
+    control_ok = control_check.get("status") == "ok" and control_check.get("valid_ohlcv_rows", 0) > 0
+    if ok_count:
+        report["overall_status"] = "idx_symbols_responding"
+    elif not control_ok:
+        report["overall_status"] = "provider_access_not_confirmed"
+    else:
+        report["overall_status"] = "idx_support_not_confirmed"
+    report["diagnosis"] = {
+        "control_symbol": CONTROL_SYMBOL,
+        "control_symbol_status": control_check.get("status", "not_checked"),
+        "control_symbol_notice_category": control_check.get("notice_category"),
+        "idx_coverage_can_be_judged": bool(control_ok),
+        "summary": (
+            "API key/plan/quota access must be resolved before IDX ticker coverage can be judged."
+            if not control_ok else
+            ("At least one IDX ticker returned valid data." if ok_count else
+             "The API responds for the control symbol, but none of the tested IDX symbols returned valid daily data.")
+        )
+    }
     report["idx_symbols_with_valid_daily_data"] = ok_count
     report["valid_idx_tickers"] = valid_tickers
     report["idx_symbols_tested"] = len(TICKERS)
@@ -222,7 +241,9 @@ def main():
     report["message"] = (
         "At least one tested IDX ticker returned parseable daily OHLCV data using one of the tested symbol formats."
         if ok_count else
-        "No tested IDX ticker returned parseable daily OHLCV data using either symbol format; do not enable this source for SPC analysis."
+        ("Control-symbol test failed; resolve API key, plan entitlement, or daily quota before judging IDX coverage."
+         if not control_ok else
+         "The control-symbol test succeeded, but no tested IDX ticker returned parseable daily OHLCV data; do not enable this source for SPC analysis.")
     )
     report["rollout_state"] = "reference_status_only" if not ok_count else "price_cross_check_candidate"
     OUT.parent.mkdir(parents=True, exist_ok=True)
