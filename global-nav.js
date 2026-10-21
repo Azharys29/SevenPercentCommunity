@@ -9,7 +9,8 @@ const groups=[
 ['Market Catalyst','market-catalyst.html','Katalis pasar dan faktor penggerak'],
 ['Catalyst Calendar','catalyst-calendar.html','Kalender katalis dan peristiwa'],
 ['AI Research Pack','ai-research-pack.html','Ekspor snapshot untuk riset web'],
-['Weekly Quant Report','weekly-quant-report.html','Laporan kuantitatif berkala']]},
+['Weekly Quant Report','weekly-quant-report.html','Laporan kuantitatif berkala'],
+['Alpha Vantage Reference','alpha-vantage-reference.html','Diagnosis akses API, data eksternal, dan freshness']]},
 {title:'Fundamental & Valuation',items:[
 ['Fundamental','fundamental.html','Analisis fundamental emiten'],
 ['Value Gap','value-gap.html','PER historis dan gap valuasi'],
@@ -37,7 +38,6 @@ const groups=[
 ['Backtest','backtest.html','Pengujian strategi historis']]},
 {title:'Administration & System',items:[
 ['System Health','system-health.html','Kesehatan data dan sistem'],
-['Alpha Vantage Reference','alpha-vantage-reference.html','Status data eksternal, coverage, dan freshness'],
 ['Research Manual','research-manual.html','Panduan metodologi terminal'],
 ['Admin','admin.html','Pengaturan administratif'],
 ['AI Insights','ai-insights.html','Insight berbantuan AI'],
