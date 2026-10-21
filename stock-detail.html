@@ -105,7 +105,7 @@ function referenceBlock(x){
  const control=(report.checks||[]).find(z=>z.is_control);
  const safeReason=z=>({"api_key_check_required":"API key perlu diperiksa","premium_or_entitlement_required":"Endpoint/plan dibatasi","daily_quota_or_rate_limit":"Kuota harian atau rate limit","provider_notice_unclassified":"Provider memberi notice; lihat halaman status"}[z]||z||"Belum ada diagnosis");
  const perStockNote=tickerChecks.length ? ticker+": "+tickerChecks.map(z=>z.symbol_tested+" = "+safeReason(z.notice_category||z.status)).join("; ") : "Ticker ini belum termasuk sampel diagnostik Alpha Vantage.";
- const controlNote=control ? " Kontrol IBM: "+safeReason(control.notice_category||control.status)+"." : "";
+ const controlNote=control ? " Kontrol IBM: "+safeReason(control.notice_category||control.status)+"." : " Kontrol IBM belum diuji pada laporan ini; jalankan ulang workflow di halaman status.";
  const statusText=s=>({available:'Tersedia',partially_available:'Tersedia sebagian',unavailable:'Tidak tersedia',not_checked:'Belum diperiksa',stale:'Kedaluwarsa',invalid:'Tidak valid',quota_or_entitlement_notice:'Akses/kuota perlu diperiksa'}[s]||s||'Belum diperiksa');
  const badge=s=>'<span class="pill">'+esc(statusText(s))+'</span>';
  const fresh=price.fetched_at_utc||report.generated_at_utc;
