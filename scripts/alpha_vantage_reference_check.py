@@ -53,6 +53,7 @@ def main():
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     report = {
         "provider": "Alpha Vantage",
+        "diagnostic_version": 2,
         "generated_at_utc": now,
         "purpose": "diagnostic_only_not_used_for_spc_signals",
         "secret_configured": bool(api_key),
