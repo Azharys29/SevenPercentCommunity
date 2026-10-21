@@ -100,6 +100,12 @@ function referenceBlock(x){
  const fundamental=families.fundamental_reference||{status:'not_checked',provider:'Alpha Vantage',endpoint:'OVERVIEW / financial statements'};
  const news=families.news_sentiment||{status:'not_checked',provider:'Alpha Vantage',endpoint:'NEWS_SENTIMENT'};
  const macro=families.macro_reference||{status:'not_checked',provider:'Alpha Vantage',endpoint:'Economic Indicators / Commodities'};
+ const ticker=String(x.s?.t||new URLSearchParams(location.search).get("stock")||"").toUpperCase();
+ const tickerChecks=(report.checks||[]).filter(z=>z.ticker===ticker);
+ const control=(report.checks||[]).find(z=>z.is_control);
+ const safeReason=z=>({"api_key_check_required":"API key perlu diperiksa","premium_or_entitlement_required":"Endpoint/plan dibatasi","daily_quota_or_rate_limit":"Kuota harian atau rate limit","provider_notice_unclassified":"Provider memberi notice; lihat halaman status"}[z]||z||"Belum ada diagnosis");
+ const perStockNote=tickerChecks.length ? ticker+": "+tickerChecks.map(z=>z.symbol_tested+" = "+safeReason(z.notice_category||z.status)).join("; ") : "Ticker ini belum termasuk sampel diagnostik Alpha Vantage.";
+ const controlNote=control ? " Kontrol IBM: "+safeReason(control.notice_category||control.status)+"." : "";
  const statusText=s=>({available:'Tersedia',partially_available:'Tersedia sebagian',unavailable:'Tidak tersedia',not_checked:'Belum diperiksa',stale:'Kedaluwarsa',invalid:'Tidak valid',quota_or_entitlement_notice:'Akses/kuota perlu diperiksa'}[s]||s||'Belum diperiksa');
  const badge=s=>'<span class="pill">'+esc(statusText(s))+'</span>';
  const fresh=price.fetched_at_utc||report.generated_at_utc;
@@ -109,7 +115,7 @@ function referenceBlock(x){
   ['News & Sentiment',news.status,badge(news.status),'Market Intelligence · AI Research','Sentimen eksternal belum digunakan'],
   ['Macro Reference',macro.status,badge(macro.status),'Sector Rotation · Commodity Play','Makro Indonesia belum divalidasi']
  ];
- return '<section class="card" id="externalReference"><div class="herohead"><div><h2 class="section-title">Alpha Vantage Reference Layer</h2><div class="note">Data eksternal hanya menjadi referensi tambahan. Technical Score dan analisis SPC tetap dihitung oleh mesin internal.</div></div><a class="link" href="./alpha-vantage-reference.html">Detail status ↗</a></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Referensi</th><th>Status</th><th>Cakupan</th><th>Validasi</th></tr></thead><tbody>'+rows.map(r=>'<tr><td><b>'+esc(r[0])+'</b></td><td>'+r[2]+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td></tr>').join('')+'</tbody></table></div><p class="note">Sumber: Alpha Vantage · pemeriksaan terakhir '+esc(fresh||'belum tersedia')+'. Price Agreement: <b>belum dapat dibandingkan</b> karena belum ada harga eksternal valid untuk ticker ini. Tidak ada data eksternal yang memengaruhi score atau sinyal.</p></section>';
+ return '<section class="card" id="externalReference"><div class="herohead"><div><h2 class="section-title">Alpha Vantage Reference Layer</h2><div class="note">Data eksternal hanya menjadi referensi tambahan. Technical Score dan analisis SPC tetap dihitung oleh mesin internal.</div></div><a class="link" href="./alpha-vantage-reference.html">Detail status ↗</a></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Referensi</th><th>Status</th><th>Cakupan</th><th>Validasi</th></tr></thead><tbody>'+rows.map(r=>'<tr><td><b>'+esc(r[0])+'</b></td><td>'+r[2]+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td></tr>').join('')+'</tbody></table></div><p class="note">Sumber: Alpha Vantage · pemeriksaan terakhir '+esc(fresh||'belum tersedia')+'. Diagnosis ticker: '+esc(perStockNote)+esc(controlNote)+' Price Agreement: <b>belum dapat dibandingkan</b> karena belum ada harga eksternal valid untuk ticker ini. Tidak ada data eksternal yang memengaruhi score atau sinyal. <a class="link" href="./alpha-vantage-reference.html">Lihat detail diagnosis ↗</a></p></section>';
 }
 
 function commodityBlock(x){
@@ -164,4 +170,4 @@ async function render(){
 $("#go").onclick=()=>{const t=$("#ticker").value.trim().toUpperCase();if(t)history.replaceState(null,"","?stock="+encodeURIComponent(t));render()};
 $("#ticker").addEventListener("keydown",e=>{if(e.key==="Enter")$("#go").click()});
 load();
-</script><script src="./global-nav.js" defer></script></body></html>
+</script><script src="./global-nav.js?v=20261022-alpha-ref-2" defer></script></body></html>
