@@ -123,11 +123,36 @@ def main():
     report["overall_status"] = "idx_symbols_responding" if ok_count else "idx_support_not_confirmed"
     report["idx_symbols_with_valid_daily_data"] = ok_count
     report["idx_symbols_tested"] = len(TICKERS)
+    report["reference_families"] = {
+        "price_cross_check": {
+            "status": "available" if ok_count == len(TICKERS) else ("partially_available" if ok_count else "unavailable"),
+            "provider": "Alpha Vantage",
+            "endpoint": "TIME_SERIES_DAILY",
+            "valid_tested_symbols": ok_count,
+            "tested_symbols": len(TICKERS),
+            "source_date": max((item.get("latest_date") for item in daily if item.get("latest_date")), default=None),
+            "fetched_at_utc": now,
+            "note": "Only validated daily OHLCV responses can be used for comparison; no external value is used in SPC calculations."
+        },
+        "fundamental_reference": {
+            "status": "not_checked", "provider": "Alpha Vantage", "endpoint": "OVERVIEW / financial statements",
+            "fetched_at_utc": None, "note": "Endpoint entitlement and IDX ticker coverage have not been validated."
+        },
+        "news_sentiment": {
+            "status": "not_checked", "provider": "Alpha Vantage", "endpoint": "NEWS_SENTIMENT",
+            "fetched_at_utc": None, "note": "Endpoint entitlement, ticker coverage, and publication metadata have not been validated."
+        },
+        "macro_reference": {
+            "status": "not_checked", "provider": "Alpha Vantage", "endpoint": "Economic Indicators / Commodities",
+            "fetched_at_utc": None, "note": "Relevant Indonesia-specific macro coverage has not been validated; US indicators are not a substitute."
+        }
+    }
     report["message"] = (
         "At least one tested IDX symbol returned parseable daily OHLCV data."
         if ok_count else
         "No tested IDX symbol returned parseable daily OHLCV data; do not enable this source for SPC analysis."
     )
+    report["rollout_state"] = "reference_status_only" if not ok_count else "price_cross_check_candidate"
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print("Alpha Vantage reference diagnostics completed.")
