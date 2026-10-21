@@ -73,5 +73,39 @@
   "overall_status": "idx_support_not_confirmed",
   "idx_symbols_with_valid_daily_data": 0,
   "idx_symbols_tested": 5,
-  "message": "No tested IDX symbol returned parseable daily OHLCV data; do not enable this source for SPC analysis."
+  "message": "No tested IDX symbol returned parseable daily OHLCV data; do not enable this source for SPC analysis.",
+  "reference_families": {
+    "price_cross_check": {
+      "status": "unavailable",
+      "provider": "Alpha Vantage",
+      "endpoint": "TIME_SERIES_DAILY",
+      "valid_tested_symbols": 0,
+      "tested_symbols": 5,
+      "source_date": null,
+      "fetched_at_utc": "2026-10-21T15:49:57+00:00",
+      "note": "Tidak ada ticker IDX sampel yang menghasilkan OHLCV valid; harga eksternal tidak digunakan untuk perbandingan."
+    },
+    "fundamental_reference": {
+      "status": "not_checked",
+      "provider": "Alpha Vantage",
+      "endpoint": "OVERVIEW / financial statements",
+      "fetched_at_utc": null,
+      "note": "Endpoint entitlement dan dukungan ticker IDX belum divalidasi."
+    },
+    "news_sentiment": {
+      "status": "not_checked",
+      "provider": "Alpha Vantage",
+      "endpoint": "NEWS_SENTIMENT",
+      "fetched_at_utc": null,
+      "note": "Akses endpoint, coverage ticker IDX, timestamp publikasi, dan sumber berita belum divalidasi."
+    },
+    "macro_reference": {
+      "status": "not_checked",
+      "provider": "Alpha Vantage",
+      "endpoint": "Economic Indicators / Commodities",
+      "fetched_at_utc": null,
+      "note": "Cakupan makro Indonesia belum divalidasi; indikator AS tidak dipakai sebagai pengganti."
+    }
+  },
+  "rollout_state": "reference_status_only"
 }
