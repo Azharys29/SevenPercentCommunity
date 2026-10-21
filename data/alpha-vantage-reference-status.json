@@ -1,0 +1,77 @@
+{
+  "provider": "Alpha Vantage",
+  "generated_at_utc": "2026-10-21T15:49:57+00:00",
+  "purpose": "diagnostic_only_not_used_for_spc_signals",
+  "secret_configured": true,
+  "checks": [
+    {
+      "endpoint": "SYMBOL_SEARCH",
+      "query": "BBCA",
+      "http_status": 200,
+      "status": "ok",
+      "match_count": 1,
+      "candidate_symbols": [
+        "BBCA"
+      ]
+    },
+    {
+      "endpoint": "TIME_SERIES_DAILY",
+      "symbol_tested": "BBCA.JK",
+      "http_status": 200,
+      "status": "quota_or_entitlement_notice",
+      "observations_returned": 0,
+      "valid_ohlcv_rows": 0,
+      "latest_date": null,
+      "oldest_date_in_response": null
+    },
+    {
+      "endpoint": "TIME_SERIES_DAILY",
+      "symbol_tested": "BBRI.JK",
+      "http_status": 200,
+      "status": "unsupported_or_invalid_symbol",
+      "observations_returned": 0,
+      "valid_ohlcv_rows": 0,
+      "latest_date": null,
+      "oldest_date_in_response": null
+    },
+    {
+      "endpoint": "TIME_SERIES_DAILY",
+      "symbol_tested": "ANTM.JK",
+      "http_status": 200,
+      "status": "unsupported_or_invalid_symbol",
+      "observations_returned": 0,
+      "valid_ohlcv_rows": 0,
+      "latest_date": null,
+      "oldest_date_in_response": null
+    },
+    {
+      "endpoint": "TIME_SERIES_DAILY",
+      "symbol_tested": "MEDC.JK",
+      "http_status": 200,
+      "status": "unsupported_or_invalid_symbol",
+      "observations_returned": 0,
+      "valid_ohlcv_rows": 0,
+      "latest_date": null,
+      "oldest_date_in_response": null
+    },
+    {
+      "endpoint": "TIME_SERIES_DAILY",
+      "symbol_tested": "PTBA.JK",
+      "http_status": 200,
+      "status": "unsupported_or_invalid_symbol",
+      "observations_returned": 0,
+      "valid_ohlcv_rows": 0,
+      "latest_date": null,
+      "oldest_date_in_response": null
+    }
+  ],
+  "notes": [
+    "No raw provider payloads or API key are stored.",
+    "A successful response confirms endpoint response only, not data quality or licensing suitability.",
+    "IDX ticker support and endpoint access must be confirmed empirically."
+  ],
+  "overall_status": "idx_support_not_confirmed",
+  "idx_symbols_with_valid_daily_data": 0,
+  "idx_symbols_tested": 5,
+  "message": "No tested IDX symbol returned parseable daily OHLCV data; do not enable this source for SPC analysis."
+}
