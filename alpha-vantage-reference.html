@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alpha Vantage Reference Layer — SevenPercentCommunity</title>
+<link rel="stylesheet" href="./ui.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090D13;--panel:#0F151D;--panel2:#141C26;--line:#2E4A68;--soft:#1B2836;--ice:#85B7EB;--bright:#ADD6FF;--dim:#7C879A;--tx:#F3F6FA;--tx2:#A3ADBC;--cream:#F2EBDD}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.55 Inter,system-ui,sans-serif}.wrap{max-width:1250px;margin:auto;padding:22px 24px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 18px;border-bottom:1px solid var(--soft)}.brand{font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:var(--ice)}.hero{padding:35px 0 20px}.hero h1{font-size:clamp(30px,4vw,46px);letter-spacing:-.04em;line-height:1.1;color:var(--cream);margin:0 0 12px}.hero p{max-width:850px;color:var(--tx2);font-size:15px}.meta{font:12px 'IBM Plex Mono',monospace;color:var(--dim);margin-top:12px;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{border:1px solid var(--line);background:var(--panel);padding:17px;border-radius:5px;min-width:0}.card h2{font-size:16px;margin:0 0 8px;color:var(--cream)}.desc{color:var(--tx2);font-size:12px}.status{display:inline-block;border:1px solid var(--line);padding:4px 8px;border-radius:999px;font-size:11px;color:var(--tx2);white-space:nowrap}.status.good{border-color:#477a61;color:#a5e0b9}.status.warn{border-color:#776844;color:#e7d5a4}.status.bad{border-color:#785252;color:#efb3b3}.metric{font-size:30px;font-weight:600;margin:8px 0;color:var(--bright)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.btn{display:inline-block;padding:9px 12px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);color:var(--tx);text-decoration:none;cursor:pointer;font:inherit}.btn:hover{border-color:var(--ice)}.tablewrap{overflow:auto;border:1px solid var(--line);margin-top:14px}table{width:100%;border-collapse:collapse;min-width:660px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--soft);vertical-align:top}th{background:var(--panel2);font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}td{font-size:12px}code{font-family:'IBM Plex Mono',monospace;color:var(--bright);overflow-wrap:anywhere}.note{border-left:2px solid var(--ice);background:var(--panel);padding:12px 14px;color:var(--tx2);margin:14px 0}.muted{color:var(--dim)}.wide{margin-top:14px}.check-list{padding-left:18px;color:var(--tx2)}.check-list li{margin:6px 0}.foot{margin-top:24px;color:var(--dim);font-size:11px;line-height:1.7}
+@media(max-width:700px){.wrap{padding:16px 13px 40px}.grid{grid-template-columns:1fr}.hero{padding-top:25px}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="brand">SEVENPERCENTCOMMUNITY / DATA QUALITY</div><a class="btn" href="./stock-detail.html">Stock Detail ↗</a></header>
+<section class="hero">
+<h1>Alpha Vantage Reference Layer</h1>
+<p>Lapisan referensi eksternal yang menambah konteks dan validasi. Ini bukan pengganti sumber data atau rumus internal SPC. Nilai eksternal hanya boleh ditampilkan ketika endpoint, ticker, kualitas, tanggal sumber, dan aksesnya telah lolos validasi.</p>
+<div id="meta" class="meta">Membaca status pemeriksaan…</div>
+<div class="actions"><a class="btn" href="https://github.com/Azharys29/SevenPercentCommunity/actions/workflows/alpha-vantage-reference-check.yml" target="_blank" rel="noopener">Jalankan pemeriksaan API ↗</a><button class="btn" id="reload" type="button">Muat ulang status</button><a class="btn" href="https://www.alphavantage.co/documentation/" target="_blank" rel="noopener">Dokumentasi provider ↗</a></div>
+</section>
+<section class="grid" id="families"><article class="card">Memuat status referensi…</article></section>
+<section class="card wide"><h2>Price Cross-Check · hasil ticker</h2><div class="desc">Sampel diagnostik awal hanya menguji lima ticker. Hasil ini tidak membuktikan bahwa seluruh universe KOMPAS100 didukung.</div><div id="checks" class="tablewrap"><table><tbody><tr><td>Memuat…</td></tr></tbody></table></div></section>
+<section class="card wide"><h2>Aturan validasi dan fallback</h2><ul class="check-list">
+<li>Technical Score, sinyal, momentum, Value Gap, dan Dividend Intelligence internal SPC tetap menjadi sumber utama.</li>
+<li>Data yang tidak tersedia, belum diperiksa, stale, invalid, atau dibatasi kuota tidak boleh diubah menjadi nol maupun sinyal bearish.</li>
+<li>Price Agreement hanya dapat disebut cocok/berbeda jika kedua harga berasal dari tanggal dan basis penyesuaian yang dapat dibandingkan.</li>
+<li>News Sentiment harus menyertakan waktu publikasi dan sumber; skor sentimen tidak otomatis menjadi rekomendasi beli/jual.</li>
+<li>Macro Reference harus menyebut negara, indikator, unit, tanggal observasi, dan sumber. Indikator AS tidak dianggap sebagai data makro Indonesia.</li>
+<li>API key hanya tersedia di GitHub Actions secret; key dan respons mentah tidak disimpan dalam JSON publik.</li>
+</ul></section>
+<div class="foot">Status yang ditampilkan berasal dari file diagnostik tersanitasi di repository. "Workflow berhasil" berarti script selesai berjalan; itu tidak menjamin semua endpoint/ticker tersedia. Tidak ada perhitungan sinyal SPC yang menggunakan Alpha Vantage pada tahap diagnostik ini.</div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const labels={available:'Tersedia',partially_available:'Tersedia sebagian',unavailable:'Tidak tersedia',not_checked:'Belum diperiksa',stale:'Kedaluwarsa',invalid:'Tidak valid',quota_or_entitlement_notice:'Akses/kuota perlu diperiksa',unsupported_or_invalid_symbol:'Ticker belum didukung/format tidak valid',ok:'Respons berhasil',request_error:'Gangguan permintaan',http_error:'HTTP error'};
+const label=s=>labels[s]||s||'Belum diperiksa';
+const klass=s=>s==='available'||s==='ok'?'good':s==='unavailable'||s==='invalid'||s==='unsupported_or_invalid_symbol'||s==='request_error'||s==='http_error'?'bad':'warn';
+const familyDefs=[
+ ['price_cross_check','Price Cross-Check','Stock Detail · Screener','Membandingkan harga eksternal dengan harga SPC pada tanggal yang sama.'],
+ ['fundamental_reference','Fundamental Reference','Value Gap · Dividend Intelligence','Metrik fundamental hanya ditampilkan jika cakupan emiten dan endpoint telah divalidasi.'],
+ ['news_sentiment','News & Sentiment','Market Intelligence · AI Research','Memerlukan sumber berita, timestamp publikasi, dan validasi simbol.'],
+ ['macro_reference','Macro Reference','Sector Rotation · Commodity Play','Harus relevan dengan Indonesia dan memiliki tanggal observasi yang jelas.']
+];
+function render(d){
+ const f=d.reference_families||{};
+ $('meta').textContent='Status secret: '+(d.secret_configured?'tersedia di runner GitHub Actions':'tidak terdeteksi')+' · Pemeriksaan terakhir UTC: '+(d.generated_at_utc||'belum tersedia')+' · '+(d.overall_status||'not_checked');
+ $('families').innerHTML=familyDefs.map(([key,title,targets,desc])=>{const x=f[key]||{status:key==='price_cross_check'?(d.idx_symbols_with_valid_daily_data?'partially_available':'unavailable'):'not_checked'};const st=x.status||'not_checked';return '<article class="card"><h2>'+title+'</h2><span class="status '+klass(st)+'">'+label(st)+'</span><div class="desc" style="margin-top:12px">'+desc+'</div><div class="metric">'+(key==='price_cross_check'?(d.idx_symbols_with_valid_daily_data||0)+' / '+(d.idx_symbols_tested||5):st==='available'?'Aktif':'—')+'</div><div class="desc">Modul terkait: '+targets+'</div><div class="desc" style="margin-top:8px">Endpoint: <code>'+esc(x.endpoint||'belum diuji')+'</code></div><div class="desc" style="margin-top:5px">Tanggal data: '+esc(x.source_date||'belum tersedia')+'</div><div class="desc" style="margin-top:5px">Catatan: '+esc(x.note||(key==='price_cross_check'?'Harga eksternal belum lolos validasi untuk perbandingan.':'Endpoint dan dukungan ticker belum diperiksa.'))+'</div></article>'}).join('');
+ const rows=d.checks||[];
+ $('checks').innerHTML='<table><thead><tr><th>Endpoint</th><th>Simbol/query</th><th>Status</th><th>OHLCV valid</th><th>Tanggal terbaru</th></tr></thead><tbody>'+ (rows.length?rows.map(x=>'<tr><td><code>'+esc(x.endpoint)+'</code></td><td>'+esc(x.symbol_tested||x.query||'—')+'</td><td><span class="status '+klass(x.status)+'">'+label(x.status)+'</span></td><td>'+(x.valid_ohlcv_rows==null?'—':x.valid_ohlcv_rows+' / '+(x.observations_returned||0))+'</td><td>'+esc(x.latest_date||'—')+'</td></tr>').join(''):'<tr><td colspan="5">Belum ada hasil pemeriksaan.</td></tr>')+'</tbody></table>';
+}
+async function load(){ $('meta').textContent='Memuat status…';try{const r=await fetch('./data/alpha-vantage-reference-status.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);render(await r.json())}catch(e){$('meta').textContent='Status belum tersedia: '+e.message;$('families').innerHTML='<article class="card">Jalankan workflow Alpha Vantage Reference Check untuk membuat file status.</article>'}}
+$('#reload').addEventListener('click',load);load();
+</script><script src="./global-nav.js?v=20261021-alpha-ref-1" defer></script></body></html>
