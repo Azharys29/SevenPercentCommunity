@@ -16,6 +16,7 @@ from urllib.error import HTTPError, URLError
 API_URL = "https://www.alphavantage.co/query"
 OUT = Path("data/alpha-vantage-reference-status.json")
 TICKERS = ["BBCA", "BBRI", "ANTM", "MEDC", "PTBA"]
+CONTROL_SYMBOL = "IBM"
 TIMEOUT = 20
 
 
@@ -43,9 +44,30 @@ def classify(status, payload, error):
         return "http_error"
     if "Error Message" in payload:
         return "unsupported_or_invalid_symbol"
-    if "Note" in payload or "Information" in payload:
-        return "quota_or_entitlement_notice"
+    notice = str(payload.get("Information") or payload.get("Note") or "").lower()
+    if notice:
+        if any(word in notice for word in ("invalid api key", "apikey", "api key", "missing api key")):
+            return "api_key_notice"
+        if any(word in notice for word in ("premium", "subscription", "entitlement", "endpoint is premium")):
+            return "premium_entitlement_notice"
+        if any(word in notice for word in ("rate", "frequency", "limit", "requests per day", "call frequency")):
+            return "quota_notice"
+        return "provider_notice"
     return "ok"
+
+
+def safe_notice_category(payload):
+    """Expose only a reason category, never the provider message or key."""
+    notice = str(payload.get("Information") or payload.get("Note") or "").lower()
+    if not notice:
+        return None
+    if any(word in notice for word in ("invalid api key", "apikey", "api key", "missing api key")):
+        return "api_key_check_required"
+    if any(word in notice for word in ("premium", "subscription", "entitlement", "endpoint is premium")):
+        return "premium_or_entitlement_required"
+    if any(word in notice for word in ("rate", "frequency", "limit", "requests per day", "call frequency")):
+        return "daily_quota_or_rate_limit"
+    return "provider_notice_unclassified"
 
 
 def main():
@@ -53,13 +75,14 @@ def main():
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     report = {
         "provider": "Alpha Vantage",
-        "diagnostic_version": 2,
+        "diagnostic_version": 3,
         "generated_at_utc": now,
         "purpose": "diagnostic_only_not_used_for_spc_signals",
         "secret_configured": bool(api_key),
         "checks": [],
         "notes": [
             "No raw provider payloads or API key are stored.",
+            "Provider notices are reduced to safe categories; raw notice text is never written.",
             "A successful response confirms endpoint response only, not data quality or licensing suitability.",
             "IDX ticker support and endpoint access must be confirmed empirically."
         ],
@@ -80,6 +103,7 @@ def main():
         "query": "BBCA",
         "http_status": status,
         "status": search_state,
+        "notice_category": safe_notice_category(payload),
         "match_count": len(matches) if isinstance(matches, list) else 0,
         "candidate_symbols": [
             str(item.get("1. symbol", "")) for item in matches[:10]
@@ -87,6 +111,41 @@ def main():
         ] if isinstance(matches, list) else [],
     }
     report["checks"].append(symbol_search)
+
+    # Known supported control symbol separates API-key/endpoint problems from
+    # IDX ticker coverage. It is diagnostic only and is never used by SPC.
+    status, payload, error = request_api(
+        {"function": "TIME_SERIES_DAILY", "symbol": CONTROL_SYMBOL, "outputsize": "compact"},
+        api_key,
+    )
+    state = classify(status, payload, error)
+    control_series = payload.get("Time Series (Daily)", {}) if state == "ok" else {}
+    control_dates = sorted(control_series.keys(), reverse=True) if isinstance(control_series, dict) else []
+    control_rows = 0
+    if isinstance(control_series, dict):
+        for row in control_series.values():
+            if isinstance(row, dict) and all(k in row for k in ("1. open", "2. high", "3. low", "4. close", "5. volume")):
+                try:
+                    values = [float(row[k]) for k in ("1. open", "2. high", "3. low", "4. close", "5. volume")]
+                    if all(v >= 0 for v in values) and values[1] >= values[2] and values[3] >= values[2] and values[3] > 0:
+                        control_rows += 1
+                except (TypeError, ValueError):
+                    pass
+    report["checks"].append({
+        "endpoint": "TIME_SERIES_DAILY",
+        "ticker": CONTROL_SYMBOL,
+        "symbol_tested": CONTROL_SYMBOL,
+        "symbol_format": "control_us_symbol",
+        "is_control": True,
+        "http_status": status,
+        "status": state,
+        "notice_category": safe_notice_category(payload),
+        "observations_returned": len(control_series) if isinstance(control_series, dict) else 0,
+        "valid_ohlcv_rows": control_rows,
+        "latest_date": control_dates[0] if control_dates else None,
+        "oldest_date_in_response": control_dates[-1] if control_dates else None,
+    })
+    time.sleep(1)
 
     for ticker in TICKERS:
         # Symbol Search returned an unsuffixed BBCA candidate. Test both formats
@@ -109,16 +168,7 @@ def main():
                                 valid_rows += 1
                         except (TypeError, ValueError):
                             pass
-            notice = payload.get("Information") or payload.get("Note") or ""
-            notice_text = str(notice).lower()
-            if any(word in notice_text for word in ("premium", "subscription", "entitlement")):
-                notice_category = "entitlement_notice"
-            elif any(word in notice_text for word in ("rate", "frequency", "limit", "requests per day")):
-                notice_category = "quota_notice"
-            elif notice:
-                notice_category = "provider_notice"
-            else:
-                notice_category = None
+            notice_category = safe_notice_category(payload)
             report["checks"].append({
                 "endpoint": "TIME_SERIES_DAILY",
                 "ticker": ticker,
