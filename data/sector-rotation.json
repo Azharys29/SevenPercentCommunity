@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-21T16:03:27.849756+00:00",
+  "generated": "2026-10-21T16:05:42.223682+00:00",
   "asof": "2026-10-21",
   "universe": "KOMPAS100",
   "sector_count": 10,
@@ -465,7 +465,7 @@
       "sector": "Consumer Non-Cyclicals",
       "count": 14,
       "avg_score": -48.54,
-      "median_score": -57.36,
+      "median_score": -57.35,
       "avg_score_delta": -0.0,
       "breadth": -78.6,
       "bullish": 0,
@@ -512,9 +512,9 @@
         },
         {
           "ticker": "CMRY",
-          "score": -57.31,
+          "score": -57.3,
           "signal": "Bearish",
-          "score_delta": -0.01
+          "score_delta": -0.0
         },
         {
           "ticker": "INDF",
