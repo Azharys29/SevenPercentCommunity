@@ -37,6 +37,7 @@ const groups=[
 ['Backtest','backtest.html','Pengujian strategi historis']]},
 {title:'Administration & System',items:[
 ['System Health','system-health.html','Kesehatan data dan sistem'],
+['Alpha Vantage Reference','alpha-vantage-reference.html','Status data eksternal, coverage, dan freshness'],
 ['Research Manual','research-manual.html','Panduan metodologi terminal'],
 ['Admin','admin.html','Pengaturan administratif'],
 ['AI Insights','ai-insights.html','Insight berbantuan AI'],
