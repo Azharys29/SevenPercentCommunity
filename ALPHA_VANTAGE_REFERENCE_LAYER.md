@@ -20,7 +20,9 @@ internal calculation or become a prerequisite for the existing pipeline.
 
 Run the manually triggered GitHub Actions workflow **Alpha Vantage Reference Check**.
 It uses one SYMBOL_SEARCH request and tests TIME_SERIES_DAILY compact responses for
-BBCA.JK, BBRI.JK, ANTM.JK, MEDC.JK, and PTBA.JK. It writes only sanitized metadata to
+BBCA, BBRI, ANTM, MEDC, and PTBA both without a suffix and with the .JK suffix (11
+requests total). This distinguishes symbol-format issues from endpoint/entitlement
+issues. It writes only sanitized metadata to
 data/alpha-vantage-reference-status.json.
 
 The check is deliberately isolated from existing screeners and market-analysis
@@ -58,6 +60,6 @@ reviewed specification explicitly says so.
 
 ## Operational notes
 
-- Workflow is manual-only; it does not add calls to the existing hourly pipeline.
+- The diagnostic workflow can be run manually and runs when its own diagnostic script/workflow changes; it does not add calls to the existing hourly screener pipeline.
 - Keep ALPHA_VANTAGE_API_KEY in GitHub Actions repository secrets.
 - The diagnostic report does not store raw API payloads or the secret.
