@@ -2,6 +2,11 @@ name: Alpha Vantage Reference Check
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/alpha_vantage_reference_check.py'
+      - '.github/workflows/alpha-vantage-reference-check.yml'
 
 permissions:
   contents: write
