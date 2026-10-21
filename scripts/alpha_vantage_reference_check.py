@@ -88,41 +88,62 @@ def main():
     report["checks"].append(symbol_search)
 
     for ticker in TICKERS:
-        symbol = ticker + ".JK"
-        status, payload, error = request_api(
-            {"function": "TIME_SERIES_DAILY", "symbol": symbol, "outputsize": "compact"},
-            api_key,
-        )
-        state = classify(status, payload, error)
-        series = payload.get("Time Series (Daily)", {}) if state == "ok" else {}
-        dates = sorted(series.keys(), reverse=True) if isinstance(series, dict) else []
-        valid_rows = 0
-        if isinstance(series, dict):
-            for row in series.values():
-                if isinstance(row, dict) and all(k in row for k in ("1. open", "2. high", "3. low", "4. close", "5. volume")):
-                    try:
-                        values = [float(row[k]) for k in ("1. open", "2. high", "3. low", "4. close", "5. volume")]
-                        if all(v >= 0 for v in values) and values[1] >= values[2]:
-                            valid_rows += 1
-                    except (TypeError, ValueError):
-                        pass
-        report["checks"].append({
-            "endpoint": "TIME_SERIES_DAILY",
-            "symbol_tested": symbol,
-            "http_status": status,
-            "status": state,
-            "observations_returned": len(series) if isinstance(series, dict) else 0,
-            "valid_ohlcv_rows": valid_rows,
-            "latest_date": dates[0] if dates else None,
-            "oldest_date_in_response": dates[-1] if dates else None,
-        })
-        time.sleep(1)
+        # Symbol Search returned an unsuffixed BBCA candidate. Test both formats
+        # rather than assuming the Yahoo Finance .JK convention is accepted.
+        for symbol in (ticker, ticker + ".JK"):
+            status, payload, error = request_api(
+                {"function": "TIME_SERIES_DAILY", "symbol": symbol, "outputsize": "compact"},
+                api_key,
+            )
+            state = classify(status, payload, error)
+            series = payload.get("Time Series (Daily)", {}) if state == "ok" else {}
+            dates = sorted(series.keys(), reverse=True) if isinstance(series, dict) else []
+            valid_rows = 0
+            if isinstance(series, dict):
+                for row in series.values():
+                    if isinstance(row, dict) and all(k in row for k in ("1. open", "2. high", "3. low", "4. close", "5. volume")):
+                        try:
+                            values = [float(row[k]) for k in ("1. open", "2. high", "3. low", "4. close", "5. volume")]
+                            if all(v >= 0 for v in values) and values[1] >= values[2] and values[3] > 0:
+                                valid_rows += 1
+                        except (TypeError, ValueError):
+                            pass
+            notice = payload.get("Information") or payload.get("Note") or ""
+            notice_text = str(notice).lower()
+            if any(word in notice_text for word in ("premium", "subscription", "entitlement")):
+                notice_category = "entitlement_notice"
+            elif any(word in notice_text for word in ("rate", "frequency", "limit", "requests per day")):
+                notice_category = "quota_notice"
+            elif notice:
+                notice_category = "provider_notice"
+            else:
+                notice_category = None
+            report["checks"].append({
+                "endpoint": "TIME_SERIES_DAILY",
+                "ticker": ticker,
+                "symbol_tested": symbol,
+                "symbol_format": "unsuffixed" if symbol == ticker else "dot_jk_suffix",
+                "http_status": status,
+                "status": state,
+                "notice_category": notice_category,
+                "observations_returned": len(series) if isinstance(series, dict) else 0,
+                "valid_ohlcv_rows": valid_rows,
+                "latest_date": dates[0] if dates else None,
+                "oldest_date_in_response": dates[-1] if dates else None,
+            })
+            time.sleep(1)
 
     daily = [item for item in report["checks"] if item.get("endpoint") == "TIME_SERIES_DAILY"]
-    ok_count = sum(item["status"] == "ok" and item["valid_ohlcv_rows"] > 0 for item in daily)
+    valid_tickers = sorted({
+        item.get("ticker") for item in daily
+        if item["status"] == "ok" and item["valid_ohlcv_rows"] > 0 and item.get("ticker")
+    })
+    ok_count = len(valid_tickers)
     report["overall_status"] = "idx_symbols_responding" if ok_count else "idx_support_not_confirmed"
     report["idx_symbols_with_valid_daily_data"] = ok_count
+    report["valid_idx_tickers"] = valid_tickers
     report["idx_symbols_tested"] = len(TICKERS)
+    report["symbol_formats_tested"] = ["unsuffixed", "dot_jk_suffix"]
     report["reference_families"] = {
         "price_cross_check": {
             "status": "available" if ok_count == len(TICKERS) else ("partially_available" if ok_count else "unavailable"),
@@ -148,9 +169,9 @@ def main():
         }
     }
     report["message"] = (
-        "At least one tested IDX symbol returned parseable daily OHLCV data."
+        "At least one tested IDX ticker returned parseable daily OHLCV data using one of the tested symbol formats."
         if ok_count else
-        "No tested IDX symbol returned parseable daily OHLCV data; do not enable this source for SPC analysis."
+        "No tested IDX ticker returned parseable daily OHLCV data using either symbol format; do not enable this source for SPC analysis."
     )
     report["rollout_state"] = "reference_status_only" if not ok_count else "price_cross_check_candidate"
     OUT.parent.mkdir(parents=True, exist_ok=True)
