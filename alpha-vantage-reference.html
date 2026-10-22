@@ -33,24 +33,36 @@
 <div class="foot">Status yang ditampilkan berasal dari file diagnostik tersanitasi di repository. "Workflow berhasil" berarti script selesai berjalan; itu tidak menjamin semua endpoint/ticker tersedia. Tidak ada perhitungan sinyal SPC yang menggunakan Alpha Vantage pada tahap diagnostik ini.</div>
 </main>
 <script>
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const labels={api_key_notice:"Periksa API key",premium_entitlement_notice:"Endpoint/plan dibatasi",quota_notice:"Kuota harian tercapai",provider_notice:"Respons provider perlu diperiksa",api_key_check_required:"Periksa API key",premium_or_entitlement_required:"Endpoint/plan dibatasi",daily_quota_or_rate_limit:"Kuota harian tercapai",provider_notice_unclassified:"Respons provider perlu diperiksa",available:'Tersedia',partially_available:'Tersedia sebagian',unavailable:'Tidak tersedia',not_checked:'Belum diperiksa',stale:'Kedaluwarsa',invalid:'Tidak valid',quota_or_entitlement_notice:'Akses/kuota perlu diperiksa',entitlement_notice:'Akses/entitlement perlu diperiksa',provider_access_not_confirmed:'Akses provider belum terkonfirmasi',unsupported_or_invalid_symbol:'Ticker belum didukung/format tidak valid',ok:'Respons berhasil',request_error:'Gangguan permintaan',http_error:'HTTP error'};
-const label=s=>labels[s]||s||'Belum diperiksa';
-const klass=s=>s==='available'||s==='ok'?'good':s==='unavailable'||s==='invalid'||s==='unsupported_or_invalid_symbol'||s==='request_error'||s==='http_error'||s==='api_key_notice'?'bad':'warn';
-const familyDefs=[
- ['price_cross_check','Price Cross-Check','Stock Detail · Screener','Membandingkan harga eksternal dengan harga SPC pada tanggal yang sama.'],
- ['fundamental_reference','Fundamental Reference','Value Gap · Dividend Intelligence','Metrik fundamental hanya ditampilkan jika cakupan emiten dan endpoint telah divalidasi.'],
- ['news_sentiment','News & Sentiment','Market Intelligence · AI Research','Memerlukan sumber berita, timestamp publikasi, dan validasi simbol.'],
- ['macro_reference','Macro Reference','Sector Rotation · Commodity Play','Harus relevan dengan Indonesia dan memiliki tanggal observasi yang jelas.']
-];
-function render(d){
- const f=d.reference_families||{};
- $('meta').textContent='Status secret: '+(d.secret_configured?'tersedia di runner GitHub Actions':'tidak terdeteksi')+' · Pemeriksaan terakhir UTC: '+(d.generated_at_utc||'belum tersedia')+' · '+(d.overall_status||'not_checked')+' · Diagnosis: '+((d.diagnosis&&d.diagnosis.summary)||d.message||'belum ada diagnosis')+((Number(d.diagnostic_version||0)<3)?' · LAPORAN LAMA — jalankan workflow ulang untuk uji kontrol IBM dan kategori error.':'');
- $('families').innerHTML=familyDefs.map(([key,title,targets,desc])=>{const x=f[key]||{status:key==='price_cross_check'?(d.idx_symbols_with_valid_daily_data?'partially_available':'unavailable'):'not_checked'};const st=x.status||'not_checked';return '<article class="card"><h2>'+title+'</h2><span class="status '+klass(st)+'">'+label(st)+'</span><div class="desc" style="margin-top:12px">'+desc+'</div><div class="metric">'+(key==='price_cross_check'?(d.idx_symbols_with_valid_daily_data||0)+' / '+(d.idx_symbols_tested||5):st==='available'?'Aktif':'—')+'</div><div class="desc">Modul terkait: '+targets+'</div><div class="desc" style="margin-top:8px">Endpoint: <code>'+esc(x.endpoint||'belum diuji')+'</code></div><div class="desc" style="margin-top:5px">Tanggal data: '+esc(x.source_date||'belum tersedia')+'</div><div class="desc" style="margin-top:5px">Catatan: '+esc((key==='price_cross_check'&&d.diagnosis&&d.diagnosis.summary)?d.diagnosis.summary:(x.note||(key==='price_cross_check'?'Harga eksternal belum lolos validasi untuk perbandingan.':'Endpoint dan dukungan ticker belum diperiksa.')))+'</div></article>'}).join('');
- const rows=d.checks||[];
- $('checks').innerHTML='<table><thead><tr><th>Endpoint</th><th>Simbol/query</th><th>Status</th><th>OHLCV valid</th><th>Diagnosis aman</th><th>Tanggal terbaru</th></tr></thead><tbody>'+ (rows.length?rows.map(x=>'<tr><td><code>'+esc(x.endpoint)+'</code></td><td>'+esc(x.symbol_tested||x.query||'—')+'</td><td><span class="status '+klass(x.status)+'">'+label(x.status)+'</span></td><td>'+(x.valid_ohlcv_rows==null?'—':x.valid_ohlcv_rows+' / '+(x.observations_returned||0))+'</td><td>'+esc(label(x.notice_category||''))+'</td><td>'+esc(x.latest_date||'—')+'</td></tr>').join(''):'<tr><td colspan="6">Belum ada hasil pemeriksaan.</td></tr>')+'</tbody></table>';
-}
-async function load(){ $('meta').textContent='Memuat status…';try{const r=await fetch('./data/alpha-vantage-reference-status.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);render(await r.json())}catch(e){$('meta').textContent='Status belum tersedia: '+e.message;$('families').innerHTML='<article class="card">Jalankan workflow Alpha Vantage Reference Check untuk membuat file status.</article>'}}
-$('#reload').addEventListener('click',load);load();
-</script><script src="./global-nav.js?v=20261022-alpha-ref-2" defer></script></body></html>
+(function(){
+ const $=s=>document.querySelector(s);
+ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]});
+ const labels={api_key_notice:'Periksa API key',premium_entitlement_notice:'Endpoint/plan dibatasi',quota_notice:'Kuota harian tercapai',provider_notice:'Respons provider perlu diperiksa',api_key_check_required:'Periksa API key',premium_or_entitlement_required:'Endpoint/plan dibatasi',daily_quota_or_rate_limit:'Kuota harian tercapai',provider_notice_unclassified:'Respons provider perlu diperiksa',available:'Tersedia',partially_available:'Tersedia sebagian',unavailable:'Tidak tersedia',not_checked:'Belum diperiksa',stale:'Kedaluwarsa',invalid:'Tidak valid',quota_or_entitlement_notice:'Akses/kuota perlu diperiksa',entitlement_notice:'Akses/entitlement perlu diperiksa',provider_access_not_confirmed:'Akses provider belum terkonfirmasi',unsupported_or_invalid_symbol:'Ticker belum didukung/format tidak valid',ok:'Respons berhasil',request_error:'Gangguan permintaan',http_error:'HTTP error',idx_symbols_responding:'Ticker IDX merespons sebagian',idx_support_not_confirmed:'Dukungan ticker IDX belum terkonfirmasi',secret_missing:'Secret belum tersedia'};
+ const label=s=>labels[s]||s||'Belum diperiksa';
+ const klass=s=>s==='available'||s==='ok'?'good':s==='unavailable'||s==='invalid'||s==='unsupported_or_invalid_symbol'||s==='request_error'||s==='http_error'||s==='api_key_notice'?'bad':'warn';
+ const familyDefs=[['price_cross_check','Price Cross-Check','Stock Detail · Screener','Harga eksternal yang lolos validasi.'],['fundamental_reference','Fundamental Reference','Value Gap · Dividend Intelligence','Metrik fundamental belum divalidasi.'],['news_sentiment','News & Sentiment','Market Intelligence · AI Research','Berita dan metadata publikasi belum divalidasi.'],['macro_reference','Macro Reference','Sector Rotation · Commodity Play','Makro Indonesia belum divalidasi.']];
+ function render(d){
+  const f=d.reference_families||{};
+  const diagnosis=d.diagnosis&&d.diagnosis.summary?d.diagnosis.summary:(d.message||'Belum ada diagnosis.');
+  const stale=Number(d.diagnostic_version||0)<3;
+  $('meta').textContent='Status secret: '+(d.secret_configured?'terdeteksi di GitHub Actions':'tidak terdeteksi')+' · Pemeriksaan UTC: '+(d.generated_at_utc||'belum tersedia')+' · '+label(d.overall_status)+(stale?' · LAPORAN LAMA':'')+' · '+diagnosis;
+  $('families').innerHTML=familyDefs.map(function(a){const key=a[0],x=f[key]||{},st=x.status||'not_checked';return '<article class="card"><h2>'+a[1]+'</h2><span class="status '+klass(st)+'">'+label(st)+'</span><div class="desc" style="margin-top:12px">'+a[3]+'</div><div class="metric">'+(key==='price_cross_check'?(d.idx_symbols_with_valid_daily_data||0)+' / '+(d.idx_symbols_tested||5):'—')+'</div><div class="desc">Modul terkait: '+a[2]+'</div><div class="desc" style="margin-top:8px">Endpoint: <code>'+esc(x.endpoint||'belum diuji')+'</code></div><div class="desc" style="margin-top:5px">Tanggal data: '+esc(x.source_date||'belum tersedia')+'</div><div class="desc" style="margin-top:5px">Catatan: '+esc((key==='price_cross_check'?diagnosis:(x.note||'Belum diperiksa.')))+'</div></article>';}).join('');
+  const rows=d.checks||[];
+  $('checks').innerHTML='<table><thead><tr><th>Endpoint</th><th>Simbol/query</th><th>Status</th><th>OHLCV valid</th><th>Diagnosis aman</th><th>Tanggal terbaru</th></tr></thead><tbody>'+(rows.length?rows.map(function(x){return '<tr><td><code>'+esc(x.endpoint)+'</code></td><td>'+esc(x.symbol_tested||x.query||'—')+'</td><td><span class="status '+klass(x.status)+'">'+label(x.status)+'</span></td><td>'+(x.valid_ohlcv_rows==null?'—':x.valid_ohlcv_rows+' / '+(x.observations_returned||0))+'</td><td>'+esc(label(x.notice_category||''))+'</td><td>'+esc(x.latest_date||'—')+'</td></tr>';}).join(''):'<tr><td colspan="6">Belum ada hasil pemeriksaan.</td></tr>')+'</tbody></table>';
+ }
+ async function load(){
+  $('meta').textContent='Memuat status diagnostik…';
+  try{
+   const url='./data/alpha-vantage-reference-status.json?refresh='+Date.now();
+   const response=await fetch(url,{cache:'no-store'});
+   if(!response.ok)throw new Error('Status JSON HTTP '+response.status);
+   const data=await response.json();render(data);
+  }catch(error){
+   $('meta').textContent='Gagal membaca status: '+error.message;
+   $('families').innerHTML='<article class="card"><h2>Status belum dapat dimuat</h2><p class="desc">Pastikan file JSON tersedia di GitHub Pages. Coba Muat ulang status atau buka file status langsung.</p><a class="btn" href="./data/alpha-vantage-reference-status.json" target="_blank" rel="noopener">Buka JSON status ↗</a></article>';
+   $('checks').innerHTML='<table><tbody><tr><td>JSON status tidak dapat dibaca browser. Periksa deployment GitHub Pages dan Console browser.</td></tr></tbody></table>';
+  }
+ }
+ const button=$('#reload');if(button)button.addEventListener('click',load);
+ load();
+})();
+<script src="./global-nav.js?v=20261022-alpha-ref-2" defer></script></body></html>
