@@ -1,7 +1,7 @@
 {
   "provider": "Alpha Vantage",
   "diagnostic_version": 3,
-  "generated_at_utc": "2026-10-22T04:38:03+00:00",
+  "generated_at_utc": "2026-10-22T04:57:17+00:00",
   "purpose": "diagnostic_only_not_used_for_spc_signals",
   "secret_configured": true,
   "checks": [
@@ -192,7 +192,7 @@
       "valid_tested_symbols": 1,
       "tested_symbols": 5,
       "source_date": "2026-10-21",
-      "fetched_at_utc": "2026-10-22T04:38:03+00:00",
+      "fetched_at_utc": "2026-10-22T04:57:17+00:00",
       "note": "Only validated daily OHLCV responses can be used for comparison; no external value is used in SPC calculations."
     },
     "fundamental_reference": {
