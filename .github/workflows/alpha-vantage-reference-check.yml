@@ -2,6 +2,8 @@ name: Alpha Vantage Reference Check
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 1 * * 1-5'
   push:
     branches: [main]
     paths:
