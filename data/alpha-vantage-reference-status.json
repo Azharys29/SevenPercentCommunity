@@ -147,7 +147,8 @@
   "notes": [
     "No raw provider payloads or API key are stored.",
     "A successful response confirms endpoint response only, not data quality or licensing suitability.",
-    "IDX ticker support and endpoint access must be confirmed empirically."
+    "IDX ticker support and endpoint access must be confirmed empirically.",
+    "This report is stale and must be refreshed by diagnostic version 3 before interpreting API access or IDX coverage."
   ],
   "overall_status": "idx_support_not_confirmed",
   "idx_symbols_with_valid_daily_data": 0,
@@ -191,5 +192,8 @@
     }
   },
   "message": "No tested IDX ticker returned parseable daily OHLCV data using either symbol format; do not enable this source for SPC analysis.",
-  "rollout_state": "reference_status_only"
+  "rollout_state": "reference_status_only",
+  "report_status": "stale_waiting_for_diagnostic_v3",
+  "refresh_required": true,
+  "refresh_note": "Laporan ini masih diagnostic_version 2 dan belum menguji kontrol IBM atau mengklasifikasikan error dengan aman. Jangan gunakan untuk menyimpulkan dukungan ticker IDX. Workflow telah dijadwalkan untuk menjalankan diagnostik versi 3."
 }
