@@ -187,7 +187,11 @@ def main():
     daily = [item for item in report["checks"] if item.get("endpoint") == "TIME_SERIES_DAILY"]
     valid_tickers = sorted({
         item.get("ticker") for item in daily
-        if item["status"] == "ok" and item["valid_ohlcv_rows"] > 0 and item.get("ticker")
+        if not item.get("is_control")
+        and item.get("symbol_format") != "control_us_symbol"
+        and item["status"] == "ok"
+        and item["valid_ohlcv_rows"] > 0
+        and item.get("ticker") in TICKERS
     })
     ok_count = len(valid_tickers)
     control_check = next((x for x in report["checks"] if x.get("is_control")), {})
