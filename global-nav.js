@@ -3,6 +3,7 @@ const groups=[
 {title:'Overview & Intelligence',items:[
 ['Market Overview','index.html','Ringkasan terminal dan akses seluruh modul'],
 ['Equity Intelligence Graph','equity-intelligence-graph.html','Transmisi ekonomi, valuasi, dan tesis'],
+['Catalyst Transmission Map','catalyst-transmission-map.html','Peta transmisi katalis, bukti, dan kontra-bukti'],
 ['Investment Decision Engine','investment-decision-engine.html','Tesis, valuasi, katalis, dan risiko'],
 ['Market Intelligence','market-intelligence.html','Kondisi pasar dan confluence'],
 ['Market Activity','market-activity.html','Aktivitas dan ringkasan perdagangan'],
