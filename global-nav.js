@@ -105,6 +105,42 @@ document.body.appendChild(side);
 const sideLinks=side.querySelector('#spcSideLinks'),sideQuery=side.querySelector('#spcSideQuery');
 function renderSide(filter=''){sideLinks.innerHTML='';let count=0;groups.forEach(g=>{const matches=g.items.filter(i=>(i[0]+' '+i[1]+' '+i[2]+' '+g.title).toLowerCase().includes(filter.toLowerCase()));if(!matches.length)return;count+=matches.length;const section=document.createElement('section');section.className='spcSideGroup';const h=document.createElement('div');h.className='spcSideGroupTitle';h.textContent=g.title;section.appendChild(h);matches.forEach(i=>{const a=document.createElement('a');a.className='spcSideLink'+(i[1].split('#')[0]===current?' active':'');a.href='./'+i[1];a.textContent=i[0];section.appendChild(a)});sideLinks.appendChild(section)});sideLinks.dataset.count=String(count)}
 sideQuery.addEventListener('input',()=>renderSide(sideQuery.value.trim()));renderSide();
+
+/* Terminal appearance switch — positioned immediately left of the burger menu. */
+const themeStyle=document.createElement('style');
+themeStyle.textContent=`
+#spcThemeToggle{position:fixed;z-index:10001;top:12px;right:154px;display:flex;align-items:center;gap:7px;border:1px solid #45627f;background:#101c2c;color:#f3f7fc;padding:10px 12px;border-radius:7px;font:600 12px/1.2 Inter,system-ui,sans-serif;cursor:pointer;box-shadow:0 5px 22px #0002;white-space:nowrap}
+#spcThemeToggle .spcThemeIcon{font-size:15px}
+html[data-spc-theme="light"] #spcThemeToggle{background:linear-gradient(135deg,#fff7ed,#eff6ff);color:#26334a;border-color:#b9c9e4}
+html[data-spc-theme="light"] #spcNavButton{background:linear-gradient(135deg,#e0f2fe,#ede9fe);color:#26334a;border-color:#a5b4fc}
+html[data-spc-theme="light"] #spcNavShade{background:rgba(51,65,85,.45)}
+html[data-spc-theme="light"] #spcNavDrawer,html[data-spc-theme="light"] #spcSideNav{background:linear-gradient(180deg,#f8fbff,#f4f0ff)!important;color:#1e293b!important;border-color:#cbd5e1!important}
+html[data-spc-theme="light"] .spcNavHead,html[data-spc-theme="light"] .spcSideBrand{border-color:#dbeafe!important}
+html[data-spc-theme="light"] .spcNavBrand,html[data-spc-theme="light"] .spcSideBrand{color:#4338ca!important}
+html[data-spc-theme="light"] .spcNavLink,html[data-spc-theme="light"] .spcSideLink{color:#334155!important}
+html[data-spc-theme="light"] .spcNavLink:hover,html[data-spc-theme="light"] .spcSideLink:hover{background:linear-gradient(90deg,#dbeafe,#ede9fe)!important;color:#3730a3!important;border-color:#c4b5fd!important}
+html[data-spc-theme="light"] .spcNavLink.active,html[data-spc-theme="light"] .spcSideLink.active{background:linear-gradient(90deg,#bfdbfe,#ddd6fe)!important;color:#312e81!important;border-color:#a5b4fc!important}
+html[data-spc-theme="light"] .spcNavGroupTitle,html[data-spc-theme="light"] .spcSideGroupTitle{color:#6d28d9!important}
+html[data-spc-theme="light"] #spcNavQuery,html[data-spc-theme="light"] #spcSideQuery{background:#fff!important;color:#1e293b!important;border-color:#c7d2fe!important}
+@media(max-width:520px){#spcThemeToggle{right:132px;top:12px;padding:9px 10px}#spcThemeToggle .spcThemeLabel{display:none}}
+`;
+document.head.appendChild(themeStyle);
+const themeButton=document.createElement('button');
+themeButton.id='spcThemeToggle';themeButton.type='button';
+themeButton.innerHTML='<span class="spcThemeIcon" aria-hidden="true">☀</span><span class="spcThemeLabel">Light mode</span>';
+themeButton.setAttribute('aria-label','Ganti mode tampilan');themeButton.setAttribute('aria-pressed','false');
+document.body.appendChild(themeButton);
+function applyTheme(theme){
+ const light=theme==='light';
+ document.documentElement.dataset.spcTheme=light?'light':'dark';
+ document.documentElement.style.colorScheme=light?'light':'dark';
+ themeButton.innerHTML='<span class="spcThemeIcon" aria-hidden="true">'+(light?'☾':'☀')+'</span><span class="spcThemeLabel">'+(light?'Dark mode':'Light mode')+'</span>';
+ themeButton.setAttribute('aria-pressed',String(light));
+ try{localStorage.setItem('spc-terminal-theme',light?'light':'dark')}catch(e){}
+}
+let savedTheme='dark';try{savedTheme=localStorage.getItem('spc-terminal-theme')||'dark'}catch(e){}
+applyTheme(savedTheme);
+themeButton.addEventListener('click',()=>applyTheme(document.documentElement.dataset.spcTheme==='light'?'dark':'light'));
 if(current!=='ai-settings'){const aiScript=document.createElement('script');aiScript.src='./ai-assistant.js?v=20261023-gemini-nav-fix-1';document.head.appendChild(aiScript);}
 if(current==='index.html'){const hub=document.getElementById('spcModuleHub');if(hub)hub.remove();}
 })();
