@@ -10,7 +10,6 @@ const groups=[
 ['Catalyst Calendar','catalyst-calendar.html','Kalender katalis dan peristiwa'],
 ['AI Research Pack','ai-research-pack.html','Ekspor snapshot untuk riset web'],
 ['Weekly Quant Report','weekly-quant-report.html','Laporan kuantitatif berkala'],
-['Alpha Vantage Reference','alpha-vantage-reference.html','Diagnosis akses API, data eksternal, dan freshness']]},
 {title:'Fundamental & Valuation',items:[
 ['Fundamental','fundamental.html','Analisis fundamental emiten'],
 ['Value Gap','value-gap.html','PER historis dan gap valuasi'],
