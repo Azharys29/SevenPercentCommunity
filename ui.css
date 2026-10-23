@@ -637,3 +637,55 @@ html body .tw table {
     overflow-y: auto !important;
   }
 }
+
+
+/* Colorful light mode for the SPC research terminal. */
+html[data-spc-theme="light"]{
+ --spc-bg:#f2f6ff;--spc-bg-soft:#e8efff;--spc-surface:#ffffff;
+ --spc-surface-2:#f5f7ff;--spc-surface-3:#e8edff;--spc-line:#d5def3;
+ --spc-line-strong:#aabbe8;--spc-text:#17223b;--spc-text-2:#43516e;
+ --spc-text-3:#667594;--spc-cyan:#0369a1;--spc-cyan-bright:#075985;
+ --spc-violet:#6d28d9;--spc-positive:#15803d;--spc-negative:#be123c;
+ --spc-warning:#a16207;color-scheme:light;
+}
+html[data-spc-theme="light"] body{
+ background:
+  radial-gradient(ellipse at 5% 0%,rgba(56,189,248,.16),transparent 36%),
+  radial-gradient(ellipse at 96% 4%,rgba(167,139,250,.16),transparent 34%),
+  radial-gradient(ellipse at 80% 80%,rgba(251,191,36,.08),transparent 32%),
+  linear-gradient(180deg,#f8fbff 0%,#eef3ff 100%)!important;
+ color:var(--spc-text)!important;
+}
+html[data-spc-theme="light"] body:before{
+ background-image:linear-gradient(rgba(71,85,105,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(71,85,105,.055) 1px,transparent 1px);
+}
+html[data-spc-theme="light"] .top{
+ background:linear-gradient(90deg,rgba(224,242,254,.94),rgba(245,243,255,.94),rgba(255,247,237,.92))!important;
+ border-bottom-color:#cbd5e1!important;
+}
+html[data-spc-theme="light"] .brand{color:#0369a1!important}
+html[data-spc-theme="light"] .card,
+html[data-spc-theme="light"] .panel,
+html[data-spc-theme="light"] .section,
+html[data-spc-theme="light"] .metric,
+html[data-spc-theme="light"] .kpi,
+html[data-spc-theme="light"] .stat,
+html[data-spc-theme="light"] .filters,
+html[data-spc-theme="light"] .tw{
+ background:linear-gradient(145deg,#fff,#f8faff)!important;
+ color:#17223b!important;border-color:#d5def3!important;
+ box-shadow:0 5px 18px rgba(67,84,130,.07)!important;
+}
+html[data-spc-theme="light"] h1,html[data-spc-theme="light"] h2{color:#172554}
+html[data-spc-theme="light"] h3{color:#3730a3}
+html[data-spc-theme="light"] input,
+html[data-spc-theme="light"] select,
+html[data-spc-theme="light"] textarea{
+ background:#fff!important;color:#17223b!important;border-color:#c7d2fe!important;
+}
+html[data-spc-theme="light"] th{background:linear-gradient(90deg,#dbeafe,#ede9fe)!important;color:#312e81!important}
+html[data-spc-theme="light"] td{border-color:#e1e7f5!important}
+html[data-spc-theme="light"] a{color:#0369a1}
+html[data-spc-theme="light"] .muted,
+html[data-spc-theme="light"] .sub,
+html[data-spc-theme="light"] .hint{color:#667594!important}
