@@ -828,3 +828,77 @@ html[data-spc-theme="light"] .dbar { background:#dbe4f3!important; }
 html[data-spc-theme="light"] .dbar .fill.u { background:#0284c7!important; }
 html[data-spc-theme="light"] .dbar .fill.d { background:#7c3aed!important; }
 html[data-spc-theme="light"] :focus-visible { outline-color:#4f46e5!important; }
+
+
+/* LIGHT MODE FIX — hard-coded terminal panels that ignored the theme variables. */
+html[data-spc-theme="light"] body:has(.command-center) .cc-regime {
+  background:#d5def0!important;border-color:#c2cde3!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .cc-metric,
+html[data-spc-theme="light"] body:has(.command-center) .cc-panel,
+html[data-spc-theme="light"] body:has(.command-center) .cc-monitor-grid>div {
+  background:#ffffff!important;color:#172033!important;border-color:#cbd5e1!important;
+  box-shadow:0 3px 12px rgba(45,62,110,.08)!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .cc-panel>header {
+  background:linear-gradient(90deg,#dbeafe,#ede9fe)!important;
+  color:#26345a!important;border-bottom-color:#c4cfe5!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .cc-metric span,
+html[data-spc-theme="light"] body:has(.command-center) .cc-metric small,
+html[data-spc-theme="light"] body:has(.command-center) .cc-row span,
+html[data-spc-theme="light"] body:has(.command-center) .cc-row em,
+html[data-spc-theme="light"] body:has(.command-center) .cc-empty,
+html[data-spc-theme="light"] body:has(.command-center) .cc-clock span,
+html[data-spc-theme="light"] body:has(.command-center) .cc-clock small {
+  color:#53627e!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .cc-metric b,
+html[data-spc-theme="light"] body:has(.command-center) .cc-row b,
+html[data-spc-theme="light"] body:has(.command-center) .cc-monitor-grid b,
+html[data-spc-theme="light"] body:has(.command-center) .cc-clock b {
+  color:#172554!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .cc-row {
+  background:#fff!important;border-bottom-color:#e1e7f2!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .cc-row:nth-child(even) {
+  background:#f3f6ff!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .cc-row:hover {
+  background:#dbeafe!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .cc-monitor-grid {
+  background:#d5def0!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .command-center,
+html[data-spc-theme="light"] body:has(.command-center) .mo-research,
+html[data-spc-theme="light"] body:has(.command-center) .mo-card,
+html[data-spc-theme="light"] body:has(.command-center) .mo-line,
+html[data-spc-theme="light"] body:has(.command-center) .mo-horizons,
+html[data-spc-theme="light"] body:has(.command-center) .mo-line span {
+  color:#263449!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .mo-research,
+html[data-spc-theme="light"] body:has(.command-center) .mo-card,
+html[data-spc-theme="light"] body:has(.command-center) .mo-line,
+html[data-spc-theme="light"] body:has(.command-center) .mo-horizons>div {
+  background:#fff!important;border-color:#cbd5e1!important;
+}
+html[data-spc-theme="light"] body:has(.command-center) .mo-card h3,
+html[data-spc-theme="light"] body:has(.command-center) .mo-research h2,
+html[data-spc-theme="light"] body:has(.command-center) .mo-line b {
+  color:#312e81!important;
+}
+/* Override dark inline background declarations used by older modules, only in light mode. */
+html[data-spc-theme="light"] [style*="background:#0"],
+html[data-spc-theme="light"] [style*="background: #0"],
+html[data-spc-theme="light"] [style*="background-color:#0"],
+html[data-spc-theme="light"] [style*="background-color: #0"],
+html[data-spc-theme="light"] [style*="background:#1"],
+html[data-spc-theme="light"] [style*="background: #1"],
+html[data-spc-theme="light"] [style*="background-color:#1"],
+html[data-spc-theme="light"] [style*="background-color: #1"] {
+  background-color:#fff!important;
+  color:#263449!important;
+}
