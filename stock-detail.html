@@ -41,11 +41,10 @@ async function load(){
    json("./data/relative-strength.json"),
    json("./data/value-gap.json"),
    json("./data/catalysts.json").catch(()=>({events:[]})),
-   json("./data/commodity-play.json").catch(()=>({impacts:[],commodities:[]})),
-   json("./data/alpha-vantage-reference-status.json").catch(()=>({overall_status:"not_checked",reference_families:{}}))
+   json("./data/commodity-play.json").catch(()=>({impacts:[],commodities:[]}))
   ]);
   const stocks=(sc.stocks&&sc.stocks.length)?sc.stocks:(mo.stocks||[]).map(m=>({t:m.ticker,n:m.name||m.ticker,sec:m.sector,c:[m.price],s:"KOMPAS100",ix:[]}));
-  DATA={sc:{...sc,stocks},si,mo,rs,vg,ca,cp,av}; render();
+  DATA={sc:{...sc,stocks},si,mo,rs,vg,ca,cp}; render();
  }catch(e){$("#app").innerHTML='<div class="error">Gagal memuat data: '+esc(e.message)+'</div>'}
 }
 async function recommendations(t){
@@ -94,29 +93,6 @@ function find(t){
  return {s,si,mo:m,rs:DATA.rs.stocks.find(x=>x.ticker===t),vg:DATA.vg.stocks.find(x=>x.ticker===t),ca:DATA.ca.events.filter(x=>x.ticker===t),cp:(DATA.cp.impacts||[]).filter(x=>x.ticker===t)}
 }
 
-function referenceBlock(x){
- const report=DATA.av||{}, families=report.reference_families||{};
- const price=families.price_cross_check||{status:report.idx_symbols_with_valid_daily_data>0?'partially_available':'unavailable',provider:'Alpha Vantage',endpoint:'TIME_SERIES_DAILY',valid_tested_symbols:report.idx_symbols_with_valid_daily_data||0,tested_symbols:report.idx_symbols_tested||5,source_date:null,fetched_at_utc:report.generated_at_utc};
- const fundamental=families.fundamental_reference||{status:'not_checked',provider:'Alpha Vantage',endpoint:'OVERVIEW / financial statements'};
- const news=families.news_sentiment||{status:'not_checked',provider:'Alpha Vantage',endpoint:'NEWS_SENTIMENT'};
- const macro=families.macro_reference||{status:'not_checked',provider:'Alpha Vantage',endpoint:'Economic Indicators / Commodities'};
- const ticker=String(x.s?.t||new URLSearchParams(location.search).get("stock")||"").toUpperCase();
- const tickerChecks=(report.checks||[]).filter(z=>z.ticker===ticker);
- const control=(report.checks||[]).find(z=>z.is_control);
- const safeReason=z=>({"api_key_check_required":"API key perlu diperiksa","premium_or_entitlement_required":"Endpoint/plan dibatasi","daily_quota_or_rate_limit":"Kuota harian atau rate limit","provider_notice_unclassified":"Provider memberi notice; lihat halaman status"}[z]||z||"Belum ada diagnosis");
- const perStockNote=tickerChecks.length ? ticker+": "+tickerChecks.map(z=>z.symbol_tested+" = "+safeReason(z.notice_category||z.status)).join("; ") : "Ticker ini belum termasuk sampel diagnostik Alpha Vantage.";
- const controlNote=control ? " Kontrol IBM: "+safeReason(control.notice_category||control.status)+"." : " Kontrol IBM belum diuji pada laporan ini; jalankan ulang workflow di halaman status.";
- const statusText=s=>({available:'Tersedia',partially_available:'Tersedia sebagian',unavailable:'Tidak tersedia',not_checked:'Belum diperiksa',stale:'Kedaluwarsa',invalid:'Tidak valid',quota_or_entitlement_notice:'Akses/kuota perlu diperiksa'}[s]||s||'Belum diperiksa');
- const badge=s=>'<span class="pill">'+esc(statusText(s))+'</span>';
- const fresh=price.fetched_at_utc||report.generated_at_utc;
- const rows=[
-  ['Price Cross-Check',price.status,badge(price.status),price.valid_tested_symbols!=null?price.valid_tested_symbols+'/'+(price.tested_symbols||5)+' ticker valid':'Belum ada data pembanding',price.source_date?'Tanggal data '+price.source_date:'Tanggal harga eksternal belum tersedia'],
-  ['Fundamental Reference',fundamental.status,badge(fundamental.status),'Value Gap · Dividend','Endpoint/ticker belum divalidasi'],
-  ['News & Sentiment',news.status,badge(news.status),'Market Intelligence · AI Research','Sentimen eksternal belum digunakan'],
-  ['Macro Reference',macro.status,badge(macro.status),'Sector Rotation · Commodity Play','Makro Indonesia belum divalidasi']
- ];
- return '<section class="card" id="externalReference"><div class="herohead"><div><h2 class="section-title">Alpha Vantage Reference Layer</h2><div class="note">Data eksternal hanya menjadi referensi tambahan. Technical Score dan analisis SPC tetap dihitung oleh mesin internal.</div></div><a class="link" href="./alpha-vantage-reference.html">Detail status ↗</a></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Referensi</th><th>Status</th><th>Cakupan</th><th>Validasi</th></tr></thead><tbody>'+rows.map(r=>'<tr><td><b>'+esc(r[0])+'</b></td><td>'+r[2]+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td></tr>').join('')+'</tbody></table></div><p class="note">Sumber: Alpha Vantage · pemeriksaan terakhir '+esc(fresh||'belum tersedia')+'. Diagnosis ticker: '+esc(perStockNote)+esc(controlNote)+' Price Agreement: <b>belum dapat dibandingkan</b> karena belum ada harga eksternal valid untuk ticker ini. Tidak ada data eksternal yang memengaruhi score atau sinyal. <a class="link" href="./alpha-vantage-reference.html">Lihat detail diagnosis ↗</a></p></section>';
-}
 
 function commodityBlock(x){
  const arr=x.cp||[];
@@ -150,8 +126,7 @@ async function render(){
  const newsUrl="https://finance.yahoo.com/quote/"+encodeURIComponent(t)+".JK/";
  $("#app").innerHTML=
  '<section class="hero"><div class="herohead"><div><div class="ticker">'+esc(t)+' <span class="pill">'+esc(x.s.s||"")+'</span></div><div class="sub">'+esc(x.s.n||t)+' · '+esc(x.s.sec||"")+' · '+esc((x.s.ix||[]).join(", "))+'</div><div class="price">Rp '+num(x.s.c?.at(-1))+'</div><div class="sub">As of '+esc(DATA.si.asof)+' · Generated '+esc(DATA.si.generated)+'</div></div><div class="'+tone(x.si.score)+'" style="text-align:right"><div style="font-size:28px;font-weight:700">'+num(x.si.score,2)+'</div><b>'+esc(x.si.signal)+' · '+esc(x.si.strength)+'</b><div class="sub">'+x.si.agree+' / '+x.si.total+' confluence</div></div></div></section>'+
- referenceBlock(x)+
- '<section class="grid">'+
+  '<section class="grid">'+
  '<div class="metric"><small>TECHNICAL SCORE</small><b class="'+tone(x.si.score)+'">'+num(x.si.score,2)+'</b></div>'+
  '<div class="metric"><small>CONFLUENCE</small><b>'+x.si.agree+' / '+x.si.total+'</b></div>'+
  '<div class="metric"><small>MOMENTUM SCORE</small><b>'+num(x.mo?.momentum_score,1)+'</b><div class="sub">'+esc(x.mo?.momentum_label||"—")+'</div></div>'+
