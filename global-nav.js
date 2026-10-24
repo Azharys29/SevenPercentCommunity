@@ -28,6 +28,7 @@ const groups=[
 ['Teknikal','teknikal.html','Analisis teknikal'],
 ['Early Signals','early-signals.html','Sinyal awal'],
 ['Momentum Dashboard','momentum-dashboard.html','Momentum lintas saham'],
+['Markov Momentum Fusion','markov-momentum-fusion.html','Regime Markov + MACD/RSI dan uji strategi'],
 ['Signal Intelligence','signal-intelligence.html','Rangkuman intelijen sinyal'],
 ['New Bullish','new-bullish.html','Daftar saham bullish terbaru'],
 ['OU Mean Reversion','ou-mean-reversion.html','Analisis mean reversion'],
