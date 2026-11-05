@@ -82,6 +82,14 @@ const style=document.createElement('style');style.textContent=`
 .top{padding-right:145px!important}
 @media(max-width:800px){.top{padding-right:0!important;padding-top:58px!important}}
 #spcSideNav{position:fixed;z-index:9998;left:0;top:0;bottom:0;width:218px;box-sizing:border-box;background:#0b121d;border-right:1px solid #263b51;display:flex;flex-direction:column;color:#dbe7f5;font-family:system-ui,sans-serif}
+/* Isolate the persistent sidebar from page-level generic nav rules. */
+#spcSideNav{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:0!important;margin:0!important;padding:0!important;float:none!important;flex-wrap:nowrap!important;overflow:hidden!important}
+#spcSideNav>.spcSideBrand,#spcSideNav>.spcSideSearch{display:block!important;flex:0 0 auto!important;width:100%!important;min-width:0!important;margin:0!important}
+#spcSideNav>#spcSideLinks{display:block!important;position:static!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;min-height:0!important;margin:0!important;overflow-x:hidden!important;overflow-y:auto!important}
+#spcSideNav .spcSideGroup{display:block!important;width:100%!important;margin:12px 0!important;padding:0!important}
+#spcSideNav .spcSideGroupTitle{display:block!important;width:100%!important;white-space:normal!important}
+#spcSideNav a.spcSideLink{display:block!important;width:100%!important;box-sizing:border-box!important;margin:0!important;float:none!important;white-space:normal!important}
+
 .spcSideBrand{padding:19px 15px 14px;border-bottom:1px solid #25394f;font:700 11px/1.7 ui-monospace,monospace;letter-spacing:.12em;color:#add6ff}.spcSideBrand span{color:#7f91a6;font-weight:500}
 .spcSideSearch{padding:10px;border-bottom:1px solid #25394f}.spcSideSearch input{width:100%;box-sizing:border-box;background:#080e16;color:#f3f6fa;border:1px solid #304966;border-radius:5px;padding:9px;font:12px system-ui,sans-serif}
 #spcSideLinks{overflow:auto;padding:4px 9px 20px}.spcSideGroup{margin:12px 0}.spcSideGroupTitle{padding:0 7px 5px;color:#7fa3cb;font:600 9px/1.4 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
