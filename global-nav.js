@@ -95,7 +95,15 @@ const style=document.createElement('style');style.textContent=`
 #spcSideLinks{overflow:auto;padding:4px 9px 20px}.spcSideGroup{margin:12px 0}.spcSideGroupTitle{padding:0 7px 5px;color:#7fa3cb;font:600 9px/1.4 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
 .spcSideLink{display:block;padding:7px;border-radius:4px;color:#b9c7d7!important;text-decoration:none!important;font:12px/1.3 system-ui,sans-serif;border:1px solid transparent}.spcSideLink:hover{background:#142236;color:#fff!important}.spcSideLink.active{background:#152a40;border-color:#45627f;color:#add6ff!important}
 body{padding-left:218px!important;box-sizing:border-box}
-@media(max-width:1000px){#spcSideNav{display:none}body{padding-left:0!important}}
+@media(max-width:1000px){
+  /* Mobile must never render the persistent desktop sidebar. */
+  #spcSideNav{display:none!important;visibility:hidden!important;pointer-events:none!important}
+  body{padding-left:0!important;margin-left:0!important;overflow-x:hidden!important}
+  #spcNavShade{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:10020!important}
+  #spcNavDrawer{position:absolute!important;top:0!important;right:0!important;bottom:0!important;height:100%!important;max-height:100%!important;width:min(430px,100vw)!important;max-width:100vw!important}
+  #spcNavList{min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch}
+}
+@media(min-width:1001px){#spcSideNav{display:flex!important;visibility:visible!important;pointer-events:auto!important}}
 \nbody{font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif!important}\nbutton,input,select,textarea{font-family:Inter,system-ui,sans-serif}\n.spcNavGroupTitle,.spcSideGroupTitle,.spcNavBrand,.spcSideBrand{font-family:'IBM Plex Mono',ui-monospace,monospace}\nbody.spcNavOpen{overflow:hidden}
 .menu-wrap,details.menu{display:none!important}
 `;document.head.appendChild(style);
