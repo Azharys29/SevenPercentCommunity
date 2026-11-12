@@ -1,9 +1,9 @@
 {
-  "generated": "2026-11-12T06:41:32.435942+00:00",
+  "generated": "2026-11-12T08:34:40.877724+00:00",
   "asof": "2026-11-12",
   "universe": "KOMPAS100",
   "sector_count": 10,
-  "baseline_median_score": 0.0,
+  "baseline_median_score": -0.02,
   "methodology": {
     "score": "rata-rata Technical Score saham dalam sektor",
     "acceleration": "rata-rata perubahan Technical Score harian",
@@ -14,92 +14,92 @@
     {
       "sector": "Financials",
       "count": 11,
-      "avg_score": 18.12,
+      "avg_score": 19.56,
       "median_score": 9.46,
-      "avg_score_delta": 2.29,
-      "breadth": 18.2,
-      "bullish": 2,
-      "neutral": 9,
+      "avg_score_delta": 1.44,
+      "breadth": 27.3,
+      "bullish": 3,
+      "neutral": 8,
       "bearish": 0,
-      "bullish_pct": 18.2,
+      "bullish_pct": 27.3,
       "bearish_pct": 0.0,
       "stocks": [
         {
-          "ticker": "BBNI",
-          "score": 47.06,
+          "ticker": "BBRI",
+          "score": 48.49,
           "signal": "Bullish",
-          "score_delta": 3.32
+          "score_delta": 2.2
         },
         {
-          "ticker": "BBRI",
-          "score": 46.29,
+          "ticker": "BBNI",
+          "score": 45.78,
           "signal": "Bullish",
-          "score_delta": 6.8
+          "score_delta": -1.28
         },
         {
           "ticker": "BMRI",
-          "score": 43.49,
-          "signal": "Neutral",
-          "score_delta": 5.83
+          "score": 45.7,
+          "signal": "Bullish",
+          "score_delta": 2.21
         },
         {
           "ticker": "BBTN",
-          "score": 41.22,
+          "score": 42.23,
           "signal": "Neutral",
-          "score_delta": 2.12
+          "score_delta": 1.01
         },
         {
           "ticker": "BBCA",
-          "score": 24.06,
+          "score": 26.04,
           "signal": "Neutral",
-          "score_delta": 9.79
+          "score_delta": 1.98
         },
         {
           "ticker": "BFIN",
           "score": 9.46,
           "signal": "Neutral",
-          "score_delta": 6.27
+          "score_delta": 0.0
         },
         {
           "ticker": "BBYB",
-          "score": 4.1,
+          "score": 5.24,
           "signal": "Neutral",
           "score_delta": 1.14
         },
         {
-          "ticker": "BRIS",
-          "score": -1.39,
-          "signal": "Neutral",
-          "score_delta": 2.89
-        },
-        {
           "ticker": "ARTO",
-          "score": -5.0,
+          "score": 4.23,
           "signal": "Neutral",
-          "score_delta": -13.0
+          "score_delta": 9.23
         },
         {
-          "ticker": "COIN",
-          "score": -5.0,
+          "ticker": "BRIS",
+          "score": -3.49,
           "signal": "Neutral",
-          "score_delta": 0.0
+          "score_delta": -2.1
         },
         {
           "ticker": "PNLF",
-          "score": -5.0,
+          "score": -3.56,
           "signal": "Neutral",
-          "score_delta": 0.0
+          "score_delta": 1.44
+        },
+        {
+          "ticker": "COIN",
+          "score": -4.98,
+          "signal": "Neutral",
+          "score_delta": 0.02
         }
       ],
       "phase": "Leading",
-      "relative_score": 18.12
+      "relative_score": 19.57
     },
     {
       "sector": "Industrials",
       "count": 5,
-      "avg_score": 14.71,
-      "median_score": 6.0,
-      "avg_score_delta": 11.41,
+      "avg_score": 17.43,
+      "median_score": 4.74,
+      "avg_score_delta": 2.72,
       "breadth": 20.0,
       "bullish": 1,
       "neutral": 4,
@@ -109,436 +109,121 @@
       "stocks": [
         {
           "ticker": "ASII",
-          "score": 59.06,
+          "score": 70.0,
           "signal": "Bullish",
-          "score_delta": 0.77
+          "score_delta": 10.94
         },
         {
           "ticker": "UNTR",
-          "score": 7.52,
+          "score": 15.39,
           "signal": "Neutral",
-          "score_delta": 59.44
-        },
-        {
-          "ticker": "SMIL",
-          "score": 6.0,
-          "signal": "Neutral",
-          "score_delta": -3.61
+          "score_delta": 7.87
         },
         {
           "ticker": "BNBR",
-          "score": 1.86,
+          "score": 4.74,
           "signal": "Neutral",
-          "score_delta": 2.61
+          "score_delta": 2.88
+        },
+        {
+          "ticker": "SMIL",
+          "score": 0.95,
+          "signal": "Neutral",
+          "score_delta": -5.05
         },
         {
           "ticker": "IMPC",
-          "score": -0.91,
+          "score": -3.94,
           "signal": "Neutral",
-          "score_delta": -2.14
+          "score_delta": -3.03
         }
       ],
       "phase": "Leading",
-      "relative_score": 14.71
+      "relative_score": 17.45
     },
     {
-      "sector": "Infrastructure",
-      "count": 8,
-      "avg_score": 0.24,
-      "median_score": 1.48,
-      "avg_score_delta": 1.23,
-      "breadth": -12.5,
-      "bullish": 0,
-      "neutral": 7,
-      "bearish": 1,
-      "bullish_pct": 0.0,
-      "bearish_pct": 12.5,
+      "sector": "Technology",
+      "count": 4,
+      "avg_score": 8.1,
+      "median_score": 0.73,
+      "avg_score_delta": 12.97,
+      "breadth": 25.0,
+      "bullish": 1,
+      "neutral": 3,
+      "bearish": 0,
+      "bullish_pct": 25.0,
+      "bearish_pct": 0.0,
       "stocks": [
         {
-          "ticker": "TLKM",
-          "score": 41.7,
-          "signal": "Neutral",
-          "score_delta": 4.48
+          "ticker": "BUKA",
+          "score": 50.95,
+          "signal": "Bullish",
+          "score_delta": 7.66
         },
         {
-          "ticker": "JSMR",
-          "score": 18.15,
-          "signal": "Neutral",
-          "score_delta": 9.6
-        },
-        {
-          "ticker": "TOWR",
-          "score": 5.31,
-          "signal": "Neutral",
-          "score_delta": -2.43
-        },
-        {
-          "ticker": "INET",
-          "score": 4.28,
-          "signal": "Neutral",
-          "score_delta": -1.9
-        },
-        {
-          "ticker": "EXCL",
-          "score": -1.32,
-          "signal": "Neutral",
-          "score_delta": 3.68
-        },
-        {
-          "ticker": "SSIA",
-          "score": -3.5,
-          "signal": "Neutral",
-          "score_delta": 1.42
-        },
-        {
-          "ticker": "ISAT",
-          "score": -5.0,
+          "ticker": "WIRG",
+          "score": 3.08,
           "signal": "Neutral",
           "score_delta": 0.0
         },
         {
-          "ticker": "PGEO",
-          "score": -57.7,
-          "signal": "Bearish",
-          "score_delta": -5.04
+          "ticker": "GOTO",
+          "score": -1.63,
+          "signal": "Neutral",
+          "score_delta": 42.12
+        },
+        {
+          "ticker": "EMTK",
+          "score": -20.0,
+          "signal": "Neutral",
+          "score_delta": 2.1
         }
       ],
       "phase": "Leading",
-      "relative_score": 0.24
-    },
-    {
-      "sector": "Consumer Non-Cyclicals",
-      "count": 14,
-      "avg_score": -2.13,
-      "median_score": -0.75,
-      "avg_score_delta": 2.34,
-      "breadth": -14.3,
-      "bullish": 2,
-      "neutral": 8,
-      "bearish": 4,
-      "bullish_pct": 14.3,
-      "bearish_pct": 28.6,
-      "stocks": [
-        {
-          "ticker": "LSIP",
-          "score": 57.01,
-          "signal": "Bullish",
-          "score_delta": 4.36
-        },
-        {
-          "ticker": "MYOR",
-          "score": 54.77,
-          "signal": "Bullish",
-          "score_delta": 0.0
-        },
-        {
-          "ticker": "ICBP",
-          "score": 40.67,
-          "signal": "Neutral",
-          "score_delta": 5.88
-        },
-        {
-          "ticker": "UNVR",
-          "score": 28.09,
-          "signal": "Neutral",
-          "score_delta": 0.85
-        },
-        {
-          "ticker": "INDF",
-          "score": 25.92,
-          "signal": "Neutral",
-          "score_delta": 1.73
-        },
-        {
-          "ticker": "CMRY",
-          "score": 10.1,
-          "signal": "Neutral",
-          "score_delta": 38.74
-        },
-        {
-          "ticker": "AMRT",
-          "score": 8.19,
-          "signal": "Neutral",
-          "score_delta": 5.34
-        },
-        {
-          "ticker": "ERAA",
-          "score": -9.69,
-          "signal": "Neutral",
-          "score_delta": -10.25
-        },
-        {
-          "ticker": "GGRM",
-          "score": -20.14,
-          "signal": "Neutral",
-          "score_delta": 7.28
-        },
-        {
-          "ticker": "CPIN",
-          "score": -23.97,
-          "signal": "Neutral",
-          "score_delta": 19.48
-        },
-        {
-          "ticker": "TAPG",
-          "score": -35.9,
-          "signal": "Bearish",
-          "score_delta": -2.24
-        },
-        {
-          "ticker": "JPFA",
-          "score": -42.84,
-          "signal": "Bearish",
-          "score_delta": 5.41
-        },
-        {
-          "ticker": "DSNG",
-          "score": -53.34,
-          "signal": "Bearish",
-          "score_delta": 2.59
-        },
-        {
-          "ticker": "PANI",
-          "score": -68.69,
-          "signal": "Bearish",
-          "score_delta": -46.41
-        }
-      ],
-      "phase": "Improving",
-      "relative_score": -2.13
-    },
-    {
-      "sector": "Energy",
-      "count": 23,
-      "avg_score": -6.6,
-      "median_score": 3.37,
-      "avg_score_delta": 1.24,
-      "breadth": -21.7,
-      "bullish": 1,
-      "neutral": 16,
-      "bearish": 6,
-      "bullish_pct": 4.3,
-      "bearish_pct": 26.1,
-      "stocks": [
-        {
-          "ticker": "RAJA",
-          "score": 62.81,
-          "signal": "Bullish",
-          "score_delta": 6.95
-        },
-        {
-          "ticker": "PGAS",
-          "score": 33.66,
-          "signal": "Neutral",
-          "score_delta": 0.0
-        },
-        {
-          "ticker": "RMKE",
-          "score": 13.81,
-          "signal": "Neutral",
-          "score_delta": -27.1
-        },
-        {
-          "ticker": "ADRO",
-          "score": 13.29,
-          "signal": "Neutral",
-          "score_delta": 3.11
-        },
-        {
-          "ticker": "PTBA",
-          "score": 12.0,
-          "signal": "Neutral",
-          "score_delta": 16.18
-        },
-        {
-          "ticker": "RATU",
-          "score": 8.26,
-          "signal": "Neutral",
-          "score_delta": 2.01
-        },
-        {
-          "ticker": "CUAN",
-          "score": 8.0,
-          "signal": "Neutral",
-          "score_delta": 13.0
-        },
-        {
-          "ticker": "DEWA",
-          "score": 7.72,
-          "signal": "Neutral",
-          "score_delta": -26.68
-        },
-        {
-          "ticker": "BULL",
-          "score": 7.69,
-          "signal": "Neutral",
-          "score_delta": 3.83
-        },
-        {
-          "ticker": "HRUM",
-          "score": 7.53,
-          "signal": "Neutral",
-          "score_delta": 1.37
-        },
-        {
-          "ticker": "BUMI",
-          "score": 3.4,
-          "signal": "Neutral",
-          "score_delta": -3.48
-        },
-        {
-          "ticker": "BIPI",
-          "score": 3.37,
-          "signal": "Neutral",
-          "score_delta": 2.5
-        },
-        {
-          "ticker": "INDY",
-          "score": 2.66,
-          "signal": "Neutral",
-          "score_delta": 2.24
-        },
-        {
-          "ticker": "ADMR",
-          "score": -2.08,
-          "signal": "Neutral",
-          "score_delta": -0.0
-        },
-        {
-          "ticker": "ENRG",
-          "score": -5.0,
-          "signal": "Neutral",
-          "score_delta": -1.41
-        },
-        {
-          "ticker": "PTRO",
-          "score": -5.0,
-          "signal": "Neutral",
-          "score_delta": 0.0
-        },
-        {
-          "ticker": "SGER",
-          "score": -13.35,
-          "signal": "Neutral",
-          "score_delta": 0.0
-        },
-        {
-          "ticker": "ELSA",
-          "score": -33.99,
-          "signal": "Bearish",
-          "score_delta": 1.56
-        },
-        {
-          "ticker": "AADI",
-          "score": -48.4,
-          "signal": "Bearish",
-          "score_delta": 2.11
-        },
-        {
-          "ticker": "TOBA",
-          "score": -51.39,
-          "signal": "Bearish",
-          "score_delta": -0.57
-        },
-        {
-          "ticker": "MEDC",
-          "score": -54.91,
-          "signal": "Bearish",
-          "score_delta": 5.43
-        },
-        {
-          "ticker": "ITMG",
-          "score": -55.01,
-          "signal": "Bearish",
-          "score_delta": 16.18
-        },
-        {
-          "ticker": "AKRA",
-          "score": -66.78,
-          "signal": "Bearish",
-          "score_delta": 11.38
-        }
-      ],
-      "phase": "Improving",
-      "relative_score": -6.6
-    },
-    {
-      "sector": "Healthcare",
-      "count": 3,
-      "avg_score": 7.54,
-      "median_score": 0.82,
-      "avg_score_delta": -0.09,
-      "breadth": 0.0,
-      "bullish": 1,
-      "neutral": 1,
-      "bearish": 1,
-      "bullish_pct": 33.3,
-      "bearish_pct": 33.3,
-      "stocks": [
-        {
-          "ticker": "KLBF",
-          "score": 54.15,
-          "signal": "Bullish",
-          "score_delta": 3.83
-        },
-        {
-          "ticker": "HEAL",
-          "score": 0.82,
-          "signal": "Neutral",
-          "score_delta": -2.51
-        },
-        {
-          "ticker": "MIKA",
-          "score": -32.35,
-          "signal": "Bearish",
-          "score_delta": -1.6
-        }
-      ],
-      "phase": "Weakening",
-      "relative_score": 7.54
+      "relative_score": 8.12
     },
     {
       "sector": "Consumer Cyclicals",
       "count": 9,
-      "avg_score": 6.64,
-      "median_score": 2.28,
-      "avg_score_delta": -0.82,
-      "breadth": 0.0,
-      "bullish": 1,
-      "neutral": 7,
+      "avg_score": 8.03,
+      "median_score": 1.84,
+      "avg_score_delta": 1.4,
+      "breadth": 11.1,
+      "bullish": 2,
+      "neutral": 6,
       "bearish": 1,
-      "bullish_pct": 11.1,
+      "bullish_pct": 22.2,
       "bearish_pct": 11.1,
       "stocks": [
         {
           "ticker": "MINA",
-          "score": 49.72,
+          "score": 59.28,
           "signal": "Bullish",
-          "score_delta": 6.0
+          "score_delta": 9.56
         },
         {
           "ticker": "ACES",
-          "score": 44.65,
-          "signal": "Neutral",
-          "score_delta": 10.3
+          "score": 46.13,
+          "signal": "Bullish",
+          "score_delta": 1.48
         },
         {
           "ticker": "MAPA",
-          "score": 43.5,
+          "score": 32.85,
           "signal": "Neutral",
-          "score_delta": 0.0
-        },
-        {
-          "ticker": "HRTA",
-          "score": 2.9,
-          "signal": "Neutral",
-          "score_delta": 1.06
+          "score_delta": -10.65
         },
         {
           "ticker": "BUVA",
-          "score": 2.28,
+          "score": 14.1,
           "signal": "Neutral",
-          "score_delta": 3.13
+          "score_delta": 11.82
+        },
+        {
+          "ticker": "HRTA",
+          "score": 1.84,
+          "signal": "Neutral",
+          "score_delta": -1.06
         },
         {
           "ticker": "KPIG",
@@ -548,32 +233,412 @@
         },
         {
           "ticker": "SCMA",
-          "score": -0.53,
+          "score": 0.88,
           "signal": "Neutral",
-          "score_delta": 2.99
+          "score_delta": 1.41
         },
         {
           "ticker": "WIFI",
           "score": -15.75,
           "signal": "Neutral",
-          "score_delta": -23.75
+          "score_delta": 0.0
         },
         {
           "ticker": "MAPI",
           "score": -68.78,
           "signal": "Bearish",
-          "score_delta": -7.08
+          "score_delta": -0.0
         }
       ],
-      "phase": "Weakening",
-      "relative_score": 6.64
+      "phase": "Leading",
+      "relative_score": 8.04
+    },
+    {
+      "sector": "Infrastructure",
+      "count": 8,
+      "avg_score": 1.22,
+      "median_score": 1.41,
+      "avg_score_delta": 0.98,
+      "breadth": -12.5,
+      "bullish": 0,
+      "neutral": 7,
+      "bearish": 1,
+      "bullish_pct": 0.0,
+      "bearish_pct": 12.5,
+      "stocks": [
+        {
+          "ticker": "TLKM",
+          "score": 42.52,
+          "signal": "Neutral",
+          "score_delta": 0.82
+        },
+        {
+          "ticker": "JSMR",
+          "score": 18.15,
+          "signal": "Neutral",
+          "score_delta": -0.0
+        },
+        {
+          "ticker": "INET",
+          "score": 12.17,
+          "signal": "Neutral",
+          "score_delta": 7.89
+        },
+        {
+          "ticker": "TOWR",
+          "score": 7.74,
+          "signal": "Neutral",
+          "score_delta": 2.43
+        },
+        {
+          "ticker": "SSIA",
+          "score": -4.92,
+          "signal": "Neutral",
+          "score_delta": -1.42
+        },
+        {
+          "ticker": "ISAT",
+          "score": -5.0,
+          "signal": "Neutral",
+          "score_delta": 0.0
+        },
+        {
+          "ticker": "EXCL",
+          "score": -7.0,
+          "signal": "Neutral",
+          "score_delta": -5.68
+        },
+        {
+          "ticker": "PGEO",
+          "score": -53.93,
+          "signal": "Bearish",
+          "score_delta": 3.77
+        }
+      ],
+      "phase": "Leading",
+      "relative_score": 1.23
+    },
+    {
+      "sector": "Property",
+      "count": 7,
+      "avg_score": -1.25,
+      "median_score": 0.18,
+      "avg_score_delta": 7.64,
+      "breadth": -14.3,
+      "bullish": 2,
+      "neutral": 2,
+      "bearish": 3,
+      "bullish_pct": 28.6,
+      "bearish_pct": 42.9,
+      "stocks": [
+        {
+          "ticker": "BKSL",
+          "score": 52.47,
+          "signal": "Bullish",
+          "score_delta": 43.0
+        },
+        {
+          "ticker": "SMRA",
+          "score": 48.4,
+          "signal": "Bullish",
+          "score_delta": 10.34
+        },
+        {
+          "ticker": "KIJA",
+          "score": 3.42,
+          "signal": "Neutral",
+          "score_delta": 0.0
+        },
+        {
+          "ticker": "PWON",
+          "score": 0.18,
+          "signal": "Neutral",
+          "score_delta": -0.0
+        },
+        {
+          "ticker": "BSDE",
+          "score": -28.99,
+          "signal": "Bearish",
+          "score_delta": 2.26
+        },
+        {
+          "ticker": "CBDK",
+          "score": -38.86,
+          "signal": "Bearish",
+          "score_delta": -2.09
+        },
+        {
+          "ticker": "CTRA",
+          "score": -45.39,
+          "signal": "Bearish",
+          "score_delta": 0.0
+        }
+      ],
+      "phase": "Improving",
+      "relative_score": -1.23
+    },
+    {
+      "sector": "Energy",
+      "count": 23,
+      "avg_score": -4.95,
+      "median_score": 4.54,
+      "avg_score_delta": 1.64,
+      "breadth": -21.7,
+      "bullish": 2,
+      "neutral": 14,
+      "bearish": 7,
+      "bullish_pct": 8.7,
+      "bearish_pct": 30.4,
+      "stocks": [
+        {
+          "ticker": "RAJA",
+          "score": 62.81,
+          "signal": "Bullish",
+          "score_delta": -0.0
+        },
+        {
+          "ticker": "RMKE",
+          "score": 49.9,
+          "signal": "Bullish",
+          "score_delta": 36.09
+        },
+        {
+          "ticker": "PGAS",
+          "score": 32.84,
+          "signal": "Neutral",
+          "score_delta": -0.82
+        },
+        {
+          "ticker": "RATU",
+          "score": 22.0,
+          "signal": "Neutral",
+          "score_delta": 13.74
+        },
+        {
+          "ticker": "ADRO",
+          "score": 15.21,
+          "signal": "Neutral",
+          "score_delta": 1.92
+        },
+        {
+          "ticker": "BIPI",
+          "score": 13.45,
+          "signal": "Neutral",
+          "score_delta": 10.08
+        },
+        {
+          "ticker": "PTBA",
+          "score": 12.0,
+          "signal": "Neutral",
+          "score_delta": -0.0
+        },
+        {
+          "ticker": "DEWA",
+          "score": 11.88,
+          "signal": "Neutral",
+          "score_delta": 4.16
+        },
+        {
+          "ticker": "BULL",
+          "score": 11.51,
+          "signal": "Neutral",
+          "score_delta": 3.82
+        },
+        {
+          "ticker": "CUAN",
+          "score": 8.0,
+          "signal": "Neutral",
+          "score_delta": 0.0
+        },
+        {
+          "ticker": "HRUM",
+          "score": 6.16,
+          "signal": "Neutral",
+          "score_delta": -1.37
+        },
+        {
+          "ticker": "BUMI",
+          "score": 4.54,
+          "signal": "Neutral",
+          "score_delta": 1.14
+        },
+        {
+          "ticker": "INDY",
+          "score": 0.42,
+          "signal": "Neutral",
+          "score_delta": -2.24
+        },
+        {
+          "ticker": "SGER",
+          "score": -3.08,
+          "signal": "Neutral",
+          "score_delta": 10.27
+        },
+        {
+          "ticker": "PTRO",
+          "score": -3.84,
+          "signal": "Neutral",
+          "score_delta": 1.16
+        },
+        {
+          "ticker": "ENRG",
+          "score": -5.0,
+          "signal": "Neutral",
+          "score_delta": 0.0
+        },
+        {
+          "ticker": "ADMR",
+          "score": -29.8,
+          "signal": "Bearish",
+          "score_delta": -27.72
+        },
+        {
+          "ticker": "ELSA",
+          "score": -32.48,
+          "signal": "Bearish",
+          "score_delta": 1.51
+        },
+        {
+          "ticker": "AADI",
+          "score": -47.39,
+          "signal": "Bearish",
+          "score_delta": 1.01
+        },
+        {
+          "ticker": "TOBA",
+          "score": -51.39,
+          "signal": "Bearish",
+          "score_delta": -0.0
+        },
+        {
+          "ticker": "ITMG",
+          "score": -55.89,
+          "signal": "Bearish",
+          "score_delta": -0.88
+        },
+        {
+          "ticker": "MEDC",
+          "score": -56.72,
+          "signal": "Bearish",
+          "score_delta": -1.81
+        },
+        {
+          "ticker": "AKRA",
+          "score": -79.08,
+          "signal": "Bearish",
+          "score_delta": -12.3
+        }
+      ],
+      "phase": "Improving",
+      "relative_score": -4.94
+    },
+    {
+      "sector": "Consumer Non-Cyclicals",
+      "count": 14,
+      "avg_score": -3.65,
+      "median_score": -0.4,
+      "avg_score_delta": -1.52,
+      "breadth": -21.4,
+      "bullish": 2,
+      "neutral": 7,
+      "bearish": 5,
+      "bullish_pct": 14.3,
+      "bearish_pct": 35.7,
+      "stocks": [
+        {
+          "ticker": "LSIP",
+          "score": 56.33,
+          "signal": "Bullish",
+          "score_delta": -0.68
+        },
+        {
+          "ticker": "MYOR",
+          "score": 55.5,
+          "signal": "Bullish",
+          "score_delta": 0.73
+        },
+        {
+          "ticker": "ICBP",
+          "score": 41.25,
+          "signal": "Neutral",
+          "score_delta": 0.58
+        },
+        {
+          "ticker": "UNVR",
+          "score": 28.92,
+          "signal": "Neutral",
+          "score_delta": 0.83
+        },
+        {
+          "ticker": "INDF",
+          "score": 25.92,
+          "signal": "Neutral",
+          "score_delta": 0.0
+        },
+        {
+          "ticker": "AMRT",
+          "score": 9.01,
+          "signal": "Neutral",
+          "score_delta": 0.82
+        },
+        {
+          "ticker": "CMRY",
+          "score": 8.88,
+          "signal": "Neutral",
+          "score_delta": -1.22
+        },
+        {
+          "ticker": "ERAA",
+          "score": -9.69,
+          "signal": "Neutral",
+          "score_delta": -0.0
+        },
+        {
+          "ticker": "CPIN",
+          "score": -23.8,
+          "signal": "Neutral",
+          "score_delta": 0.17
+        },
+        {
+          "ticker": "GGRM",
+          "score": -28.34,
+          "signal": "Bearish",
+          "score_delta": -8.2
+        },
+        {
+          "ticker": "JPFA",
+          "score": -34.23,
+          "signal": "Bearish",
+          "score_delta": 8.61
+        },
+        {
+          "ticker": "TAPG",
+          "score": -42.56,
+          "signal": "Bearish",
+          "score_delta": -6.66
+        },
+        {
+          "ticker": "DSNG",
+          "score": -53.34,
+          "signal": "Bearish",
+          "score_delta": 0.0
+        },
+        {
+          "ticker": "PANI",
+          "score": -85.0,
+          "signal": "Bearish",
+          "score_delta": -16.31
+        }
+      ],
+      "phase": "Lagging",
+      "relative_score": -3.63
     },
     {
       "sector": "Basic Materials",
       "count": 16,
-      "avg_score": -0.24,
-      "median_score": -0.89,
-      "avg_score_delta": -3.33,
+      "avg_score": -5.5,
+      "median_score": -5.5,
+      "avg_score_delta": -5.26,
       "breadth": -18.8,
       "bullish": 1,
       "neutral": 11,
@@ -583,51 +648,39 @@
       "stocks": [
         {
           "ticker": "SMGR",
-          "score": 47.63,
+          "score": 47.16,
           "signal": "Bullish",
-          "score_delta": 0.47
+          "score_delta": -0.47
         },
         {
           "ticker": "ANTM",
-          "score": 40.06,
+          "score": 40.68,
           "signal": "Neutral",
-          "score_delta": 1.93
+          "score_delta": 0.62
         },
         {
           "ticker": "INCO",
-          "score": 40.01,
+          "score": 38.75,
           "signal": "Neutral",
-          "score_delta": 0.41
-        },
-        {
-          "ticker": "ARCI",
-          "score": 10.55,
-          "signal": "Neutral",
-          "score_delta": 0.0
+          "score_delta": -1.26
         },
         {
           "ticker": "AMMN",
-          "score": 9.27,
+          "score": 7.16,
           "signal": "Neutral",
-          "score_delta": 0.0
+          "score_delta": -2.11
         },
         {
           "ticker": "TINS",
-          "score": 7.24,
+          "score": 6.74,
           "signal": "Neutral",
-          "score_delta": -0.96
+          "score_delta": -0.5
         },
         {
           "ticker": "INKP",
-          "score": 2.83,
+          "score": 0.3,
           "signal": "Neutral",
-          "score_delta": 1.67
-        },
-        {
-          "ticker": "MDKA",
-          "score": 1.87,
-          "signal": "Neutral",
-          "score_delta": -0.72
+          "score_delta": -2.53
         },
         {
           "ticker": "MBMA",
@@ -639,7 +692,13 @@
           "ticker": "PSAB",
           "score": -4.69,
           "signal": "Neutral",
-          "score_delta": -11.31
+          "score_delta": -0.0
+        },
+        {
+          "ticker": "ARCI",
+          "score": -6.31,
+          "signal": "Neutral",
+          "score_delta": -16.86
         },
         {
           "ticker": "BRMS",
@@ -648,138 +707,79 @@
           "score_delta": 0.0
         },
         {
-          "ticker": "ESSA",
-          "score": -15.15,
+          "ticker": "MDKA",
+          "score": -9.52,
           "signal": "Neutral",
-          "score_delta": 0.0
+          "score_delta": -11.39
+        },
+        {
+          "ticker": "ESSA",
+          "score": -19.64,
+          "signal": "Neutral",
+          "score_delta": -4.49
         },
         {
           "ticker": "TPIA",
-          "score": -28.52,
+          "score": -27.86,
           "signal": "Bearish",
-          "score_delta": -3.81
-        },
-        {
-          "ticker": "BRPT",
-          "score": -33.25,
-          "signal": "Bearish",
-          "score_delta": 0.0
-        },
-        {
-          "ticker": "EMAS",
-          "score": -35.0,
-          "signal": "Bearish",
-          "score_delta": 0.0
+          "score_delta": 0.66
         },
         {
           "ticker": "NCKL",
-          "score": -36.08,
+          "score": -38.15,
           "signal": "Bearish",
-          "score_delta": -40.98
+          "score_delta": -2.07
+        },
+        {
+          "ticker": "EMAS",
+          "score": -48.8,
+          "signal": "Bearish",
+          "score_delta": -13.8
+        },
+        {
+          "ticker": "BRPT",
+          "score": -63.25,
+          "signal": "Bearish",
+          "score_delta": -30.0
         }
       ],
       "phase": "Lagging",
-      "relative_score": -0.24
+      "relative_score": -5.49
     },
     {
-      "sector": "Technology",
-      "count": 4,
-      "avg_score": -4.87,
-      "median_score": -9.51,
-      "avg_score_delta": -0.52,
-      "breadth": -25.0,
+      "sector": "Healthcare",
+      "count": 3,
+      "avg_score": -7.32,
+      "median_score": -0.06,
+      "avg_score_delta": -14.85,
+      "breadth": -33.3,
       "bullish": 0,
-      "neutral": 3,
+      "neutral": 2,
       "bearish": 1,
       "bullish_pct": 0.0,
-      "bearish_pct": 25.0,
+      "bearish_pct": 33.3,
       "stocks": [
         {
-          "ticker": "BUKA",
-          "score": 43.29,
+          "ticker": "KLBF",
+          "score": 8.86,
           "signal": "Neutral",
-          "score_delta": 0.0
+          "score_delta": -45.29
         },
         {
-          "ticker": "WIRG",
-          "score": 3.08,
+          "ticker": "HEAL",
+          "score": -0.06,
           "signal": "Neutral",
-          "score_delta": 0.0
+          "score_delta": -0.88
         },
         {
-          "ticker": "EMTK",
-          "score": -22.1,
-          "signal": "Neutral",
-          "score_delta": -2.1
-        },
-        {
-          "ticker": "GOTO",
-          "score": -43.75,
+          "ticker": "MIKA",
+          "score": -30.75,
           "signal": "Bearish",
-          "score_delta": 0.0
+          "score_delta": 1.6
         }
       ],
       "phase": "Lagging",
-      "relative_score": -4.87
-    },
-    {
-      "sector": "Property",
-      "count": 7,
-      "avg_score": -8.9,
-      "median_score": 0.18,
-      "avg_score_delta": -0.62,
-      "breadth": -28.6,
-      "bullish": 1,
-      "neutral": 3,
-      "bearish": 3,
-      "bullish_pct": 14.3,
-      "bearish_pct": 42.9,
-      "stocks": [
-        {
-          "ticker": "SMRA",
-          "score": 38.06,
-          "signal": "Bullish",
-          "score_delta": 0.0
-        },
-        {
-          "ticker": "BKSL",
-          "score": 9.47,
-          "signal": "Neutral",
-          "score_delta": 6.81
-        },
-        {
-          "ticker": "KIJA",
-          "score": 3.42,
-          "signal": "Neutral",
-          "score_delta": -4.76
-        },
-        {
-          "ticker": "PWON",
-          "score": 0.18,
-          "signal": "Neutral",
-          "score_delta": 1.73
-        },
-        {
-          "ticker": "BSDE",
-          "score": -31.25,
-          "signal": "Bearish",
-          "score_delta": 1.18
-        },
-        {
-          "ticker": "CBDK",
-          "score": -36.77,
-          "signal": "Bearish",
-          "score_delta": -10.19
-        },
-        {
-          "ticker": "CTRA",
-          "score": -45.39,
-          "signal": "Bearish",
-          "score_delta": 0.86
-        }
-      ],
-      "phase": "Lagging",
-      "relative_score": -8.9
+      "relative_score": -7.31
     }
   ]
 }
