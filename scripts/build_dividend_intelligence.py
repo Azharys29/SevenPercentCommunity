@@ -155,7 +155,7 @@ def build_stock(ticker, meta, now_year):
     net_income = row_year_values(annual, ["Net Income", "Net Income Common Stockholders", "Net Income Continuous Operations"], 5)
     eps = row_year_values(annual, ["Diluted EPS", "Basic EPS", "DilutedEPS", "BasicEPS"], 5)
     # Normalize issuer reporting currency before combining with IDR dividends/prices.
-    financial_currency = str(info.get("financialCurrency") or info.get("financialCurrencyCode") or "").upper()
+    financial_currency = str(info.get("financialCurrency") or info.get("financialCurrencyCode") or info.get("currency") or "").upper()
     quote_currency = str(info.get("currency") or "IDR").upper()
     reporting_fx_to_idr = fx_to_idr(financial_currency)
     if reporting_fx_to_idr is not None:
