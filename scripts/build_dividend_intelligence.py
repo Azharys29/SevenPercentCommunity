@@ -19,6 +19,25 @@ UNIVERSE = ROOT / "universe.csv"
 SCREENER = ROOT / "data/screener.json"
 OUT = ROOT / "data/dividend-intelligence.json"
 IDX_URL = "https://www.idx.id/id/perusahaan-tercatat/laporan-keuangan-dan-tahunan"
+_FX_TO_IDR_CACHE = None
+
+
+def fx_to_idr(currency):
+    """Return IDR per unit of reporting currency; unknown currencies stay unavailable."""
+    global _FX_TO_IDR_CACHE
+    code = str(currency or "").strip().upper()
+    if code == "IDR":
+        return 1.0
+    if code == "USD":
+        if _FX_TO_IDR_CACHE is None:
+            try:
+                fx = yf.Ticker("USDIDR=X").history(period="5d")
+                vals = fx["Close"].dropna() if fx is not None and not fx.empty else []
+                _FX_TO_IDR_CACHE = num(vals.iloc[-1]) if len(vals) else None
+            except Exception:
+                _FX_TO_IDR_CACHE = None
+        return _FX_TO_IDR_CACHE
+    return None
 
 
 def num(v):
@@ -135,6 +154,14 @@ def build_stock(ticker, meta, now_year):
     revenue = row_year_values(annual, ["Total Revenue", "Operating Revenue", "Revenue"], 5)
     net_income = row_year_values(annual, ["Net Income", "Net Income Common Stockholders", "Net Income Continuous Operations"], 5)
     eps = row_year_values(annual, ["Diluted EPS", "Basic EPS", "DilutedEPS", "BasicEPS"], 5)
+    # Normalize issuer reporting currency before combining with IDR dividends/prices.
+    financial_currency = str(info.get("financialCurrency") or info.get("financialCurrencyCode") or "").upper()
+    quote_currency = str(info.get("currency") or "IDR").upper()
+    reporting_fx_to_idr = fx_to_idr(financial_currency)
+    if reporting_fx_to_idr is not None:
+        revenue = {y: v * reporting_fx_to_idr for y, v in revenue.items()}
+        net_income = {y: v * reporting_fx_to_idr for y, v in net_income.items()}
+        eps = {y: v * reporting_fx_to_idr for y, v in eps.items()}
     dividend_series = t.dividends
     divs = series_year_sums(dividend_series)
     payment_pattern = dividend_payment_pattern(dividend_series, now_year, 3)
@@ -164,7 +191,7 @@ def build_stock(ticker, meta, now_year):
         ep = eps.get(year)
         # Yahoo dividend history can be incomplete or reflect corporate-action adjustments.
         dps = divs.get(year)
-        dpr = (dps / ep * 100) if dps is not None and ep is not None and ep > 0 else None
+        dpr = (dps / ep * 100) if reporting_fx_to_idr is not None and dps is not None and ep is not None and ep > 0 else None
         npm = (ni / rev * 100) if ni is not None and rev is not None and rev > 0 else None
         hist.append({
             "year": year, "revenue": rounded(rev, 0), "net_income": rounded(ni, 0),
@@ -218,7 +245,7 @@ def build_stock(ticker, meta, now_year):
     for label, npm_mult, dpr_mult in settings:
         npm = npm_avg * npm_mult if npm_avg is not None else None
         dpr = min(100.0, dpr_avg * dpr_mult) if dpr_avg is not None else None
-        net_est = revenue_runrate * npm / 100 if revenue_runrate is not None and npm is not None else None
+        net_est = revenue_runrate * npm / 100 if reporting_fx_to_idr is not None and revenue_runrate is not None and npm is not None else None
         total_dividend = net_est * dpr / 100 if net_est is not None and dpr is not None else None
         dps_est = total_dividend / shares if total_dividend is not None and shares and shares > 0 else None
         yield_est = dps_est / price * 100 if dps_est is not None and price and price > 0 else None
@@ -251,6 +278,11 @@ def build_stock(ticker, meta, now_year):
         "dividend_consistency": consistency,
         "data_quality": {
             "annual_periods_available": len(hist),
+            "financial_currency": financial_currency or "unknown",
+            "quote_currency": quote_currency,
+            "fx_to_idr": rounded(reporting_fx_to_idr, 4) if reporting_fx_to_idr is not None else None,
+            "currency_normalized_to_idr": reporting_fx_to_idr is not None,
+            "currency_note": ("Laporan keuangan dikonversi ke IDR sebelum dipadankan dengan DPS/harga." if reporting_fx_to_idr is not None else "Mata uang laporan keuangan tidak diketahui/konversi FX gagal; DPR dan estimasi ditahan agar tidak menghasilkan angka lintas mata uang."),
             "has_3y_revenue": sum(1 for x in model_years if x["revenue"] is not None) >= 3,
             "has_3y_npm": len(npm_values) >= 2,
             "has_3y_dpr": len(dpr_values) >= 2,
@@ -295,7 +327,8 @@ def main():
         "error_count": len(errors), "errors": errors, "stocks": rows,
         "methodology": {
             "revenue_estimate": "Current-year reported quarterly revenue annualized by reported months; fallback to latest annual revenue when YTD data unavailable.",
-            "dividend_estimate": "Estimated revenue × scenario NPM × scenario DPR ÷ shares outstanding; estimated yield = DPS ÷ latest price.",
+            "currency_normalization": "Financial statement revenue, net income and EPS are converted from issuer reporting currency to IDR before combining with IDR dividend-per-share and market-price data. Unsupported/unknown currencies keep DPR and scenario estimates unavailable.",
+            "dividend_estimate": "Estimated IDR revenue × scenario NPM × scenario DPR ÷ shares outstanding; estimated yield = IDR DPS ÷ latest IDR price.",
             "payment_pattern": "Actual historical dividend payment dates from Yahoo Finance over three years; months are historical windows, not guaranteed future payment dates. Multiple payments in a year are flagged as a possible interim/instalment pattern and must be verified against official IDX/KSEI/issuer announcements.",
             "scenario_factors": {"Conservative": {"npm": 0.85, "dpr": 0.8}, "Base": {"npm": 1.0, "dpr": 1.0}, "Optimistic": {"npm": 1.1, "dpr": 1.1}},
             "caveat": "Exploratory estimate only. Fiscal periods, special dividends, share changes, corporate actions and incomplete Yahoo data may distort results. Validate against official filings.",
